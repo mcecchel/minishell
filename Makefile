@@ -1,15 +1,12 @@
-NAME		= pipex
+NAME		= minishell
 RM			= rm -f
-CFLAGS		= -Wall -Wextra -Werror -g -pedantic -I. -ILibft -Imlx_linux
+CFLAGS		= -Wall -Wextra -Werror -g -pedantic -I. -ILibft
 
 # Libft
 LIBFT_DIR	= Libft
 LIBFT_LIB	= $(LIBFT_DIR)/libft.a
 
-SRC		= 	src/utils.c \
-			src/manage_cmd.c \
-			src/close_error.c \
-			src/pipex.c \
+SRC		= 	src/
 			main.c
 
 
