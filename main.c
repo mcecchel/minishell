@@ -6,7 +6,19 @@
 /*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 17:30:08 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/05/06 17:31:07 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/05/12 16:21:38 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "minishell.h"
+#include <readline/readline.h>
+#include <stdlib.h>
+
+int main(void)
+{
+    char *read_line;
+    read_line = readline("Prompt > ");
+    printf("%s\n", read_line);
+	free(read_line);
+    return (0);
+}

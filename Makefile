@@ -1,6 +1,6 @@
 NAME		= minishell
 RM			= rm -f
-CFLAGS		= -Wall -Wextra -Werror -g -pedantic -I. -ILibft -Iincludes
+CFLAGS		= -Wall -Wextra -Werror -g -pedantic -I. -ILibft -Iincludes -lreadline
 
 # Libft
 LIBFT_DIR	= Libft
