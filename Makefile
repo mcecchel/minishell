@@ -1,14 +1,12 @@
 NAME		= minishell
 RM			= rm -f
-CFLAGS		= -Wall -Wextra -Werror -g -pedantic -I. -ILibft
+CFLAGS		= -Wall -Wextra -Werror -g -pedantic -I. -ILibft -Iincludes
 
 # Libft
 LIBFT_DIR	= Libft
 LIBFT_LIB	= $(LIBFT_DIR)/libft.a
 
-SRC		= 	src/
-			main.c
-
+SRC		= 	src/lexer.c \
 
 all: $(LIBFT_LIB) $(NAME)
 

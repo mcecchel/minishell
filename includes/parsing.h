@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marianna <marianna@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 16:02:45 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/05/07 15:52:59 by marianna         ###   ########.fr       */
+/*   Updated: 2025/05/12 15:28:09 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 # include "libft.h"
 
 // usare enum perche' cosi' non c'e' bisogno di specificare il tipo delle variabili
-typedef enum e_token
+typedef enum e_token_type
 {
 	// PAROLE
 	CMD,
@@ -34,7 +34,14 @@ typedef enum e_token
 	QUOTE,
 	DQUOTE,
 	UNKNOWN,
-}			t_token;
+}			t_token_type;
+
+typedef struct s_token
+{
+	char			*value;
+	t_token_type	type;
+	struct s_token	*next;
+}					t_token;
 
 typedef struct s_cmd
 {
@@ -42,7 +49,7 @@ typedef struct s_cmd
     char			**argv;
 //    int			fd_pipe[2];
     int				pid;
-	struct s_cmd	*next;	
+	struct s_cmd	*next;
 }					t_cmd;
 
 typedef struct s_shell
@@ -53,5 +60,7 @@ typedef struct s_shell
 	t_token	token;
 
 }			   t_shell;
+
+int	is_space(char c);
 
 # endif
