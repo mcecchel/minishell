@@ -6,7 +6,7 @@
 /*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 14:58:50 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/05/13 17:15:58 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/05/13 17:34:08 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ char *extract_word(char *line, int *index)
 }
 
 // Estrae il contenuto tra virgolette singole o doppie
-char *extract_quote(t_shell shell, char *line, int *index)
+char *extract_quote(char *line, int *index)
 {
 	char	quote;
 	int		start_quote;
@@ -59,15 +59,13 @@ char *extract_quote(t_shell shell, char *line, int *index)
 	str = NULL;
 	quote = line[*index];
 	(*index)++;// Salto  le quote iniziali
-	shell.in_quote = 1;
 	start_quote = *index;
 	while (line[*index] && line[*index] != quote)
 		(*index)++;
 	if (line[*index] == quote)
 	{
 		str = ft_substr(line, start_quote, (*index) - start_quote);
-		(*index)++;// Salto le quote finali
-		shell.in_quote = 0;
+		(*index)++;// Salto  le quote finali
 	}
 	else
 		ft_printf("Error: Missing closing quote\n");
@@ -93,26 +91,24 @@ char *extract_operator(char *line, int *index)
 // 1) Alloca un nuovo nodo token
 // 2) Determina il tipo (es: "|" → PIPE, ">" → RED_OUT)
 // 3) Lo inserisce in coda alla lista
-t_token_type classify_token(t_shell shell, char *str)
+t_token_type classify_token(char *str)
 {
     // str = NULL;
-	if (access(str, X_OK))
-		return CMD; // Se il file esiste o è eseguibile è un comando
 	if (!str)
 		return UNKNOWN;
-    if (ft_strcmp(str, "|") == 0 && shell.in_quote == 0)
+    if (ft_strcmp(str, "|") == 0)
 	{	printf("[%s]\n", str);
         return PIPE;}
-    else if (ft_strcmp(str, ">") == 0 && shell.in_quote == 0)
+    else if (ft_strcmp(str, ">") == 0)
 	{	printf("[%s]\n", str);
         return RED_OUT;}
-    else if (ft_strcmp(str, "<") == 0&& shell.in_quote == 0)
+    else if (ft_strcmp(str, "<") == 0)
 	{	printf("[%s]\n", str);
 		return RED_IN;}
-    else if (ft_strcmp(str, "<<") == 0 && shell.in_quote == 0)
+    else if (ft_strcmp(str, "<<") == 0)
 	{	printf("[%s]\n", str);
         return HEREDOC;}
-    else if (ft_strcmp(str, ">>") == 0 && shell.in_quote == 0)
+    else if (ft_strcmp(str, ">>") == 0)
 	{	printf("[%s]\n", str);
         return APPEND;}
     else if (str[0] == '-')
@@ -123,8 +119,12 @@ t_token_type classify_token(t_shell shell, char *str)
         return QUOTE;}
     else
 	{
-		printf("[%s]\n", str);
-			return ARG; // Altrimenti è un argomento
+		if (access(str, F_OK & X_OK))
+		{	printf("[%s]\n", str);
+			return CMD;} // Se il file esiste o è eseguibile è un comando
+		else
+		{	printf("[%s]\n", str);
+			return ARG;} // Altrimenti è un argomento
 	}
 }
 #include <stdio.h>
@@ -138,7 +138,6 @@ int main(void)
     int index = 0;
     char *token_value;
     t_token token;
-	t_shell shell = {0};
 
     // Inizializza la lista dei token
     token.head = NULL;
@@ -157,7 +156,7 @@ int main(void)
             break;
         // Estrae e classifica i token
         if (read_line[index] == '\'' || read_line[index] == '\"')
-            token_value = extract_quote(shell, read_line, &index);
+            token_value = extract_quote(read_line, &index);
         else if ((token_value = extract_operator(read_line, &index)))
         {
             // Gli operatori vengono già estratti
@@ -167,7 +166,7 @@ int main(void)
         if (token_value)
         {
             // Classifica il token
-            t_token_type type = classify_token(shell, token_value);
+            t_token_type type = classify_token(token_value);
             printf("- Value: %s, Type: %d\n", token_value, type);
             // Libera la memoria allocata per il token
             free(token_value);
@@ -178,7 +177,7 @@ int main(void)
     return (0);
 }
 
-t_token *add_token(t_shell shell, char *content)
+t_token *add_token(t_token token, char *content)
 {
 	t_token	*new_token;
 	t_token	*current;
@@ -187,13 +186,13 @@ t_token *add_token(t_shell shell, char *content)
 	if (!new_token)
 		return (NULL);
 	new_token->value = content;
-	new_token->type = classify_token(shell, content);
+	new_token->type = classify_token(content);
 	new_token->next = NULL;
-	if (shell.token.head == NULL)
-		shell.token.head = new_token;
+	if (token.head == NULL)
+		token.head = new_token;
 	else
 	{
-		current = shell.token.head;
+		current = token.head;
 		// Trova l'ultimo nodo
 		while (current->next != NULL)
 			current = current->next;
