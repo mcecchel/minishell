@@ -6,7 +6,7 @@
 /*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 16:02:45 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/05/12 15:28:09 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/05/13 16:55:46 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,8 @@ typedef enum e_token_type
 	// OPERATORI DI REDIREZIONE
 	RED_IN,
 	RED_OUT,
-	RED_APPEND,
-	RED_HEREDOC,
+	APPEND,
+	HEREDOC,
 	// PARENTESI E SIMBOLI SPECIALI
 	QUOTE,
 	DQUOTE,
@@ -40,6 +40,7 @@ typedef struct s_token
 {
 	char			*value;
 	t_token_type	type;
+	struct s_token	*head;
 	struct s_token	*next;
 }					t_token;
 
@@ -58,6 +59,7 @@ typedef struct s_shell
     t_cmd	*cmd;
     int		n_cmds;
 	t_token	token;
+	bool	in_quote;
 
 }			   t_shell;
 
