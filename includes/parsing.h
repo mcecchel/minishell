@@ -6,7 +6,7 @@
 /*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 16:02:45 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/05/13 16:55:46 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/05/14 16:37:03 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,17 +41,21 @@ typedef struct s_token
 	char			*value;
 	t_token_type	type;
 	struct s_token	*head;
+	struct s_token	*current;
 	struct s_token	*next;
 }					t_token;
 
 typedef struct s_cmd
 {
-    char			*cmd_path;
-    char			**argv;
-//    int			fd_pipe[2];
-    int				pid;
+	char			*cmd_path;
+	char			**argv;
+	int				infile;
+	int				outfile;
+	int				pid;
+	//int			fd_pipe[2];
 	struct s_cmd	*next;
-}					t_cmd;
+}					 t_cmd;
+
 
 typedef struct s_shell
 {

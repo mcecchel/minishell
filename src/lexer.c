@@ -6,7 +6,7 @@
 /*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 14:58:50 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/05/13 17:34:08 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/05/14 17:54:44 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@ char *extract_word(char *line, int *index)
 
     start = *index;
     end = start;
-
     // Increment `end` until a space or operator is encountered
     while (line[end] && !is_space(line[end]) &&
            line[end] != '|' && line[end] != '>' && line[end] != '<' &&
@@ -29,14 +28,12 @@ char *extract_word(char *line, int *index)
     {
         end++;
     }
-
     // Skip operators if encountered
     while (line[end] == '|' || line[end] == '>' || line[end] == '<' ||
            line[end] == '\'' || line[end] == '\"')
     {
         end++;
     }
-
     // Extract the word using ft_substr
     word = ft_substr(line, start, end - start);
     if (!word)
@@ -44,7 +41,6 @@ char *extract_word(char *line, int *index)
         *index = end;
         return (NULL);
     }
-
     *index = end; // Update the index to the position after the word
     return (word);
 }
@@ -88,162 +84,231 @@ char *extract_operator(char *line, int *index)
     return ft_substr(line, start, *index - start);
 }
 
-// 1) Alloca un nuovo nodo token
-// 2) Determina il tipo (es: "|" → PIPE, ">" → RED_OUT)
-// 3) Lo inserisce in coda alla lista
-t_token_type classify_token(char *str)
+t_token_type classify_token(char *str, int is_first_token)
 {
-    // str = NULL;
-	if (!str)
-		return UNKNOWN;
+    if (!str)
+        return UNKNOWN;
+    // Se il token è racchiuso tra virgolette singole o doppie
+    if (str[0] == '\'' && str[strlen(str) - 1] == '\'')
+        return QUOTE;
+    else if (str[0] == '\"' && str[strlen(str) - 1] == '\"')
+        return DQUOTE;
+    // Se è il primo token, è un comando
+    if (is_first_token)
+        return CMD;
+    // Controlla se è un'opzione o un flag
+    if (str[0] == '-')
+        return FLAG;
+    // Controlla se è un operatore
     if (ft_strcmp(str, "|") == 0)
-	{	printf("[%s]\n", str);
-        return PIPE;}
+        return PIPE;
     else if (ft_strcmp(str, ">") == 0)
-	{	printf("[%s]\n", str);
-        return RED_OUT;}
+        return RED_OUT;
     else if (ft_strcmp(str, "<") == 0)
-	{	printf("[%s]\n", str);
-		return RED_IN;}
+        return RED_IN;
     else if (ft_strcmp(str, "<<") == 0)
-	{	printf("[%s]\n", str);
-        return HEREDOC;}
+        return HEREDOC;
     else if (ft_strcmp(str, ">>") == 0)
-	{	printf("[%s]\n", str);
-        return APPEND;}
-    else if (str[0] == '-')
-	{	printf("[%s]\n", str);
-		return FLAG;}
-    else if (str[0] == '\'' || str[0] == '\"')
-	{	printf("[%s]\n", str);
-        return QUOTE;}
-    else
-	{
-		if (access(str, F_OK & X_OK))
-		{	printf("[%s]\n", str);
-			return CMD;} // Se il file esiste o è eseguibile è un comando
-		else
-		{	printf("[%s]\n", str);
-			return ARG;} // Altrimenti è un argomento
-	}
-}
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "minishell.h"
-
-int main(void)
-{
-    char *read_line;
-    int index = 0;
-    char *token_value;
-    t_token token;
-
-    // Inizializza la lista dei token
-    token.head = NULL;
-    // Legge una riga di input
-    read_line = readline("Prompt > ");
-    if (!read_line)
-        return (1);
-    printf("Input line: %s\n", read_line);
-    printf("Classified tokens:\n");
-    while (read_line[index])
-    {
-        // Salta gli spazi
-        while (read_line[index] && is_space(read_line[index]))
-            index++;
-        if (read_line[index] == '\0')
-            break;
-        // Estrae e classifica i token
-        if (read_line[index] == '\'' || read_line[index] == '\"')
-            token_value = extract_quote(read_line, &index);
-        else if ((token_value = extract_operator(read_line, &index)))
-        {
-            // Gli operatori vengono già estratti
-        }
-        else
-            token_value = extract_word(read_line, &index);
-        if (token_value)
-        {
-            // Classifica il token
-            t_token_type type = classify_token(token_value);
-            printf("- Value: %s, Type: %d\n", token_value, type);
-            // Libera la memoria allocata per il token
-            free(token_value);
-        }
-    }
-    // Libera la memoria allocata per la riga
-    free(read_line);
-    return (0);
+        return APPEND;
+    // Altrimenti è un argomento
+    return (ARG);
 }
 
-t_token *add_token(t_token token, char *content)
+t_token *add_token(t_token *token, char *content)
 {
 	t_token	*new_token;
-	t_token	*current;
 
+	if (!token)
+	{
+		ft_printf("Error: Token list is NULL\n");
+		return (NULL);
+	}
 	new_token = malloc(sizeof(t_token));
 	if (!new_token)
+	{
+		ft_printf("Error: Memory allocation failed\n");
 		return (NULL);
+	}
 	new_token->value = content;
-	new_token->type = classify_token(content);
+	new_token->type = classify_token(content, 0);
 	new_token->next = NULL;
-	if (token.head == NULL)
-		token.head = new_token;
+	if (token->head == NULL)
+		token->head = new_token;
 	else
 	{
-		current = token.head;
+		token->current = token->head;
 		// Trova l'ultimo nodo
-		while (current->next != NULL)
-			current = current->next;
-		current->next = new_token;
+		while (token->current->next != NULL)
+			token->current = token->current->next;
+		token->current->next = new_token;
 	}
 	return (new_token);
 }
 
-// int main()
-// {
-// 	char *read_line;
-// 	int index = 0;
-// 	char *word;
-// 	char *operator;
-// 	char *quoted;
+t_token *tokenize_input(t_token *token, char *line)
+{
+    int i = 0;
+    int is_first_token = 1; // Flag per identificare il primo token
 
-// 	read_line = readline("Prompt > ");
-// 	printf("%s\n", read_line);
+    token->head = NULL;
+    token->current = NULL;
 
-// 	printf("Input line: %s\n", read_line);
-// 	printf("Extracted tokens:\n");
-// 	while (read_line[index])
-// 	{
-// 		while (read_line[index] && is_space(read_line[index]))
-// 			index++;
-// 		if (read_line[index] == '\0')
-// 			break;
-// 		if (read_line[index] == '\'' || read_line[index] == '\"')
-// 		{
-// 			quoted = extract_quote(read_line, &index);
-// 			if (quoted)
-// 			{
-// 				printf("* %s\n", quoted);
-// 				free(quoted); // Libera la memoria allocata da ft_substr
-// 			}
-// 		}
-// 		else if ((operator = extract_operator(read_line, &index)))
-// 		{
-// 			printf("[ %s\n", operator);
-// 			free(operator); // Libera la memoria allocata da ft_substr
-// 		}
-// 		else
-// 		{
-// 			word = extract_word(read_line, &index);
-// 			if (word)
-// 			{
-// 				printf("- %s\n", word);
-// 				free(word); // Libera la memoria allocata da ft_substr
-// 			}
-// 		}
-// 	}
-// 	free(read_line); // Libera la memoria allocata da readline
-// 	return (0);
-// }
+    while (line[i])
+    {
+        while (is_space(line[i]))
+            i++;
+        if (line[i] == '\0')
+            break;
+        char *content = NULL;
+        // Gestione quote
+        if (line[i] == '\'' || line[i] == '\"')
+            content = extract_quote(line, &i);
+        // Gestione operatori
+        else if (line[i] == '|' || line[i] == '<' || line[i] == '>')
+            content = extract_operator(line, &i);
+        // Gestione parole
+        else
+            content = extract_word(line, &i);
+        if (content)
+        {
+            // Classifica il token
+            t_token_type type = classify_token(content, is_first_token);
+            is_first_token = 0; // Dopo il primo token, tutti gli altri sono ARG o altro
+            token->current = add_token(token, content);
+            token->current->type = type; // Imposta il tipo del token
+        }
+    }
+    return (token);
+}
+
+void	print_token_type(t_token *token)
+{
+	if (token->type == CMD) printf("CMD");
+	else if (token->type == ARG) printf("ARG");
+	else if (token->type == OPTION) printf("OPTION");
+	else if (token->type == FLAG) printf("FLAG");
+	else if (token->type == PIPE) printf("PIPE");
+	else if (token->type == RED_IN) printf("RED_IN");
+	else if (token->type == RED_OUT) printf("RED_OUT");
+	else if (token->type == APPEND) printf("APPEND");
+	else if (token->type == HEREDOC) printf("HEREDOC");
+	else if (token->type == QUOTE) printf("QUOTE");
+	else if (token->type == DQUOTE) printf("DQUOTE");
+	else printf("UNKNOWN");
+}
+
+void	debug_tokens(t_token *token)
+{
+	int i = 0;
+	while (token)
+	{
+		printf("[%d] Token: \"%s\" | Type: ", i, token->value);
+		print_token_type(token);
+		printf("\n");
+		token = token->next;
+		i++;
+	}
+}
+
+void	free_tokens(t_token *token)
+{
+	t_token *tmp;
+	while (token)
+	{
+		tmp = token;
+		token = token->next;
+		free(tmp->value);
+		free(tmp);
+	}
+}
+
+t_cmd	*parse_tokens(t_token *token)
+{
+	t_cmd	*cmd_list;
+	t_cmd	*current_cmd;
+	t_cmd	*new_cmd;
+
+	cmd_list = NULL;
+	current_cmd = NULL;
+	while (token)
+	{
+		if (token->type == CMD)
+		{
+			new_cmd = malloc(sizeof(t_cmd));
+			if (!new_cmd)
+				return (NULL);
+			new_cmd->cmd_path = ft_strdup(token->value);
+			new_cmd->argv = malloc(sizeof(char *) * 100); // Allocate memory for argv
+			if (!new_cmd->argv)
+			{
+				ft_printf("Error: Memory allocation failed for argv\n");
+				free(new_cmd);
+				return (NULL);
+			}
+			new_cmd->argv[0] = NULL; // Initialize the first element to NULL
+			new_cmd->argv[0] = ft_strdup(token->value);
+			new_cmd->infile = -1;
+			new_cmd->outfile = -1;
+			new_cmd->pid = -1;
+			new_cmd->next = NULL;
+			if (!cmd_list)
+				cmd_list = new_cmd;
+			else
+			{
+				current_cmd->next = new_cmd;
+				current_cmd = new_cmd;
+			}
+		}
+		else if (token->type == ARG || token->type == FLAG)
+		{
+			int	i;
+
+			i = 0;
+			while (current_cmd->argv[i])
+				i++;
+			current_cmd->argv[i] = ft_strdup(token->value);
+			current_cmd->argv[i + 1] = NULL;
+		}
+		else if (token->type == PIPE)
+		{
+			// really dunno
+		}
+		else if (token->type == RED_IN)
+		{
+			current_cmd->infile = open(token->next->value, O_RDONLY);
+			if (current_cmd->infile < 0)
+				perror("Error opening infile");
+		}
+		else if (token->type == RED_OUT || token->type == APPEND)
+		{
+			current_cmd->outfile = open(token->next->value, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+			if (current_cmd->outfile < 0)
+				perror("Error opening outfile");
+		}
+		else if (token->type == HEREDOC)
+		{
+			current_cmd->infile = open(token->next->value, O_RDONLY);
+			if (current_cmd->infile < 0)
+				perror("Error opening heredoc");
+		}
+		token = token->next;
+	}
+	return (cmd_list);
+}
+void	free_cmd_list(t_cmd *cmd)
+{
+	t_cmd *tmp;
+	while (cmd)
+	{
+		tmp = cmd;
+		free(cmd->cmd_path);
+		if (cmd->argv)
+		{
+			for (int i = 0; cmd->argv[i]; i++)
+				free(cmd->argv[i]);
+			free(cmd->argv);
+		}
+		cmd = cmd->next;
+		free(tmp);
+	}
+}
