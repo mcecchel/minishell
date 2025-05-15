@@ -6,7 +6,16 @@ CFLAGS		= -Wall -Wextra -Werror -g -pedantic -I. -ILibft -Iincludes -lreadline
 LIBFT_DIR	= Libft
 LIBFT_LIB	= $(LIBFT_DIR)/libft.a
 
-SRC		= 	src/lexer.c \
+SRC		= 	main.c \
+		srcs/parsing/lexer.c \
+		srcs/parsing/parser.c \
+		# srcs/builtin/ft_cd.c \
+		# srcs/builtin/ft_exit.c \
+		# srcs/builtin/ft_env.c \
+		# srcs/builtin/ft_pwd.c \
+		# srcs/builtin/ft_unset.c \
+		# srcs/builtin/ft_echo.c \
+		# srcs/builtin/ft_export.c \
 
 all: $(LIBFT_LIB) $(NAME)
 
