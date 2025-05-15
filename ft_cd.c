@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 12:22:07 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/05/15 14:12:48 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/05/15 17:31:31 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,7 +151,7 @@ int	ft_cd(char *new_path, char **mini_env)
 	old_path = getcwd(NULL, 0);
 	old_path = ft_strjoin_free_s2("OLDPWD=", old_path);
 	//aggiorna una variabile d'appoggio che tiene l'oldpwd per ritornare in quella directory se viene usato cd -
-	if (chdir(new_path) != 0)
+	if (chdir(new_path) == -1)
 	{
 		perror("cd");
 		free(old_path);
@@ -248,11 +248,11 @@ int main(int argc, char **argv, char **envp)
 	i = 0;
 	k = 0;
 	mini_env = copy_env(envp);
-	print_env(mini_env);
+	//print_env(mini_env);
 	ft_cd("Libft/ft_printf", mini_env);
 	ft_cd(argv[1], mini_env);
 	printf("//////////////////////////////////////////////////////////////////////////////////////////////////////////\n");
-	print_env(mini_env);
+	//print_env(mini_env);
 	free_matrix(mini_env);
 	return(0);
 }
