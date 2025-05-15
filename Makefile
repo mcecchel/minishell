@@ -30,6 +30,9 @@ fclean: clean
 	$(RM) $(NAME)
 	$(MAKE) fclean -C $(LIBFT_DIR)
 
+valgrind: $(NAME)
+	@valgrind --quiet --leak-check=full --track-fds=yes --show-leak-kinds=all --track-origins=yes ./$(NAME)
+
 re: fclean all
 .SILENT:
 
