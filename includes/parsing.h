@@ -6,7 +6,7 @@
 /*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 16:02:45 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/05/14 16:37:03 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/05/16 15:38:12 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@ typedef enum e_token_type
 	// PAROLE
 	CMD,
 	ARG,
-	OPTION,
 	FLAG,
 	// OPERATORI DI CONTROLLO
 	PIPE,
