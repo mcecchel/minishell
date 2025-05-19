@@ -1,22 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   ft_env.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/06 16:03:55 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/05/19 16:53:58 by mbrighi          ###   ########.fr       */
+/*   Created: 2025/05/19 16:40:04 by mbrighi           #+#    #+#             */
+/*   Updated: 2025/05/19 23:59:06 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
-# define MINISHELL_H
+#include "minishell.h"
 
-# include "parsing.h"
-# include "exec.h"
-# include <readline/readline.h>
-# include <readline/history.h>
-# include "builtin.h"
+void	ft_env(t_shell root)
+{
+	int i;
 
-# endif
+	i = 0;
+	while (root.env[i] != NULL)
+	{
+		ft_printf("declare -x ");
+		ft_printf("%s\n", root.env[i]);
+		i++;
+	}
+}

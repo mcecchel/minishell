@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 16:02:45 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/05/14 16:37:03 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/05/19 23:55:52 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ typedef struct s_cmd
 
 typedef struct s_shell
 {
-    char	**envp;
+    char	**env;
     t_cmd	*cmd;
     int		n_cmds;
 	t_token	token;

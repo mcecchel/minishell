@@ -9,13 +9,15 @@ LIBFT_LIB	= $(LIBFT_DIR)/libft.a
 SRC		= 	main.c \
 		srcs/parsing/lexer.c \
 		srcs/parsing/parser.c \
-		# srcs/builtin/ft_cd.c \
+		srcs/builtin/ft_cd.c \
+		srcs/builtin/ft_env.c \
+		srcs/builtin/copy_free_env.c \
+		srcs/builtin/ft_export.c \
+		srcs/builtin/ft_unset.c \
+		srcs/builtin/ft_pwd.c \
+		srcs/builtin/utils_builtin.c \
+		#srcs/builtin/ft_echo.c \
 		# srcs/builtin/ft_exit.c \
-		# srcs/builtin/ft_env.c \
-		# srcs/builtin/ft_pwd.c \
-		# srcs/builtin/ft_unset.c \
-		# srcs/builtin/ft_echo.c \
-		# srcs/builtin/ft_export.c \
 
 all: $(LIBFT_LIB) $(NAME)
 

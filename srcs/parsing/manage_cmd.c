@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   manage_cmd.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:09:38 by marianna          #+#    #+#             */
-/*   Updated: 2025/05/08 15:37:01 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/05/20 00:52:56 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,10 @@ char	*find_env_path(t_shell *shell)
 	int	i;
 
 	i = 0;
-	while (shell->envp[i])
+	while (shell->env[i])
 	{
-		if (ft_strncmp(shell->envp[i], "PATH=", 5) == 0)
-			return (shell->envp[i] + 5);
+		if (ft_strncmp(shell->env[i], "PATH=", 5) == 0)
+			return (shell->env[i] + 5);
 		i++;
 	}
 	return (NULL);
@@ -35,7 +35,7 @@ char	*find_env_path(t_shell *shell)
 
 int	is_valid_command(t_shell *shell, t_cmd *cmd)
 {
-	if (cmd == NULL || *cmd == '\0' || find_spaces(*cmd) == 1)
+	if (cmd == NULL || cmd == '\0' || find_spaces(*cmd) == 1)
 	{
 		perror("Error: Invalid command");
 		return (0);
