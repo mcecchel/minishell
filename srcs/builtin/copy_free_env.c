@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 16:57:36 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/05/19 23:56:51 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/05/20 13:51:48 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,21 +26,21 @@ void	free_matrix_error(char **mini_envp, int i)
 	perror("Failed to duplicate envp");
 }
 
-void	free_matrix(char **mini_envp)
+void	free_matrix(t_shell root)
 {
 	int index;
 	int	i;
 
 	index = 0;
 	i = 0;
-	while (mini_envp[i] != NULL)
+	while (root.env[i] != NULL)
 		i++;
 	while (index < i)
 	{
-		free(mini_envp[index]);
+		free(root.env[index]);
 		index++;
 	}
-	free(mini_envp);
+	free(root.env);
 }
 
 char	**copy_env(char **env, t_shell root)
@@ -68,6 +68,7 @@ char	**copy_env(char **env, t_shell root)
 		}
 		i++;
 	}
+	sort_env(root);
 	return (root.env);
 }
 

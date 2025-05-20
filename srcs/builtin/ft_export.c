@@ -6,13 +6,13 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 16:45:25 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/05/20 00:08:09 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/05/20 13:53:17 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void ft_export(t_shell root, char s)
+void ft_export(t_shell root, char *s)
 {
 	int	count;
 
@@ -24,6 +24,6 @@ void ft_export(t_shell root, char s)
 	}
 	while (root.env[count] != NULL)
 		count++;
-	root.env[count] = ft_strdup(&s);
-	sort_env(root.env);
+	root.env[count] = ft_strdup(s);
+	sort_env(root);
 }

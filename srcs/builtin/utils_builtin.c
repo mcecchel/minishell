@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 16:59:36 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/05/19 17:04:43 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/05/20 13:52:24 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ char	*ft_strjoin_free_s2(char *s1, char *s2)
 	return ((char *)l);
 }
 
-void	sort_env(char **mini_env)
+void	sort_env(t_shell root)
 {
 	int rows;
 	int col;
@@ -49,18 +49,18 @@ void	sort_env(char **mini_env)
 
 	rows = 0;
 	count = 0;
-	while (mini_env[count] != NULL)
+	while (root.env[count] != NULL)
 		count++;
 	while (rows < count - 1)
 	{
 		col = 0;
 		while (col < count - rows - 1)
 		{
-			if (ft_strcmp(mini_env[col], mini_env[col + 1]) > 0)
+			if (ft_strcmp(root.env[col], root.env[col + 1]) > 0)
 			{
-				temp = mini_env[col];
-				mini_env[col] = mini_env[col + 1];
-				mini_env[col + 1] = temp;
+				temp = root.env[col];
+				root.env[col] = root.env[col + 1];
+				root.env[col + 1] = temp;
 			}
 			col++;
 		}

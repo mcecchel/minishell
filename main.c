@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 17:30:08 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/05/20 00:54:28 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/05/20 13:51:08 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ int main(int argc, char **argv, char **envp)
 {
 	char *read_line;
 	t_shell root = {0};
+	int		i = 0;
 
 
 	root.env = copy_env(envp, root);
@@ -44,10 +45,14 @@ int main(int argc, char **argv, char **envp)
 		if (read_line == NULL)
         {
             printf("\nexit\n");
+			free_matrix(root);
             break;
         }
+		if (i == 1)
+			ft_env(root);
 		printf("%s\n", read_line);
 		free(read_line);
+		i++;
 	}
 	return (0);
 }
