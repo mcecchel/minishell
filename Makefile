@@ -7,6 +7,8 @@ LIBFT_DIR	= Libft
 LIBFT_LIB	= $(LIBFT_DIR)/libft.a
 
 SRC		= 	src/lexer.c \
+			src/parser.c \
+			src/manage_cmd.c \
 
 all: $(LIBFT_LIB) $(NAME)
 

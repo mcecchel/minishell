@@ -6,7 +6,7 @@
 /*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 17:30:08 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/05/12 16:21:38 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/05/20 16:02:05 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,14 @@
 #include <readline/readline.h>
 #include <stdlib.h>
 
-int main(void)
+int main(int ac, char **av)
 {
-    char *read_line;
-    read_line = readline("Prompt > ");
-    printf("%s\n", read_line);
+	t_cmd	cmd = {0};
+	t_token	token = {0};
+
+	char *read_line;
+	read_line = readline("Prompt > ");
+	printf("%s\n", read_line);
 	free(read_line);
     return (0);
 }

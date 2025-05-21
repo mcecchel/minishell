@@ -6,11 +6,14 @@
 /*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 14:58:50 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/05/16 15:50:02 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/05/21 18:00:46 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+t_cmd	*init_new_cmd(t_cmd *cmd);
+void	add_cmd(t_cmd *cmd, t_cmd *new_cmd);
 
 // Estrae una parola fino a uno spazio / operatore
 char	*extract_word(char *line, int *index)
@@ -215,95 +218,225 @@ void	free_tokens(t_token *token)
 	}
 }
 
-t_cmd	*parse_tokens(t_token *token)
+int handle_heredoc(char *delimiter)
 {
-	t_cmd	*cmd_list;
-	t_cmd	*current_cmd;
-	t_cmd	*new_cmd;
+    int pipe_fd[2];
+    char *line;
 
-	cmd_list = NULL;
-	current_cmd = NULL;
-	while (token)
-	{
-		if (token->type == CMD)
-		{
-			new_cmd = ft_calloc(1, sizeof(t_cmd));
-			if (!new_cmd)
-				return (NULL);
-			new_cmd->cmd_path = ft_strdup(token->value);
-			new_cmd->argv = ft_calloc(sizeof(char *), 100); // Allocate memory for argv
-			if (!new_cmd->argv)
-			{
-				ft_printf("Error: Memory allocation failed for argv\n");
-				free(new_cmd);
-				return (NULL);
-			}
-			new_cmd->argv[0] = NULL; // Initialize the first element to NULL
-			new_cmd->argv[0] = ft_strdup(token->value);
-			new_cmd->infile = -1;
-			new_cmd->outfile = -1;
-			new_cmd->pid = -1;
-			new_cmd->next = NULL;
-			if (!cmd_list)
-			{
-				cmd_list = new_cmd;
-				current_cmd = new_cmd; // Initialize current_cmd for the first command
-			}
-			else
-			{
-				current_cmd->next = new_cmd;
-				current_cmd = new_cmd;
-			}
-		}
-		else if (token->type == ARG || token->type == FLAG)
-		{
-			int	i;
+    // Crea una pipe per salvare l'input dell'heredoc
+    if (pipe(pipe_fd) < 0)
+    {
+        perror("pipe");
+        return (-1);
+    }
+    // Legge da stdin fino al delimitatore
+    while (1)
+    {
+        line = readline("> ");
+        if (!line)
+        {
+            close(pipe_fd[1]);
+            return (pipe_fd[0]);
+        }
+        // Se la linea è uguale al delimitatore, termina
+        if (ft_strcmp(line, delimiter) == 0)
+        {
+            free(line);
+            break;
+        }
+        // Scrivi nella pipe e aggiungi un newline
+        ft_putendl_fd(line, pipe_fd[1]);
+        free(line);
+    }
+    close(pipe_fd[1]);
+    return (pipe_fd[0]);
+}
 
-			i = 0;
-			while (current_cmd->argv[i])
-				i++;
-			current_cmd->argv[i] = ft_strdup(token->value);
-			current_cmd->argv[i + 1] = NULL;
-		}
-		else if (token->type == PIPE)
-		{
-			// really dunno
-			if (token->next)
-			{
-				current_cmd->infile = open(token->next->value, O_RDONLY);
-				if (current_cmd->infile < 0)
-					perror("Error opening infile");
-			}
-			if (token->next)
-			{
-				current_cmd->outfile = open(token->next->value, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-				if (current_cmd->outfile < 0)
-					perror("Error opening outfile");
-			}
-			if (token->next)
-			{
-				current_cmd->infile = open(token->next->value, O_RDONLY);
-				if (current_cmd->infile < 0)
-					perror("Error opening heredoc");
-			}
-			else
-				ft_printf("Error: Missing file for HEREDOC\n");
-		}
-		else if (token->type == RED_OUT || token->type == APPEND)
-		{
-			current_cmd->outfile = open(token->next->value, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-			if (current_cmd->outfile < 0)
-				perror("Error opening outfile");
-		}
-		else if (token->type == HEREDOC)
-		{
-			current_cmd->infile = open(token->next->value, O_RDONLY);
-			if (current_cmd->infile < 0)
-				perror("Error opening heredoc");
-		}
-		token = token->next;
-	}
-	return (cmd_list);
+t_cmd *parse_tokens(t_token *token_list, t_cmd *cmd)
+{
+    t_cmd	*cmd_list;
+    t_cmd	*current_cmd;
+    t_token	*token;
+
+    if (!token_list)
+        return (NULL);
+    cmd_list = NULL;
+    current_cmd = NULL;
+    token = token_list;
+    while (token)
+    {
+        // Gestione del comando
+        if (token->type == CMD)
+        {
+            // Inizializza un nuovo comando
+            if (!cmd_list)
+            {
+                // Primo comando della lista
+                cmd_list = cmd;
+                cmd_list->cmd_path = ft_strdup(token->value);
+                if (!cmd_list->cmd_path)
+                    return (NULL);
+                cmd_list->argv = ft_calloc(sizeof(char *), 100);
+                if (!cmd_list->argv)
+                {
+                    free(cmd_list->cmd_path);
+                    return (NULL);
+                }
+                cmd_list->argv[0] = ft_strdup(token->value);
+                cmd_list->argv[1] = NULL;
+                cmd_list->infile = -1;
+                cmd_list->outfile = -1;
+                cmd_list->pid = -1;
+                cmd_list->next = NULL;
+                current_cmd = cmd_list;
+            }
+            else
+            {
+                // Comando successivo dopo un pipe
+                t_cmd *new_cmd = init_new_cmd(cmd);
+                if (!new_cmd)
+                    return (NULL);
+                new_cmd->cmd_path = ft_strdup(token->value);
+                if (!new_cmd->cmd_path)
+                {
+                    free(new_cmd);
+                    return (NULL);
+                }
+                new_cmd->argv[0] = ft_strdup(token->value);
+                new_cmd->argv[1] = NULL;
+                add_cmd(cmd_list, new_cmd);
+                current_cmd = new_cmd;
+            }
+        }
+        // Gestione degli argomenti e flag
+        else if (token->type == ARG || token->type == FLAG ||
+                 token->type == QUOTE || token->type == DQUOTE)
+        {
+            int i = 0;
+            if (!current_cmd)
+            {
+                // Se non c'è un comando corrente ma c'è un argomento, è un errore
+                ft_printf("Error: Argument without command\n");
+                return (NULL);
+            }
+            // Aggiungi l'argomento all'array argv
+            while (current_cmd->argv[i])
+                i++;
+            current_cmd->argv[i] = ft_strdup(token->value);
+            current_cmd->argv[i + 1] = NULL;
+        }
+        // Gestione delle redirezioni
+        else if (token->type == RED_IN)
+        {
+            if (!token->next || (token->next->type != ARG && token->next->type != QUOTE &&
+                token->next->type != DQUOTE))
+            {
+                ft_printf("Error: Missing file for input redirection\n");
+                return (NULL);
+            }
+            token = token->next;
+            if (current_cmd->infile != -1)
+                close(current_cmd->infile);
+            current_cmd->infile = open(token->value, O_RDONLY);
+            if (current_cmd->infile < 0)
+            {
+                perror("Error opening input file");
+                return (NULL);
+            }
+        }
+        else if (token->type == RED_OUT)
+        {
+            if (!token->next || (token->next->type != ARG && token->next->type != QUOTE &&
+                token->next->type != DQUOTE))
+            {
+                ft_printf("Error: Missing file for output redirection\n");
+                return (NULL);
+            }
+            token = token->next;
+            if (current_cmd->outfile != -1)
+                close(current_cmd->outfile);
+            current_cmd->outfile = open(token->value, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+            if (current_cmd->outfile < 0)
+            {
+                perror("Error opening output file");
+                return (NULL);
+            }
+        }
+        else if (token->type == APPEND)
+        {
+            if (!token->next || (token->next->type != ARG && token->next->type != QUOTE &&
+                token->next->type != DQUOTE))
+            {
+                ft_printf("Error: Missing file for append redirection\n");
+                return (NULL);
+            }
+            token = token->next;
+            if (current_cmd->outfile != -1)
+                close(current_cmd->outfile);
+            current_cmd->outfile = open(token->value, O_WRONLY | O_CREAT | O_APPEND, 0644);
+            if (current_cmd->outfile < 0)
+            {
+                perror("Error opening output file for append");
+                return (NULL);
+            }
+        }
+        else if (token->type == HEREDOC)
+        {
+            if (!token->next || (token->next->type != ARG && token->next->type != QUOTE &&
+                token->next->type != DQUOTE))
+            {
+                ft_printf("Error: Missing delimiter for heredoc\n");
+                return (NULL);
+            }
+            token = token->next;
+            // Implementa la gestione dell'heredoc qui
+            // Questo richiede una funzione separata per leggere da stdin fino al delimitatore
+            int heredoc_fd = handle_heredoc(token->value);
+            if (heredoc_fd < 0)
+                return (NULL);
+            if (current_cmd->infile != -1)
+                close(current_cmd->infile);
+            current_cmd->infile = heredoc_fd;
+        }
+        else if (token->type == PIPE)
+        {
+            // Prepara per il prossimo comando
+            if (!token->next)
+            {
+                ft_printf("Error: Pipe at the end of command\n");
+                return (NULL);
+            }
+            // Il prossimo token dovrebbe essere un comando
+            if (token->next->type != CMD)
+            {
+                // Imposta il prossimo token come CMD (in caso di sintassi come "ls | wc")
+                token->next->type = CMD;
+            }
+        }
+        token = token->next;
+    }
+    return (cmd_list);
+}
+
+void debug_cmds(t_cmd *cmd_list)
+{
+    int cmd_index = 0;
+    t_cmd *current = cmd_list;
+
+    while (current)
+    {
+        printf("Command %d:\n", cmd_index++);
+        printf("  Path: %s\n", current->cmd_path);
+        printf("  Arguments: ");
+        for (int i = 0; current->argv && current->argv[i]; i++)
+        {
+            printf("\"%s\" ", current->argv[i]);
+        }
+        printf("\n");
+        printf("  Infile: %d\n", current->infile);
+        printf("  Outfile: %d\n", current->outfile);
+        current = current->next;
+    }
 }
 
 void	free_cmd_list(t_cmd *cmd)
@@ -324,81 +457,64 @@ void	free_cmd_list(t_cmd *cmd)
 	}
 }
 
-// int main(void)
-// {
-//     char *line;
-//     t_token token_list;
-
-//     // Inizializza la lista dei token
-//     token_list.head = NULL;
-//     token_list.current = NULL;
-
-//     // Legge una riga di input dall'utente
-//     line = readline("Prompt > ");
-//     if (!line)
-//     {
-//         printf("Error: Failed to read input\n");
-//         return (1);
-//     }
-
-//     // Tokenizza la riga di input
-//     tokenize_input(&token_list, line);
-
-//     // Stampa i token generati
-//     printf("Generated tokens:\n");
-//     debug_tokens(token_list.head);
-
-//     // Libera la memoria allocata
-//     free_tokens(token_list.head);
-//     free(line);
-
-//     return (0);
-// }
-
 int main(void)
 {
     char *line;
     t_token token_list;
-    t_cmd *cmd_list;
+    t_cmd cmd;
+    t_shell shell;
 
+    // Inizializza la struttura shell
+    shell.envp = NULL;
+    shell.cmd = NULL;
+    shell.n_cmds = 0;
+    shell.in_quote = false;
+    // Inizializza la struttura cmd
+    cmd.cmd_path = NULL;
+    cmd.argv = NULL;
+    cmd.infile = -1;
+    cmd.outfile = -1;
+    cmd.pid = -1;
+    cmd.next = NULL;
     // Inizializza la lista dei token
     token_list.head = NULL;
     token_list.current = NULL;
-    // Legge una riga di input dall'utente
-    line = readline("Prompt > ");
-    if (!line)
+    while (1)
     {
-        printf("Error: Failed to read input\n");
-        exit (1);
-    }
-    // Tokenizza la riga di input
-    tokenize_input(&token_list, line);
-    // Stampa i token generati
-    printf("Generated tokens:\n");
-    debug_tokens(token_list.head);
-    // Analizza i token per creare la lista di comandi
-    cmd_list = parse_tokens(token_list.head);
-    // Stampa i comandi generati
-    printf("\nGenerated commands:\n");
-    t_cmd *current = cmd_list;
-    int cmd_index = 0;
-    while (current)
-    {
-        printf("Command %d:\n", cmd_index++);
-        printf("  Path: %s\n", current->cmd_path);
-        printf("  Arguments: ");
-        for (int i = 0; current->argv && current->argv[i]; i++)
+        // Leggi una riga di input dall'utente
+        line = readline("minishell> ");
+        if (!line)
         {
-            printf("\"%s\" ", current->argv[i]);
+            printf("\nExiting...\n");
+            break;
         }
-        printf("\n");
-        printf("  Infile: %d\n", current->infile);
-        printf("  Outfile: %d\n", current->outfile);
-        current = current->next;
+        // Aggiungi il comando alla history
+        add_history(line);
+        if (!tokenize_input(&token_list, line))
+        {
+            free(line);
+            continue;
+        }
+        printf("Generated tokens:\n");
+        debug_tokens(token_list.head);
+        // Analizza i token per creare la lista di comandi
+        shell.cmd = parse_tokens(token_list.head, &cmd);
+        if (!shell.cmd)
+        {
+            free_tokens(token_list.head);
+            free(line);
+            continue;
+        }
+        printf("\nGenerated commands:\n");
+        debug_cmds(shell.cmd);
+        execute_command_list(&shell);
+        // Pulizia
+        free_tokens(token_list.head);
+        token_list.head = NULL;
+        token_list.current = NULL;
+        free_cmd_list(shell.cmd);
+		shell.cmd = NULL;
+        free(line);
     }
-    // Libera la memoria allocata
-    free_tokens(token_list.head);
-    free_cmd_list(cmd_list);
-    free(line);
     return (0);
 }
