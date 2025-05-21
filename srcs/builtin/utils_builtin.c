@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 16:59:36 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/05/20 13:52:24 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/05/21 18:33:56 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,30 +40,16 @@ char	*ft_strjoin_free_s2(char *s1, char *s2)
 	return ((char *)l);
 }
 
-void	sort_env(t_shell root)
+void	print_env_list(t_env *env)
 {
-	int rows;
-	int col;
-	int count;
-	char *temp;
-
-	rows = 0;
-	count = 0;
-	while (root.env[count] != NULL)
-		count++;
-	while (rows < count - 1)
+	while (env)
 	{
-		col = 0;
-		while (col < count - rows - 1)
-		{
-			if (ft_strcmp(root.env[col], root.env[col + 1]) > 0)
-			{
-				temp = root.env[col];
-				root.env[col] = root.env[col + 1];
-				root.env[col + 1] = temp;
-			}
-			col++;
-		}
-		rows++;
+		ft_printf("%s=", env->var);
+		if (env->arg)
+			ft_printf("%s\n", env->arg);
+		else
+			ft_printf("ARG: (null)\n");
+		ft_printf("EXPORTED: %d\n", env->ex_env);
+		env = env->next;
 	}
 }

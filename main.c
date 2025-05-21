@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 17:30:08 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/05/20 13:51:08 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/05/21 18:28:33 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,39 +18,44 @@
 
 void sigint_handler(int sig)
 {
-    (void)sig;
-    // Vai a capo e mostra di nuovo il prompt
-    write(STDOUT_FILENO, "\n", 1);
-    rl_replace_line("", 0);          // Pulisce la riga corrente
-    rl_on_new_line();                // Si prepara a una nuova riga
-    rl_redisplay();                  // Mostra il prompt di nuovo
+	(void)sig;
+	// Vai a capo e mostra di nuovo il prompt
+	write(STDOUT_FILENO, "\n", 1);
+	rl_replace_line("", 0);          // Pulisce la riga corrente
+	rl_on_new_line();                // Si prepara a una nuova riga
+	rl_redisplay();                  // Mostra il prompt di nuovo
 }
 
 int main(int argc, char **argv, char **envp)
 {
 	char *read_line;
-	t_shell root = {0};
-	int		i = 0;
+	t_env	*env = (t_env *){0};
+	int i = 0;
+	//char	*tryunset;
 
 
-	root.env = copy_env(envp, root);
+	env = copy_env(envp);
 	(void)argc;
 	(void)argv;
 	signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, SIG_IGN);
 	while(1)
 	{
-		read_line = readline("Prompt > ");
+		read_line = readline("");
 
 		if (read_line == NULL)
-        {
-            printf("\nexit\n");
-			free_matrix(root);
-            break;
-        }
+		{
+			printf("\nexit\n");
+			free_env_list(env);
+			break;
+		}
 		if (i == 1)
-			ft_env(root);
-		printf("%s\n", read_line);
+			print_env_list(env);
+		if (ft_strcmp(read_line, "PATH") == 0)
+			ft_unset(&env, read_line);
+		if (i == 4)
+			print_env_list(env);
+		//printf("%s\n", read_line);
 		free(read_line);
 		i++;
 	}

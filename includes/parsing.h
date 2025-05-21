@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 16:02:45 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/05/19 23:55:52 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/05/21 17:44:17 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,10 +56,19 @@ typedef struct s_cmd
 	struct s_cmd	*next;
 }					 t_cmd;
 
+typedef struct s_env
+{
+	struct s_env	*prev;
+	char			*var;
+	char			*arg;
+	int				ex_env;
+	struct s_env	*next;
+}					t_env;
+
 
 typedef struct s_shell
 {
-    char	**env;
+    t_env	env;
     t_cmd	*cmd;
     int		n_cmds;
 	t_token	token;
