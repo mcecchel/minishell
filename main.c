@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 17:30:08 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/05/21 18:28:33 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/05/22 17:00:42 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,6 @@ int main(int argc, char **argv, char **envp)
 	t_env	*env = (t_env *){0};
 	int i = 0;
 	//char	*tryunset;
-
 
 	env = copy_env(envp);
 	(void)argc;
