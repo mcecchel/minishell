@@ -6,12 +6,13 @@
 /*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 14:59:11 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/05/29 18:16:14 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/05/30 19:15:47 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+// Inizializzazione comando migliorata
 t_cmd *init_new_cmd(void)
 {
     t_cmd *new_cmd;
@@ -19,15 +20,15 @@ t_cmd *init_new_cmd(void)
     new_cmd = ft_calloc(1, sizeof(t_cmd));
     if (!new_cmd)
         return (NULL);
-
-    new_cmd->cmd_path = NULL;  // Inizializza a NULL
     new_cmd->argv = ft_calloc(sizeof(char *), 100);
     if (!new_cmd->argv)
     {
         free(new_cmd);
         return (NULL);
     }
+    new_cmd->cmd_path = NULL;
     new_cmd->argc = 0;
+    new_cmd->argv[0] = NULL; // IMPORTANTE: Inizializza
     new_cmd->infile = -1;
     new_cmd->outfile = -1;
     new_cmd->pid = -1;
@@ -63,7 +64,6 @@ void add_cmd_to_list(t_cmd **cmd_list, t_cmd *new_cmd)
         *cmd_list = new_cmd;
         return;
     }
-
     current = *cmd_list;
     while (current->next)
         current = current->next;
@@ -72,14 +72,21 @@ void add_cmd_to_list(t_cmd **cmd_list, t_cmd *new_cmd)
 
 void add_argument_to_cmd(t_cmd *cmd, char *arg)
 {
-    if (!cmd || !arg)
+    if (!cmd || !arg || !cmd->argv)
         return;
-
     if (cmd->argc >= 99) // Limite di sicurezza
+    {
+        ft_printf("Error: Too many arguments\n");
         return;
+    }
     cmd->argv[cmd->argc] = ft_strdup(arg);
+    if (!cmd->argv[cmd->argc])
+    {
+        ft_printf("Error: Memory allocation failed\n");
+        return;
+    }
     cmd->argc++;
-    cmd->argv[cmd->argc] = NULL;
+    cmd->argv[cmd->argc] = NULL; // SEMPRE termina l'array
 }
 
 int is_redirection_token(t_token_type type)
@@ -112,47 +119,55 @@ t_cmd *parse_tokens(t_token *token_list)
     t_cmd *cmd_list = NULL;
     t_cmd *current_cmd = NULL;
     t_token *token = token_list;
-    int first_cmd = 1;
 
     while (token)
     {
-        if (token->type == CMD || (token->type == ARG && !current_cmd))
+        if (token->type == CMD)
         {
-            // Se è il primo comando o dopo un pipe
-            if (first_cmd || (token->type == ARG && !current_cmd))
+            // Crea nuovo comando
+            current_cmd = init_new_cmd();
+            if (!current_cmd)
             {
-                current_cmd = init_new_cmd();
-                if (!current_cmd)
-                    return (free_cmd_list(cmd_list), NULL);
-
-                current_cmd->cmd_path = ft_strdup(token->value);
-                current_cmd->argv[0] = ft_strdup(token->value);
-                current_cmd->argc = 1;
-
-                if (!cmd_list)
-                    cmd_list = current_cmd;
-                else
-                    add_cmd_to_list(&cmd_list, current_cmd);
-
-                first_cmd = 0;
+                free_cmd_list(cmd_list);
+                return (NULL);
             }
+            // Imposta comando e primo argomento
+            current_cmd->cmd_path = ft_strdup(token->value);
+            if (!current_cmd->cmd_path)
+            {
+                free_cmd_list(current_cmd);
+                free_cmd_list(cmd_list);
+                return (NULL);
+            }
+            current_cmd->argv[0] = ft_strdup(token->value);
+            if (!current_cmd->argv[0])
+            {
+                free_cmd_list(current_cmd);
+                free_cmd_list(cmd_list);
+                return (NULL);
+            }
+            current_cmd->argc = 1;
+            current_cmd->argv[1] = NULL;
+            add_cmd_to_list(&cmd_list, current_cmd);
         }
-        else if (token->type == ARG || token->type == FLAG ||
-                 token->type == QUOTE || token->type == DQUOTE)
+        else if (token->type == ARG || token->type == FLAG)
         {
             if (!current_cmd)
             {
                 ft_printf("Error: Argument without command\n");
-                return (free_cmd_list(cmd_list), NULL);
+                free_cmd_list(cmd_list);
+                return (NULL);
             }
             add_argument_to_cmd(current_cmd, token->value);
         }
         else if (token->type == PIPE)
         {
+            // Verifica che ci sia un comando dopo il pipe
             if (!token->next)
             {
                 ft_printf("Error: Pipe at end of command\n");
-                return (free_cmd_list(cmd_list), NULL);
+                free_cmd_list(cmd_list);
+                return (NULL);
             }
             current_cmd = NULL; // Reset per il prossimo comando
         }
@@ -161,17 +176,26 @@ t_cmd *parse_tokens(t_token *token_list)
             if (!current_cmd)
             {
                 ft_printf("Error: Redirection without command\n");
-                return (free_cmd_list(cmd_list), NULL);
+                free_cmd_list(cmd_list);
+                return (NULL);
             }
             if (!handle_redirection(current_cmd, token))
             {
-                return (free_cmd_list(cmd_list), NULL);
+                free_cmd_list(cmd_list);
+                return (NULL);
             }
-            token = token->next; // Salta il nome del file
+            // Salta il token del filename
+            if (token->next)
+                token = token->next;
         }
 
         token = token->next;
     }
-
+    // Verifica che abbiamo almeno un comando
+    if (!cmd_list)
+    {
+        ft_printf("Error: No valid commands found\n");
+        return (NULL);
+    }
     return (cmd_list);
 }

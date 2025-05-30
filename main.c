@@ -6,13 +6,11 @@
 /*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 17:30:08 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/05/29 18:22:14 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/05/30 17:04:20 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <readline/readline.h>
-#include <stdlib.h>
 
 void init_shell(t_shell *shell, char **envp)
 {
@@ -46,49 +44,64 @@ int main(int argc, char **argv, char **envp)
     
     (void)argc;
     (void)argv;
-    shell.envp = envp;
+    
     init_shell(&shell, envp);
+    
     while (1)
     {
-        // Leggi una riga di input dall'utente
         line = readline("minishell> ");
         if (!line)
         {
             printf("\nExiting...\n");
             break;
         }
+        
         // Ignora linee vuote
         if (*line == '\0')
         {
             free(line);
             continue;
         }
+        
         add_history(line);
-        // Tokenizza l'input
+        
+        // Tokenizza l'input - ORA RITORNA INT
         if (!tokenize_input(&shell.token, line))
         {
+            ft_printf("Error: Tokenization failed\n");
             free(line);
             continue;
         }
-        // Debug token
+        
+        // Debug opzionale
+        #ifdef DEBUG
         printf("Generated tokens:\n");
         debug_tokens(shell.token.head);
-        // Analizza i token per creare la lista di comandi
-        shell.cmd = parse_tokens(&shell.token);
+        #endif
+        
+        // Parsing
+        shell.cmd = parse_tokens(shell.token.head);
         if (!shell.cmd)
         {
             cleanup_shell(&shell);
             free(line);
             continue;
         }
-        // Debug comandi
+        
+        // Debug opzionale
+        #ifdef DEBUG
         printf("\nGenerated commands:\n");
         debug_cmds(shell.cmd);
+        #endif
+        
+        // Esecuzione
         execute_command_list(&shell);
-        // Pulizia
+        
+        // Cleanup
         cleanup_shell(&shell);
         free(line);
     }
+    
     cleanup_shell(&shell);
     return (0);
 }

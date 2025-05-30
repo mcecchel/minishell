@@ -6,7 +6,7 @@
 /*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 16:02:45 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/05/29 18:24:32 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/05/30 16:56:23 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ typedef struct s_shell
 /*                          LEXER FUNCTIONS                                   */
 /* ************************************************************************** */
 // Tokenization functions
-t_token			*tokenize_input(t_token *token, char *line);
+int				tokenize_input(t_token *token, char *line);
 char			*extract_word(char *line, int *index);
 char			*extract_quote(char *line, int *index, int *is_quoted);
 char			*extract_operator(char *line, int *index);
@@ -92,7 +92,6 @@ void			print_token_type(t_token *token);
 void			debug_tokens(t_token *token);
 void			free_tokens(t_token *token);
 int				handle_heredoc(char *delimiter);
-
 
 /* ************************************************************************** */
 /*                          PARSER FUNCTIONS                                 */

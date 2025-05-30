@@ -6,7 +6,7 @@
 /*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 14:58:50 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/05/29 18:02:42 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/05/30 19:14:48 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,19 +26,16 @@ char	*extract_word(char *line, int *index)
 		line[end] != '|' && line[end] != '>' && line[end] != '<' &&
 		line[end] != '\'' && line[end] != '\"')
 			end++;
-	// Estrai la parola usando ft_substr
 	word = ft_substr(line, start, end - start);
 	if (!word)
 	{
 		*index = end;
 		return (NULL);
 	}
-	// Aggiorna l'indice alla posizione successiva
 	*index = end;
 	return (word);
 }
 
-// Estrae il contenuto tra virgolette singole o doppie
 char *extract_quote(char *line, int *index, int *is_quoted)
 {
     char quote_char = line[*index];
@@ -49,15 +46,17 @@ char *extract_quote(char *line, int *index, int *is_quoted)
     *is_quoted = 1;
     // Trova la quote di chiusura
     while (line[end] && line[end] != quote_char)
-        end++;
+        end++; 
     if (line[end] != quote_char)
     {
         ft_printf("minishell: syntax error: unclosed quote\n");
         *is_quoted = 0;
         return (NULL);
     }
-    // Estrai il contenuto senza le quote
     result = ft_substr(line, start, end - start);
+    if (!result)
+        return (NULL);
+        
     *index = end + 1;
     return (result);
 }
@@ -65,7 +64,6 @@ char *extract_quote(char *line, int *index, int *is_quoted)
 char *extract_operator(char *line, int *index)
 {
     int start = *index;
-
     // Gestisce operatori singoli o doppi (<<, >>)
     if ((line[*index] == '<' && line[*index + 1] == '<') || 
         (line[*index] == '>' && line[*index + 1] == '>'))
@@ -74,118 +72,140 @@ char *extract_operator(char *line, int *index)
         (*index)++; // Salta l'operatore singolo
     else
         return (NULL); // Non è un operatore
-    // Estrae l'operatore
     return ft_substr(line, start, *index - start);
 }
 
+// Classificazione token migliorata
 t_token_type classify_token(char *str, int is_first_token, int is_quoted)
 {
     if (!str)
         return UNKNOWN;
-    
-    // Se il token era quotato, ritorna il tipo appropriato
+    // Se è quotato, determina il tipo in base al contesto
     if (is_quoted)
     {
         if (is_first_token)
-            return (CMD);
+            return CMD;
         else
-            return (ARG);
-    }    
+            return ARG;
+    }
+    // Controlla operatori (solo se non quotato)
+    if (ft_strcmp(str, "|") == 0) return PIPE;
+    if (ft_strcmp(str, ">") == 0) return RED_OUT;
+    if (ft_strcmp(str, "<") == 0) return RED_IN;
+    if (ft_strcmp(str, "<<") == 0) return HEREDOC;
+    if (ft_strcmp(str, ">>") == 0) return APPEND;
     // Se è il primo token, è un comando
     if (is_first_token)
         return CMD;
-    // Controlla se è un'opzione o un flag
-    if (str[0] == '-')
+    // Se inizia con '-' ed ha altri caratteri, è un flag
+    if (str[0] == '-' && str[1] != '\0')
         return FLAG;
-    // Controlla se è un operatore
-    if (ft_strcmp(str, "|") == 0)
-        return PIPE;
-    else if (ft_strcmp(str, ">") == 0)
-        return RED_OUT;
-    else if (ft_strcmp(str, "<") == 0)
-        return RED_IN;
-    else if (ft_strcmp(str, "<<") == 0)
-        return HEREDOC;
-    else if (ft_strcmp(str, ">>") == 0)
-        return APPEND;
     // Altrimenti è un argomento
-    return (ARG);
+    return ARG;
 }
 
-t_token *add_token(t_token *token, char *content, int is_quoted)
+t_token *create_token(char *content, t_token_type type, int is_quoted)
 {
-	t_token	*new_token;
+    t_token *new_token;
 
-	if (!token)
-	{
-		ft_printf("Error: Token list is NULL\n");
-		return (NULL);
-	}
-	new_token = ft_calloc(1, sizeof(t_token));
-	if (!new_token)
-	{
-		ft_printf("Error: Memory allocation failed\n");
-		return (NULL);
-	}
-	new_token->value = content;
-	new_token->is_quoted = is_quoted;
-	new_token->type = classify_token(content, 0, is_quoted);
-	new_token->next = NULL;
-	
-	if (token->head == NULL)
-		token->head = new_token;
-	else
-	{
-		token->current = token->head;
-		// Trova l'ultimo nodo
-		while (token->current->next != NULL)
-			token->current = token->current->next;
-		token->current->next = new_token;
-	}
-	return (new_token);
+    new_token = ft_calloc(1, sizeof(t_token));
+    if (!new_token)
+        return (NULL);
+    new_token->value = content; // Il content è già allocato
+    new_token->type = type;
+    new_token->is_quoted = is_quoted;
+    new_token->next = NULL;
+    return (new_token);
 }
 
-t_token *tokenize_input(t_token *token, char *line)
+// Funzione per aggiungere token alla lista
+void add_token_to_list(t_token *token_list, t_token *new_token)
 {
-    int i = 0;
-    int is_first_token = 1; // Flag per identificare il primo token
+    if (!token_list->head)
+    {
+        token_list->head = new_token;
+        token_list->current = new_token;
+    }
+    else
+    {
+        token_list->current->next = new_token;
+        token_list->current = new_token;
+    }
+}
 
-    token->head = NULL;
-    token->current = NULL;
+// Tokenizer principale - VERSIONE CORRETTA
+int tokenize_input(t_token *token_list, char *line)
+{
+    int i;
+    int is_first_token;
+
+    i = 0;
+    is_first_token = 1;
+    // Inizializza la lista
+    token_list->head = NULL;
+    token_list->current = NULL;
     while (line[i])
     {
+        // Salta spazi bianchi
         while (is_space(line[i]))
             i++;
         if (line[i] == '\0')
             break;
+
         char *content = NULL;
         int is_quoted = 0;
         // Gestione quote
         if (line[i] == '\'' || line[i] == '\"')
+        {
             content = extract_quote(line, &i, &is_quoted);
+            if (!content) // Errore nelle quote
+            {
+                free_tokens(token_list->head);
+                token_list->head = NULL;
+                return (0);
+            }
+        }
         // Gestione operatori
         else if (line[i] == '|' || line[i] == '<' || line[i] == '>')
-            content = extract_operator(line, &i);
-        // Gestione parole
-        else
-            content = extract_word(line, &i);
-        if (content)
         {
-            // Classifica il token
-            t_token_type type = classify_token(content, is_first_token, is_quoted);
-            
-            // Dopo il primo token non-pipe, resetta il flag
-            if (type != PIPE)
-                is_first_token = 0;
-            else
-                is_first_token = 1; // Reset per il comando dopo pipe
-            
-            token->current = add_token(token, content, is_quoted);
-            if (token->current)
-                token->current->type = type; // Imposta il tipo del token
+            content = extract_operator(line, &i);
+            if (!content)
+            {
+                free_tokens(token_list->head);
+                token_list->head = NULL;
+                return (0);
+            }
         }
+        // Gestione parole normali
+        else
+        {
+            content = extract_word(line, &i);
+            if (!content)
+            {
+                free_tokens(token_list->head);
+                token_list->head = NULL;
+                return (0);
+            }
+        }
+        // Classifica e crea il token
+        t_token_type type = classify_token(content, is_first_token, is_quoted);
+        t_token *new_token = create_token(content, type, is_quoted);
+        if (!new_token)
+        {
+            free(content);
+            free_tokens(token_list->head);
+            token_list->head = NULL;
+            return (0);
+        }
+        // Aggiungi alla lista
+        add_token_to_list(token_list, new_token);
+        // Aggiorna il flag per il primo token
+        if (type == PIPE)
+            is_first_token = 1; // Reset dopo pipe
+        else if (is_first_token)
+            is_first_token = 0; // Non più il primo token
     }
-    return (token);
+    return (1); // Successo
 }
 
 // Funzione di debug 1
@@ -289,86 +309,31 @@ void debug_cmds(t_cmd *cmd_list)
     }
 }
 
-void	free_cmd_list(t_cmd *cmd)
+void free_cmd_list(t_cmd *cmd)
 {
     t_cmd *tmp;
+    
     while (cmd)
     {
         tmp = cmd;
-        free(cmd->cmd_path);
-        if (cmd->argv)
+        cmd = cmd->next;
+        if (tmp->cmd_path)
+            free(tmp->cmd_path);
+        if (tmp->argv)
         {
             int i = 0;
-            while (cmd->argv[i])
+            while (tmp->argv[i])
             {
-                free(cmd->argv[i]);
+                free(tmp->argv[i]);
                 i++;
             }
-            free(cmd->argv);
+            free(tmp->argv);
         }
-        cmd = cmd->next;
+        if (tmp->infile != -1)
+            close(tmp->infile);
+        if (tmp->outfile != -1)
+            close(tmp->outfile);
+            
         free(tmp);
     }
 }
-
-// int main(void)
-// {
-//     char *line;
-//     t_token token_list;
-//     t_cmd cmd;
-//     t_shell shell;
-
-//     // Inizializza la struttura shell
-//     shell.envp = NULL;
-//     shell.cmd = NULL;
-//     shell.n_cmds = 0;
-//     shell.in_quote = false;
-//     // Inizializza la struttura cmd
-//     cmd.cmd_path = NULL;
-//     cmd.argv = NULL;
-//     cmd.infile = -1;
-//     cmd.outfile = -1;
-//     cmd.pid = -1;
-//     cmd.next = NULL;
-//     // Inizializza la lista dei token
-//     token_list.head = NULL;
-//     token_list.current = NULL;
-//     while (1)
-//     {
-//         // Leggi una riga di input dall'utente
-//         line = readline("minishell> ");
-//         if (!line)
-//         {
-//             printf("\nExiting...\n");
-//             break;
-//         }
-//         // Aggiungi il comando alla history
-//         add_history(line);
-//         if (!tokenize_input(&token_list, line))
-//         {
-//             free(line);
-//             continue;
-//         }
-//         printf("Generated tokens:\n");
-//         debug_tokens(token_list.head);
-//         // Analizza i token per creare la lista di comandi
-//         shell.cmd = parse_tokens(token_list.head, &cmd);
-//         if (!shell.cmd)
-//         {
-//             free_tokens(token_list.head);
-//             free(line);
-//             continue;
-//         }
-//         printf("\nGenerated commands:\n");
-//         debug_cmds(shell.cmd);
-//         execute_command_list(&shell);
-//         // Pulizia
-//         free_tokens(token_list.head);
-//         token_list.head = NULL;
-//         token_list.current = NULL;
-//         free_cmd_list(shell.cmd);
-// 		shell.cmd = NULL;
-//         free(line);
-//     }
-//     return (0);
-// }

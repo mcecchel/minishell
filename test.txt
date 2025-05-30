@@ -1,0 +1,7 @@
+$PWD
+"$PWD" deve espandere
+'$PWD' non deve espandere
+
+<< 'cicao' nell'hd non espande le variabili
+""
+ciao | ls

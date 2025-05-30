@@ -6,7 +6,7 @@
 /*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:09:38 by marianna          #+#    #+#             */
-/*   Updated: 2025/05/21 17:56:10 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/05/30 17:11:42 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,6 +130,13 @@ char	*get_cmd_path(t_shell *shell, t_cmd *cmd, char *command)
 	if (!paths)
 		return (NULL);
 	full_path = search_command(paths, command);
+	if (!full_path)
+	{
+		perror("Error: Command not found");
+		free_split(paths);
+		close_cmd_fds(cmd);
+		return (NULL);
+	}
 	return (full_path);
 }
 
