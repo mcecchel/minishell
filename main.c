@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 17:30:08 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/05/22 23:55:17 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/05/30 17:58:29 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,9 @@ int main(int argc, char **argv, char **envp)
 	int i = 0;
 	//char	*tryunset;
 
+	root = ft_calloc(1, sizeof(t_shell));
 	env = copy_env(envp);
+	root->env = env;
 	(void)argc;
 	(void)argv;
 	signal(SIGINT, sigint_handler);
@@ -67,17 +69,18 @@ int main(int argc, char **argv, char **envp)
 			break;
 		}
 		if (ft_strcmp(read_line, "env") == 0)
-			print_env_list(env);
-		if (ft_strcmp(read_line, "PATH") == 0)
+			print_env_list(env, true);
+		if (ft_strcmp(read_line, "export") == 0)
+			print_env_list(env, false);
+		if (ft_strcmp(read_line, "PWD") == 0)
 			ft_unset(&env, read_line);
-		else
+		if (ft_strncmp(read_line, "cd ", 3) == 0)
 		{
-			print_pwd(env);
-			ft_cd(read_line, root);
-			print_pwd(env);
+			//ft_printf("%s", ft_substr(read_line, 3, (ft_strlen(read_line) - 3)));
+			ft_cd(ft_substr(read_line, 3, (ft_strlen(read_line) - 3)), root);
 		}
-		if (i == 4)
-			print_env_list(env);
+		// if (i == 4)
+		// 	print_env_list(env);
 		//printf("%s\n", read_line);
 		free(read_line);
 		i++;
