@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 12:22:07 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/05/22 18:32:45 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/05/22 23:52:40 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,14 +29,14 @@ void	change_env(t_shell *root, char *old_path, char *current_path)
 	t_env *pwd;
 	t_env *oldpwd;
 
-	pwd = find_env(&root->env, "PWD");
+	pwd = find_env(root->env, "PWD");
 	if (pwd)
 	{
 		free(pwd->arg);
 		pwd->arg = ft_strdup(current_path);
 	}
 
-	oldpwd = find_env(&root->env, "OLDPWD");
+	oldpwd = find_env(root->env, "OLDPWD");
 	if (oldpwd)
 	{
 		free(oldpwd->arg);
@@ -60,7 +60,7 @@ int	ft_cd(char *new_path, t_shell *root)
 	current_path = getcwd(NULL, 0);
 	if (new_path[0] == '-' && new_path[1] == '\0')
 		current_path = old_path;
-	change_env(&root, old_path, current_path);
+	change_env(root, old_path, current_path);
 	free(current_path);
 	free(old_path);
 	return(0);

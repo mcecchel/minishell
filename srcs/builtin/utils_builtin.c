@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 16:59:36 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/05/21 18:33:56 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/05/22 23:55:31 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ void	print_env_list(t_env *env)
 			ft_printf("%s\n", env->arg);
 		else
 			ft_printf("ARG: (null)\n");
-		ft_printf("EXPORTED: %d\n", env->ex_env);
+		//ft_printf("EXPORTED: %d\n", env->ex_env);
 		env = env->next;
 	}
 }

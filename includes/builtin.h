@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 16:54:11 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/05/21 18:19:17 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/05/22 23:28:28 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,10 @@
 # include "libft.h"
 
 //cd
+t_env 	*find_env(t_env *env, char *to_change);
+void	change_env(t_shell *root, char *old_path, char *current_path);
+int		ft_cd(char *new_path, t_shell *root);
+
 
 //copy_free_env
 t_env	*create_env_node(char *env_str);
