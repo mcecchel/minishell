@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 16:54:11 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/05/30 15:45:53 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/01 18:21:52 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,9 @@ void	add_oldpwd_node(t_env **head, t_env **current);
 
 
 //ft_export
+void	add_env(t_shell *root, char *arg, bool is_env);
+void	ft_export(t_shell *root, char **args);
+
 
 //env
 
