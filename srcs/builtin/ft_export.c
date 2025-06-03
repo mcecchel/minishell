@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 16:45:25 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/06/01 18:23:03 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/03 18:27:25 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ void add_env(t_shell *root, char *arg, bool is_env)
 	char *value;
 	int i;
 
+	new_env = root->env;
 	i = 0;
 	while (arg[i] && arg[i] != '=')
 		i++;
@@ -37,13 +38,14 @@ void add_env(t_shell *root, char *arg, bool is_env)
 	if (root->env)
 		root->env->prev = new_env;
 	root->env = new_env;
+	sort_env_list(root->env);
 }
 
 void ft_export(t_shell *root, char *args)
 {
-	t_env	*env;
 	int		i;
-
+	ft_printf("CIAO\n");
+	ft_printf("%s\n", args);
 	if (!args[1])
 	{
 		print_env_list(root->env, false);
@@ -52,10 +54,10 @@ void ft_export(t_shell *root, char *args)
 	i = 1;
 	while (args[i])
 	{
-		if (ft_strchr(args[i], '='))
-			add_env(root, args[i], true);
+		if (ft_strchr(&args[i], '='))
+			add_env(root, args, true);
 		else
-			add_env(root, args[i], false);;
+			add_env(root, args, false);;
 		i++;
 	}
 }

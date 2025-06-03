@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 16:57:36 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/05/30 17:44:40 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/03 18:34:26 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ void	append_env_node(t_env **head, t_env **current, t_env *new_node)
 	}
 	*current = new_node;
 }
+
 void	add_oldpwd_node(t_env **head, t_env **current)
 {
 	t_env	*oldpwd_node;
@@ -60,7 +61,6 @@ void	add_oldpwd_node(t_env **head, t_env **current)
 	oldpwd_node->ex_env = 0;
 	oldpwd_node->prev = NULL;
 	oldpwd_node->next = NULL;
-
 	append_env_node(head, current, oldpwd_node);
 }
 
@@ -76,7 +76,7 @@ t_env	*copy_env(char **env)
 	{
 		new_node = create_env_node(env[i]);
 		if (!new_node)
-			return (NULL); // gestione errore reale consigliata
+			return (NULL);
 		append_env_node(&head, &current, new_node);
 		i++;
 	}

@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 16:59:36 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/06/01 18:16:24 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/03 18:25:43 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,6 @@ void	print_env_list(t_env *env, bool is_env)
 		//ft_printf("EXPORTED: %d\n", env->ex_env);
 		env = env->next;
 	}
-
 	while (env && !is_env)
 	{
 		ft_printf("declare -x ");

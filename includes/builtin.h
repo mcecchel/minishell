@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 16:54:11 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/06/01 18:21:52 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/03 18:26:44 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void	add_oldpwd_node(t_env **head, t_env **current);
 
 //ft_export
 void	add_env(t_shell *root, char *arg, bool is_env);
-void	ft_export(t_shell *root, char **args);
+void	ft_export(t_shell *root, char *args);
 
 
 //env
@@ -43,7 +43,7 @@ void	ft_unset(t_env **head, char *var_name);
 
 //utils builtin
 char	*ft_strjoin_free_s2(char *s1, char *s2);
-void	print_env_list(t_env *env, bool is_env);
+void	print_env_list(t_env *root, bool is_env);
 
 //sort_env
 void	swap_env_content(t_env *a, t_env *b);

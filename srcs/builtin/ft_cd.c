@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 12:22:07 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/05/30 18:05:33 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/03 18:34:25 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,6 @@ void	change_env(t_shell *root, char *old_path, char *current_path)
 		oldpwd->ex_env = 1;
 	}
 }
-
 
 int	ft_cd(char *new_path, t_shell *root)
 {
