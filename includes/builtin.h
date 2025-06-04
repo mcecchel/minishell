@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 16:54:11 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/06/03 18:26:44 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/04 15:32:12 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ void	print_env_list(t_env *root, bool is_env);
 
 //sort_env
 void	swap_env_content(t_env *a, t_env *b);
-void	sort_env_list(t_env *m_env);
+t_env	*sort_env_list(t_env *m_env);
 
 
 

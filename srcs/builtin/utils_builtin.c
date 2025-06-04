@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 16:59:36 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/06/03 18:25:43 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/04 16:46:19 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ char	*ft_strjoin_free_s2(char *s1, char *s2)
 		l[is1] = s1[is1];
 		is1++;
 	}
-	;
 	while (s2[is2])
 	{
 		l[is1 + is2] = s2[is2];
@@ -46,9 +45,9 @@ void	print_env_list(t_env *env, bool is_env)
 	{
 		if (env->ex_env == 1)
 		{
-			ft_printf("%s=", env->var);
+			ft_printf("%s", env->var);
 			if (env->arg)
-				ft_printf("%s\n", env->arg);
+				ft_printf("=\"%s\"\n", env->arg);
 		}
 		//ft_printf("EXPORTED: %d\n", env->ex_env);
 		env = env->next;
@@ -56,9 +55,9 @@ void	print_env_list(t_env *env, bool is_env)
 	while (env && !is_env)
 	{
 		ft_printf("declare -x ");
-		ft_printf("%s=", env->var);
+		ft_printf("%s", env->var);
 		if (env->arg)
-			ft_printf("%s\n", env->arg);
+			ft_printf("=%s\n", env->arg);
 		if (!env->arg)
 			ft_printf("\n");
 		//ft_printf("EXPORTED: %d\n", env->ex_env);

@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 17:30:08 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/06/03 17:49:53 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/04 16:42:36 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ int main(int argc, char **argv, char **envp)
 	t_env	*env = (t_env *){0};
 	t_shell	*root;
 	int i = 0;
+	//int a;
 	//char	*tryunset;
 
 	root = ft_calloc(1, sizeof(t_shell));
@@ -56,8 +57,8 @@ int main(int argc, char **argv, char **envp)
 	root->env = env;
 	(void)argc;
 	(void)argv;
-	signal(SIGINT, sigint_handler);
-	signal(SIGQUIT, SIG_IGN);
+	//signal(SIGINT, sigint_handler);
+	//signal(SIGQUIT, SIG_IGN);
 	while(1)
 	{
 		read_line = readline("");
@@ -70,8 +71,23 @@ int main(int argc, char **argv, char **envp)
 		}
 		if (ft_strcmp(read_line, "env") == 0)
 			print_env_list(root->env, true);
-		if (ft_strcmp(read_line, "export") == 0)
-			ft_export(root, ft_substr(read_line, 7, (ft_strlen(read_line) - 7)));
+		if (ft_strncmp(read_line, "export", 6) == 0)
+		{
+			//a = ft_strcmp(read_line, "export");
+			//ft_printf("a is %d\n", ft_strcmp(read_line, "export"));
+			if (ft_strcmp(read_line, "export") == 0)
+			{
+				
+				//ft_printf("CIAO\n");
+				print_env_list(root->env, false);
+				continue;
+			}
+			else
+			{
+				ft_export(root, ft_substr(read_line, 7, (ft_strlen(read_line) - 7)));
+				ft_printf("to add is %s\n", ft_substr(read_line, 7, (ft_strlen(read_line) - 7)));
+			}
+		}
 		if (ft_strcmp(read_line, "PWD") == 0)
 			ft_unset(&root->env, read_line);
 		if (ft_strncmp(read_line, "cd ", 3) == 0)

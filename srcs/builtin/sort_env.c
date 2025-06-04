@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/21 17:31:11 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/05/21 17:56:48 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/04 15:36:47 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,14 +31,13 @@ void	swap_env_content(t_env *a, t_env *b)
 	b->ex_env = tmp_ex;
 }
 
-void	sort_env_list(t_env *m_env)
+t_env	*sort_env_list(t_env *m_env)
 {
 	t_env	*current;
 	int		sorted;
 
 	if (!m_env)
-		return ;
-
+		return (NULL);
 	sorted = 0;
 	while (!sorted)
 	{
@@ -54,4 +53,5 @@ void	sort_env_list(t_env *m_env)
 			current = current->next;
 		}
 	}
+	return(m_env);
 }
