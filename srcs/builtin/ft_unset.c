@@ -6,19 +6,19 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 14:31:15 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/05/21 18:27:56 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/04 17:11:59 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	ft_unset(t_env **head, char *var_name)
+void	ft_unset(t_shell *head, char *var_name)
 {
 	t_env	*current;
 
-	if (!head || !*head || !var_name)
+	if (!head || !head || !var_name)
 		return;
-	current = *head;
+	current = head->env;
 	while (current)
 	{
 		if (ft_strcmp(current->var, var_name) == 0)
@@ -26,7 +26,7 @@ void	ft_unset(t_env **head, char *var_name)
 			if (current->prev)
 				current->prev->next = current->next;
 			else
-				*head = current->next;
+				head->env = current->next;
 			if (current->next)
 				current->next->prev = current->prev;
 			free(current->var);

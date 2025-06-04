@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 16:45:25 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/06/04 15:58:03 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/04 17:20:35 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,6 @@ void add_env(t_shell *root, char *arg, bool is_env)
 
 void ft_export(t_shell *root, char *args)
 {
-	ft_printf("CIAO\n");
-	ft_printf("%s\n", args);
 	if (!args)
 	{
 		print_env_list(root->env, false);

@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 17:30:08 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/06/04 16:42:36 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/04 17:21:37 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,8 +88,10 @@ int main(int argc, char **argv, char **envp)
 				ft_printf("to add is %s\n", ft_substr(read_line, 7, (ft_strlen(read_line) - 7)));
 			}
 		}
-		if (ft_strcmp(read_line, "PWD") == 0)
-			ft_unset(&root->env, read_line);
+		if (ft_strcmp(read_line, "pwd") == 0)
+			ft_pwd();
+		if (ft_strncmp(read_line, "unset", 5) == 0)
+			ft_unset(root, ft_substr(read_line, 6, (ft_strlen(read_line) - 6)));
 		if (ft_strncmp(read_line, "cd ", 3) == 0)
 		{
 			//ft_printf("%s", ft_substr(read_line, 3, (ft_strlen(read_line) - 3)));

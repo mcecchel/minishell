@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 16:54:11 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/06/04 15:32:12 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/04 17:22:30 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,9 +37,10 @@ void	ft_export(t_shell *root, char *args);
 //env
 
 //pwd
+int     ft_pwd();
 
 //unset
-void	ft_unset(t_env **head, char *var_name);
+void	ft_unset(t_shell *head, char *var_name);
 
 //utils builtin
 char	*ft_strjoin_free_s2(char *s1, char *s2);

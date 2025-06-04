@@ -15,8 +15,8 @@ SRC		= 	main.c \
 		srcs/builtin/utils_builtin.c \
 		srcs/builtin/ft_cd.c \
 		srcs/builtin/ft_export.c \
+		srcs/builtin/ft_pwd.c \
 		# srcs/builtin/ft_env.c \
-		# srcs/builtin/ft_pwd.c \
 		# srcs/builtin/ft_echo.c \
 		# srcs/builtin/ft_exit.c \
 

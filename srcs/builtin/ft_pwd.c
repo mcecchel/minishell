@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 22:54:32 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/05/14 13:30:07 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/04 17:23:15 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ int	ft_pwd()
 	}
 	else
 		write(1, pwd, pwd_len);
+	write (1, "\n", 1);
 	free(pwd);
 	return (0);
 }
