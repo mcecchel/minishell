@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 17:30:08 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/06/04 17:21:37 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/05 13:59:30 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ int main(int argc, char **argv, char **envp)
 	t_env	*env = (t_env *){0};
 	t_shell	*root;
 	int i = 0;
+	char *try = NULL;
 	//int a;
 	//char	*tryunset;
 
@@ -57,8 +58,8 @@ int main(int argc, char **argv, char **envp)
 	root->env = env;
 	(void)argc;
 	(void)argv;
-	//signal(SIGINT, sigint_handler);
-	//signal(SIGQUIT, SIG_IGN);
+	signal(SIGINT, sigint_handler);
+	signal(SIGQUIT, SIG_IGN);
 	while(1)
 	{
 		read_line = readline("");
@@ -67,6 +68,7 @@ int main(int argc, char **argv, char **envp)
 		{
 			printf("\nexit\n");
 			free_env_list(env);
+			free (root);
 			break;
 		}
 		if (ft_strcmp(read_line, "env") == 0)
@@ -84,18 +86,36 @@ int main(int argc, char **argv, char **envp)
 			}
 			else
 			{
-				ft_export(root, ft_substr(read_line, 7, (ft_strlen(read_line) - 7)));
-				ft_printf("to add is %s\n", ft_substr(read_line, 7, (ft_strlen(read_line) - 7)));
+				try = ft_substr(read_line, 7, (ft_strlen(read_line) - 7));
+				ft_export(root, try);
+				ft_printf("to add is %s\n", try);
+				if (try != NULL)
+					free (try);
 			}
 		}
 		if (ft_strcmp(read_line, "pwd") == 0)
 			ft_pwd();
 		if (ft_strncmp(read_line, "unset", 5) == 0)
-			ft_unset(root, ft_substr(read_line, 6, (ft_strlen(read_line) - 6)));
+		{
+			try = ft_substr(read_line, 6, (ft_strlen(read_line) - 6));
+			ft_unset(root, try);
+			if (try != NULL)
+					free (try);
+		}
 		if (ft_strncmp(read_line, "cd ", 3) == 0)
 		{
 			//ft_printf("%s", ft_substr(read_line, 3, (ft_strlen(read_line) - 3)));
-			ft_cd(ft_substr(read_line, 3, (ft_strlen(read_line) - 3)), root);
+			try = ft_substr(read_line, 3, (ft_strlen(read_line) - 3));
+			ft_cd(try, root);
+			if (try != NULL)
+					free (try);
+		}
+		if (ft_strncmp(read_line, "exit", 4) == 0)
+		{
+			try = ft_substr(read_line, 5, (ft_strlen(read_line) - 5));
+			free(read_line);
+			ft_exit(try, root);
+			break;
 		}
 		// if (i == 4)
 		// 	print_env_list(env);

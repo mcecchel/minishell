@@ -1,6 +1,6 @@
 NAME		= minishell
 RM			= rm -f
-CFLAGS		= -g -pedantic -I. -ILibft -Iincludes -lreadline
+CFLAGS		= -g -pedantic -I. -ILibft -Iincludes -lreadline -Wall -Wextra -Werror
 
 # Libft
 LIBFT_DIR	= Libft
@@ -16,9 +16,9 @@ SRC		= 	main.c \
 		srcs/builtin/ft_cd.c \
 		srcs/builtin/ft_export.c \
 		srcs/builtin/ft_pwd.c \
+		srcs/builtin/ft_exit.c \
 		# srcs/builtin/ft_env.c \
 		# srcs/builtin/ft_echo.c \
-		# srcs/builtin/ft_exit.c \
 
 all: $(LIBFT_LIB) $(NAME)
 

@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 16:54:11 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/06/04 17:22:30 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/05 13:50:47 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,8 @@ void	add_env(t_shell *root, char *arg, bool is_env);
 void	ft_export(t_shell *root, char *args);
 
 
-//env
+//exit
+void	ft_exit(char *arg, t_shell *root);
 
 //pwd
 int     ft_pwd();
