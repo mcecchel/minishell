@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 14:31:15 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/06/04 17:11:59 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/06 14:38:07 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void	ft_unset(t_shell *head, char *var_name)
 	t_env	*current;
 
 	if (!head || !head || !var_name)
-		return;
+		return ;
 	current = head->env;
 	while (current)
 	{
@@ -33,12 +33,11 @@ void	ft_unset(t_shell *head, char *var_name)
 			if (current->arg)
 				free(current->arg);
 			free(current);
-			return;
+			return ;
 		}
 		current = current->next;
 	}
 }
-
 
 // int main(int argc, char **argv, char **envp)
 // {
@@ -52,7 +51,7 @@ void	ft_unset(t_shell *head, char *var_name)
 // 	print_env(mini_env);
 // 	//ft_cd("Libft", mini_env);
 // 	ft_unset(argv[1], mini_env);
-// 	printf("//////////////////////////////////////////////////////////////////////////////////////////////////////////\n");
+// 	printf("///////////////////////////////////////////////////////////////\n");
 // 	print_env(mini_env);
 // 	free_matrix(mini_env);
 // 	return(0);

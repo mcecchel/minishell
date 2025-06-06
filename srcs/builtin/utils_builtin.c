@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 16:59:36 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/06/04 16:46:19 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/06 14:39:33 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,6 @@ void	print_env_list(t_env *env, bool is_env)
 			if (env->arg)
 				ft_printf("=\"%s\"\n", env->arg);
 		}
-		//ft_printf("EXPORTED: %d\n", env->ex_env);
 		env = env->next;
 	}
 	while (env && !is_env)
@@ -60,7 +59,30 @@ void	print_env_list(t_env *env, bool is_env)
 			ft_printf("=%s\n", env->arg);
 		if (!env->arg)
 			ft_printf("\n");
-		//ft_printf("EXPORTED: %d\n", env->ex_env);
 		env = env->next;
 	}
+}
+
+long long int	ft_atoi_ll(const char *nptr)
+{
+	long long int	sign;
+	long long int	result;
+
+	sign = 1;
+	result = 0;
+	while ((*nptr >= 9 && *nptr <= 13) || *nptr == 32)
+		nptr++;
+	if (*nptr == '-')
+	{
+		sign = -1;
+		nptr++;
+	}
+	else if (*nptr == '+')
+		nptr++;
+	while (*nptr >= '0' && *nptr <= '9')
+	{
+		result = result * 10 + (*nptr - '0');
+		nptr++;
+	}
+	return (result * sign);
 }

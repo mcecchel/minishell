@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 14:51:45 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/06/05 15:56:58 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/06 16:16:23 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,8 @@ int	what_ret(int num, int alpha, int other)
 		return (2);
 	if (alpha == 1 && num == 1 && other == 0)
 		return (3);
-	if (alpha == 1 && num == 1 && other == 1)
+	if ((alpha == 1 && num == 1 && other == 1) || (alpha == 0 && num == 1
+			&& other == 1) || (alpha == 1 && num == 0 && other == 1))
 		return (4);
 	if (alpha == 0 && num == 0 && other == 1)
 		return (5);
@@ -56,3 +57,37 @@ int	what_is(char *str, int n)
 	ret = what_ret(num, alpha, other);
 	return (ret);
 }
+
+// const char *desc(int code)
+// {
+// 			if (code == 0) return "Vuota";
+// 			if (code == 1) return "Solo lettere";
+// 			if (code == 2) return "Solo numeri";
+// 			if (code == 3) return "Lettere e numeri";
+// 			if (code == 4) return "Lettere, numeri e altro";
+// 			if (code == 5) return "Solo caratteri speciali";
+// 			return "Caso non previsto";
+// }
+
+// int main(void)
+// 	{
+// 	char *test[] = {
+// 		"",
+// 		"abc",
+// 		"123",
+// 		"abc123",
+// 		"abc!",
+// 		"123!",
+// 		"!@#",
+// 		"abc123!",
+// 		NULL
+// 	};
+// 	int i = 0;
+// 	while (test[i])
+// 	{
+// 		int code = what_is(test[i], 100);
+// 		printf("Test \"%s\": %s (codice %d)\n", test[i], desc(code), code);
+// 		i++;
+// 	}
+// 	return 0;
+// 	}

@@ -6,14 +6,13 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 12:22:07 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/06/03 18:34:25 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/06 14:34:29 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-
-t_env *find_env(t_env *env, char *to_change)
+t_env	*find_env(t_env *env, char *to_change)
 {
 	while (env)
 	{
@@ -26,8 +25,8 @@ t_env *find_env(t_env *env, char *to_change)
 
 void	change_env(t_shell *root, char *old_path, char *current_path)
 {
-	t_env *pwd;
-	t_env *oldpwd;
+	t_env	*pwd;
+	t_env	*oldpwd;
 
 	pwd = find_env(root->env, "PWD");
 	if (pwd)
@@ -66,7 +65,7 @@ int	ft_cd(char *new_path, t_shell *root)
 	change_env(root, old_path, current_path);
 	free(current_path);
 	free(old_path);
-	return(0);
+	return (0);
 }
 
 // int main(int argc, char **argv, char **envp)
@@ -81,7 +80,7 @@ int	ft_cd(char *new_path, t_shell *root)
 // 	//print_env(mini_env);
 // 	//ft_cd("Libft/ft_printf", mini_env);
 // 	ft_cd(argv[1], mini_env);
-// 	printf("//////////////////////////////////////////////////////////////////////////////////////////////////////////\n");
+// 	printf("///////////////////////////////////////////////////////////////\n");
 // 	sort_env(mini_env);
 // 	print_env(mini_env);
 // 	free_matrix(mini_env);

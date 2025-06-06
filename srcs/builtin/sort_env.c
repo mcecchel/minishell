@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/21 17:31:11 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/06/04 15:36:47 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/06 14:38:55 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,9 @@ void	swap_env_content(t_env *a, t_env *b)
 	tmp_var = a->var;
 	tmp_arg = a->arg;
 	tmp_ex = a->ex_env;
-
 	a->var = b->var;
 	a->arg = b->arg;
 	a->ex_env = b->ex_env;
-
 	b->var = tmp_var;
 	b->arg = tmp_arg;
 	b->ex_env = tmp_ex;
@@ -53,5 +51,5 @@ t_env	*sort_env_list(t_env *m_env)
 			current = current->next;
 		}
 	}
-	return(m_env);
+	return (m_env);
 }

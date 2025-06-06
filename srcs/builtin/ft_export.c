@@ -6,18 +6,18 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 16:45:25 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/06/05 13:35:08 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/06 14:36:47 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void add_env(t_shell *root, char *arg, bool is_env)
+void	add_env(t_shell *root, char *arg, bool is_env)
 {
-	t_env *new_env;
-	char *name;
-	char *value;
-	int i;
+	t_env	*new_env;
+	char	*name;
+	char	*value;
+	int		i;
 
 	new_env = root->env;
 	i = 0;
@@ -41,21 +41,20 @@ void add_env(t_shell *root, char *arg, bool is_env)
 	root->env = new_env;
 }
 
-void ft_export(t_shell *root, char *args)
+void	ft_export(t_shell *root, char *args)
 {
 	if (!args)
 	{
 		print_env_list(root->env, false);
-		return;
+		return ;
 	}
 	if (ft_strchr(args, ' ') || ft_strchr(args, '\t'))
 	{
 		write(2, "export: not a valid identifier\n", 31);
-		return;
+		return ;
 	}
 	if (ft_strchr(args, '='))
 		add_env(root, args, true);
 	else
 		add_env(root, args, false);
 }
-

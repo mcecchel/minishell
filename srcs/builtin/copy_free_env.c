@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 16:57:36 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/06/03 18:34:26 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/06 14:33:26 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,11 +66,13 @@ void	add_oldpwd_node(t_env **head, t_env **current)
 
 t_env	*copy_env(char **env)
 {
-	t_env	*head = NULL;
-	t_env	*current = NULL;
+	t_env	*head;
+	t_env	*current;
 	t_env	*new_node;
 	int		i;
 
+	head = NULL;
+	current = NULL;
 	i = 0;
 	while (env[i])
 	{
@@ -81,14 +83,14 @@ t_env	*copy_env(char **env)
 		i++;
 	}
 	add_oldpwd_node(&head, &current);
-	if(head)
+	if (head)
 		sort_env_list(head);
 	return (head);
 }
 
 void	free_env_list(t_env *env)
 {
-	t_env *tmp;
+	t_env	*tmp;
 
 	while (env)
 	{

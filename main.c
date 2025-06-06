@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 17:30:08 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/06/05 13:59:30 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/06 16:01:28 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,6 @@ int main(int argc, char **argv, char **envp)
 			try = ft_substr(read_line, 5, (ft_strlen(read_line) - 5));
 			free(read_line);
 			ft_exit(try, root);
-			break;
 		}
 		// if (i == 4)
 		// 	print_env_list(env);
