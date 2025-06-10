@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 16:54:11 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/06/06 14:42:18 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/10 14:50:19 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 # define BUILTIN_H
 
 # include "libft.h"
+
+void	parser_builtin(t_shell *root, char *read_line);
 
 //cd
 t_env 			*find_env(t_env *env, char *to_change);
