@@ -1,13 +1,20 @@
 NAME		= minishell
 RM			= rm -f
 CFLAGS		= -Wall -Wextra -Werror -g -pedantic -I. -ILibft -Iincludes -lreadline
+VALFLAGS	= --quiet --leak-check=full --track-fds=yes --show-leak-kinds=all --track-origins=yes
 
 # Libft
 LIBFT_DIR	= Libft
 LIBFT_LIB	= $(LIBFT_DIR)/libft.a
 
 SRC		= 	main.c \
-		srcs/parsing/lexer.c \
+		srcs/parsing/tokenizer.c \
+			src/parser.c \
+			src/path.c \
+			src/manage_cmd.c \
+			src/redirection.c \
+			src/utils.c \
+			main.c \
 		srcs/parsing/parser.c \
 		# srcs/builtin/ft_cd.c \
 		# srcs/builtin/ft_exit.c \
@@ -40,7 +47,7 @@ fclean: clean
 	$(MAKE) fclean -C $(LIBFT_DIR)
 
 valgrind: $(NAME)
-	@valgrind --quiet --leak-check=full --track-fds=yes --show-leak-kinds=all --track-origins=yes ./$(NAME)
+	@valgrind $(VALFLAGS) ./$(NAME)
 
 re: fclean all
 .SILENT:
