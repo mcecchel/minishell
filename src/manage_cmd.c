@@ -6,139 +6,11 @@
 /*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:09:38 by marianna          #+#    #+#             */
-/*   Updated: 2025/05/30 17:11:42 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/06/10 12:31:31 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-int	is_space(char c)
-{
-	if (c == 32 || (c >= 9 && c <= 13))
-		return (1);
-	return (0);
-}
-
-char	*find_env_path(t_shell *shell)
-{
-	int	i;
-
-	i = 0;
-	while (shell->envp[i])
-	{
-		if (ft_strncmp(shell->envp[i], "PATH=", 5) == 0)
-			return (shell->envp[i] + 5);
-		i++;
-	}
-	return (NULL);
-}
-
-// Funzione per liberare matrice di stringhe
-void	free_split(char **split)
-{
-	int	i;
-
-	i = 0;
-	if (!split)
-		return ;
-	while (split[i])
-	{
-		free(split[i]);
-		i++;
-	}
-	free(split);
-}
-
-void	close_cmd_fds(t_cmd *cmd)
-{
-	if (cmd->infile != -1)
-	{
-		close(cmd->infile);
-		cmd->infile = -1;
-	}
-	if (cmd->outfile != -1)
-	{
-		close(cmd->outfile);
-		cmd->outfile = -1;
-	}
-}
-
-int	is_valid_command(t_cmd *cmd, char *command)
-{
-	if (command == NULL || *command == '\0' || is_space(*command) == 1)
-	{
-		perror("Error: Invalid command");
-		if (cmd->infile != -1)
-			close(cmd->infile);
-		if (cmd->outfile != -1)
-			close(cmd->outfile);
-		return (0);
-	}
-	return (1);
-}
-
-char	**get_paths(t_shell *shell)
-{
-	char	*path_env;
-	char	**paths;
-
-	path_env = find_env_path(shell);
-	if (!path_env)
-	{
-		perror("Error: Failed to find path");
-		return (NULL);
-	}
-	paths = ft_split(path_env, ':');
-	if (!paths)
-		perror("Error: Failed to split path");
-	return (paths);
-}
-
-char	*search_command(char **paths, char *cmd)
-{
-	char	*temp;
-	char	*full_path;
-	int		i;
-
-	i = 0;
-	while (paths[i])
-	{
-		temp = ft_strjoin(paths[i], "/");
-		full_path = ft_strjoin(temp, cmd);
-		free(temp);
-		if (access(full_path, F_OK | X_OK) == 0)
-		{
-			free_split(paths);
-			return (full_path);
-		}
-		free(full_path);
-		i++;
-	}
-	return (NULL);
-}
-
-char	*get_cmd_path(t_shell *shell, t_cmd *cmd, char *command)
-{
-	char	**paths;
-	char	*full_path;
-
-	if (!is_valid_command(cmd, command))
-		return (NULL);
-	if (access(command, F_OK | X_OK) == 0 && ft_strchr(command, '/'))
-		return (ft_strdup(command));
-	paths = get_paths(shell);
-	if (!paths)
-		return (NULL);
-	full_path = search_command(paths, command);
-	if (!full_path)
-	{
-		perror("Error: Command not found");
-		free_split(paths);
-		close_cmd_fds(cmd);
-		return (NULL);
-	}
-	return (full_path);
-}
 
 // Funzione per gestire gli errori di esecuzione
 void	handle_exec_error(t_cmd *cmd, char **command, char *path)
@@ -146,7 +18,6 @@ void	handle_exec_error(t_cmd *cmd, char **command, char *path)
 	free_split(command);
 	free(path);
 	close_cmd_fds(cmd);
-	// Funzione per chiudere le pipe tra comandi
 	exit(1);
 }
 
@@ -262,3 +133,4 @@ void	execute_command_list(t_shell *shell)
 	if (prev_pipe != -1)
 		close(prev_pipe);
 }
+

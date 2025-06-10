@@ -6,10 +6,12 @@ CFLAGS		= -Wall -Wextra -Werror -g -pedantic -I. -ILibft -Iincludes -lreadline
 LIBFT_DIR	= Libft
 LIBFT_LIB	= $(LIBFT_DIR)/libft.a
 
-SRC		= 	src/lexer.c \
+SRC		= 	src/tokenizer.c \
 			src/parser.c \
+			src/path.c \
 			src/manage_cmd.c \
 			src/redirection.c \
+			src/utils.c \
 			main.c \
 
 all: $(LIBFT_LIB) $(NAME)

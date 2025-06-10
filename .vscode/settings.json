@@ -4,5 +4,6 @@
 		"libft.h": "c",
 		"minishell.h": "c",
 		"readline.h": "c"
-	}
+	},
+	"makefile.configureOnOpen": true
 }
