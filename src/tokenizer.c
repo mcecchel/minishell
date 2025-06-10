@@ -6,7 +6,7 @@
 /*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 14:58:50 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/06/10 12:26:12 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/06/10 12:36:11 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,10 +38,10 @@ char	*extract_word(char *line, int *index)
 
 char *extract_quote(char *line, int *index, int *is_quoted)
 {
-	char quote_char = line[*index];
-	int start = *index + 1;
-	int end = start;
-	char *result;
+	char	quote_char = line[*index];
+	int		start = *index + 1;
+	int		end = start;
+	char	*res;
 	
 	*is_quoted = 1;
 	// Trova la quote di chiusura
@@ -53,12 +53,11 @@ char *extract_quote(char *line, int *index, int *is_quoted)
 		*is_quoted = 0;
 		return (NULL);
 	}
-	result = ft_substr(line, start, end - start);
-	if (!result)
+	res = ft_substr(line, start, end - start);
+	if (!res)
 		return (NULL);
-		
 	*index = end + 1;
-	return (result);
+	return (res);
 }
 
 char *extract_operator(char *line, int *index)
@@ -69,14 +68,14 @@ char *extract_operator(char *line, int *index)
 		(line[*index] == '>' && line[*index + 1] == '>'))
 		*index += 2; // Salta gli operatori doppi
 	else if (line[*index] == '|' || line[*index] == '<' || line[*index] == '>')
-		(*index)++; // Salta l'operatore singolo
+		(*index)++;
 	else
 		return (NULL); // Non è un operatore
 	return ft_substr(line, start, *index - start);
 }
 
 // Classificazione token migliorata
-t_token_type classify_token(char *str, int is_first_token, int is_quoted)
+t_token_type	classify_token(char *str, int is_first_token, int is_quoted)
 {
 	if (!str)
 		return UNKNOWN;
@@ -104,9 +103,9 @@ t_token_type classify_token(char *str, int is_first_token, int is_quoted)
 	return ARG;
 }
 
-t_token *create_token(char *content, t_token_type type, int is_quoted)
+t_token	*create_token(char *content, t_token_type type, int is_quoted)
 {
-	t_token *new_token;
+	t_token	*new_token;
 
 	new_token = ft_calloc(1, sizeof(t_token));
 	if (!new_token)
@@ -119,7 +118,7 @@ t_token *create_token(char *content, t_token_type type, int is_quoted)
 }
 
 // Funzione per aggiungere token alla lista
-void add_token_to_list(t_token *token_list, t_token *new_token)
+void	add_token_to_list(t_token *token_list, t_token *new_token)
 {
 	if (!token_list->head)
 	{
@@ -134,10 +133,10 @@ void add_token_to_list(t_token *token_list, t_token *new_token)
 }
 
 // Tokenizer principale - VERSIONE CORRETTA
-int tokenize_input(t_token *token_list, char *line)
+int	tokenize_input(t_token *token_list, char *line)
 {
-	int i;
-	int is_first_token;
+	int	i;
+	int	is_first_token;
 
 	i = 0;
 	is_first_token = 1;
@@ -205,12 +204,14 @@ int tokenize_input(t_token *token_list, char *line)
 		else if (is_first_token)
 			is_first_token = 0; // Non più il primo token
 	}
-	return (1); // Successo
+	return (1);
 }
 
 void	free_tokens(t_token *token)
 {
-	t_token *tmp;
+	t_token	*tmp;
+	if (!token)
+		return;
 	while (token)
 	{
 		tmp = token;

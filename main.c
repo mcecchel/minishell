@@ -6,7 +6,7 @@
 /*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 17:30:08 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/05/30 17:04:20 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/06/10 14:20:25 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,14 +39,12 @@ void cleanup_shell(t_shell *shell)
 
 int main(int argc, char **argv, char **envp)
 {
-    char *line;
+    char    *line;
     t_shell shell;
     
     (void)argc;
     (void)argv;
-    
     init_shell(&shell, envp);
-    
     while (1)
     {
         line = readline("minishell> ");
@@ -55,30 +53,25 @@ int main(int argc, char **argv, char **envp)
             printf("\nExiting...\n");
             break;
         }
-        
         // Ignora linee vuote
         if (*line == '\0')
         {
             free(line);
             continue;
         }
-        
         add_history(line);
-        
-        // Tokenizza l'input - ORA RITORNA INT
+        // Tokenizza l'input
         if (!tokenize_input(&shell.token, line))
         {
             ft_printf("Error: Tokenization failed\n");
             free(line);
             continue;
         }
-        
         // Debug opzionale
         #ifdef DEBUG
         printf("Generated tokens:\n");
         debug_tokens(shell.token.head);
         #endif
-        
         // Parsing
         shell.cmd = parse_tokens(shell.token.head);
         if (!shell.cmd)
@@ -87,21 +80,15 @@ int main(int argc, char **argv, char **envp)
             free(line);
             continue;
         }
-        
         // Debug opzionale
         #ifdef DEBUG
         printf("\nGenerated commands:\n");
         debug_cmds(shell.cmd);
         #endif
-        
-        // Esecuzione
         execute_command_list(&shell);
-        
-        // Cleanup
         cleanup_shell(&shell);
         free(line);
     }
-    
     cleanup_shell(&shell);
     return (0);
 }

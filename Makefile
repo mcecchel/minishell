@@ -1,6 +1,7 @@
 NAME		= minishell
 RM			= rm -f
 CFLAGS		= -Wall -Wextra -Werror -g -pedantic -I. -ILibft -Iincludes -lreadline
+VALFLAGS	= --quiet --leak-check=full --track-fds=yes --show-leak-kinds=all --track-origins=yes
 
 # Libft
 LIBFT_DIR	= Libft
@@ -37,7 +38,7 @@ fclean: clean
 	$(MAKE) fclean -C $(LIBFT_DIR)
 
 valgrind: $(NAME)
-	@valgrind --quiet --leak-check=full --track-fds=yes --show-leak-kinds=all --track-origins=yes ./$(NAME)
+	@valgrind $(VALFLAGS) ./$(NAME)
 
 re: fclean all
 .SILENT:

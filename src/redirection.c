@@ -6,7 +6,7 @@
 /*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 17:28:53 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/06/10 12:31:15 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/06/10 12:37:15 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 int handle_heredoc(char *delimiter)
 {
-	int pipe_fd[2];
-	char *line;
+	int		pipe_fd[2];
+	char	*line;
 
 	// Crea una pipe per salvare l'input dell'heredoc
 	if (pipe(pipe_fd) < 0)
