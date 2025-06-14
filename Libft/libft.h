@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 10:25:56 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/06/05 18:59:48 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/14 17:33:47 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,10 @@
 
 # ifndef FD_MAX
 #  define FD_MAX 1024
+# endif
+
+# ifndef DEBUG
+#  define DEBUG 1
 # endif
 
 # include <stddef.h>
@@ -71,20 +75,12 @@ void	ft_putchar_fd(char c, int fd);
 void	ft_putstr_fd(char *s, int fd);
 void	ft_putendl_fd(char *s, int fd);
 void	ft_putnbr_fd(int n, int fd);
+int		ft_putchar(char c);
+
 
 
 size_t	ft_strlen(const char *s);
 int		ft_counter(int nbr);
-int		ft_hex_counter(unsigned int nbr);
-int		ft_putchar(char c);
-int		ft_putstr(char *str);
-int		ft_percent(void);
-int		ft_putdecimal(int nbr);
-int		ft_putunsign(unsigned int nbr);
-int		ft_puthexamin(unsigned int nbr);
-int		ft_puthexamai(unsigned int nbr);
-int		ft_putptr(void *ptr);
-int		ft_printf(const char *str, ...);
 
 // Bonus part
 typedef struct a_list
@@ -105,15 +101,16 @@ void	ft_lstiter(t_lst *lst, void (*f)(void *));
 // ft_printf functions
 int		ft_counter(int nbr);
 int		ft_hex_counter(unsigned int nbr);
-int		ft_putchar(char c);
-int		ft_putstr(char *str);
-int		ft_percent(void);
-int		ft_putdecimal(int nbr);
-int		ft_putunsign(unsigned int nbr);
-int		ft_puthexamin(unsigned int nbr);
-int		ft_puthexamai(unsigned int nbr);
-int		ft_putptr(void *ptr);
+int		ft_putchar_pf(int fd, char c);
+int		ft_putstr_pf(int fd, char *str);
+int		ft_percent_fd(int fd);
+int		ft_putdecimal_fd(int fd, int nbr);
+int		ft_putunsign(int fd, unsigned int nbr);
+int		ft_puthexamin(int fd, unsigned int nbr);
+int		ft_puthexamai(int fd, unsigned int nbr);
+int		ft_putptr(int fd, void *ptr);
 int		ft_printf(const char *str, ...);
+int		printf_debug(const char *str, ...);
 
 // get_next_line functions
 char	*get_next_line(int fd);

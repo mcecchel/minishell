@@ -26,8 +26,6 @@ SRC = ./ft_atoi.c \
 	./ft_memcpy.c \
 	./ft_memmove.c \
 	./ft_memset.c \
-	./ft_percent.c \
-	./ft_printf.c \
 	./ft_printf/ft_aux.c \
 	./ft_printf/ft_percent.c \
 	./ft_printf/ft_printf.c \
@@ -38,18 +36,10 @@ SRC = ./ft_atoi.c \
 	./ft_printf/ft_putptr.c \
 	./ft_printf/ft_putstr.c \
 	./ft_printf/ft_putunsign.c \
-	./ft_printf_aux.c \
-	./ft_putchar.c \
 	./ft_putchar_fd.c \
-	./ft_putdecimal.c \
 	./ft_putendl_fd.c \
-	./ft_puthexamai.c \
-	./ft_puthexamin.c \
 	./ft_putnbr_fd.c \
-	./ft_putptr.c \
-	./ft_putstr.c \
 	./ft_putstr_fd.c \
-	./ft_putunsign.c \
 	./ft_split.c \
 	./ft_strchr.c \
 	./ft_strdup.c \
@@ -90,4 +80,4 @@ fclean: clean
 re: fclean all
 
 .PHONY: all clean fclean re
-.SILENT:
+#.SILENT:

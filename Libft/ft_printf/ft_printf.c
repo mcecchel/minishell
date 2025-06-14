@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   ft_printf.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 14:50:10 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/02/04 15:57:56 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/06/14 17:27:32 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static int	ft_printf_check(char str, va_list args)
+static int	ft_printf_check(int fd, char str, va_list *args)
 {
 	int	count;
 
@@ -20,47 +20,66 @@ static int	ft_printf_check(char str, va_list args)
 		return (0);
 	count = 0;
 	if (str == 'c')
-		count = ft_putchar(va_arg(args, int));
+		count = ft_putchar_pf(fd, va_arg(*args, int));
 	else if (str == 's')
-		count = ft_putstr(va_arg(args, char *));
+		count = ft_putstr_pf(fd, va_arg(*args, char *));
 	else if (str == 'd' || str == 'i')
-		count = ft_putdecimal(va_arg(args, int));
+		count = ft_putdecimal_fd(fd, va_arg(*args, int));
 	else if (str == 'u')
-		count = ft_putunsign(va_arg(args, unsigned int));
+		count = ft_putunsign(fd, va_arg(*args, unsigned int));
 	else if (str == 'x')
-		count = ft_puthexamin(va_arg(args, unsigned int));
+		count = ft_puthexamin(fd, va_arg(*args, unsigned int));
 	else if (str == 'X')
-		count = ft_puthexamai(va_arg(args, unsigned int));
+		count = ft_puthexamai(fd, va_arg(*args, unsigned int));
 	else if (str == 'p')
-		count = ft_putptr((void *)va_arg(args, unsigned long));
+		count = ft_putptr(fd, (void *)va_arg(*args, unsigned long));
 	else if (str == '%')
-		count = ft_percent();
+		count = ft_percent_fd(fd);
 	return (count);
 }
 
-int	ft_printf(const char *str, ...)
+int	printf_body(int fd, const char *ptr, va_list *args)
 {
-	const char	*ptr;
-	va_list		args;
 	int			count;
 
-	va_start(args, str);
-	ptr = str;
 	count = 0;
 	while (*ptr)
 	{
 		if (*ptr == '%')
 		{
 			ptr++;
-			count += ft_printf_check(*ptr, args);
+			count += ft_printf_check(fd, *ptr, args);
 			ptr++;
 		}
 		else
 		{
-			count += ft_putchar(*ptr);
+			count += ft_putchar_pf(fd, *ptr);
 			ptr++;
 		}
 	}
+	return (count);
+}
+
+int	printf_debug(const char *str, ...)
+{
+	va_list		args;
+	int			count;
+
+	if (!DEBUG)
+		return (-1);
+	va_start(args, str);
+	count = printf_body(2, str, &args);
+	va_end(args);
+	return (count);
+}
+
+int	ft_printf(const char *str, ...)
+{
+	va_list		args;
+	int			count;
+
+	va_start(args, str);
+	count = printf_body(1, str, &args);
 	va_end(args);
 	return (count);
 }

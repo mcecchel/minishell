@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 17:30:08 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/06/10 16:00:37 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/06/14 17:48:41 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,65 @@ void sigint_handler(int sig)
 	rl_replace_line("", 0);          // Pulisce la riga corrente
 	rl_on_new_line();                // Si prepara a una nuova riga
 	rl_redisplay();                  // Mostra il prompt di nuovo
+}
+
+void debug_cmds(t_cmd *cmd_list)
+{
+    int cmd_index = 0;
+    t_cmd *current = cmd_list;
+
+	if (!DEBUG)
+		return ;
+    while (current)
+    {
+        printf_debug("Command %d:\n", cmd_index++);
+        printf_debug("  Path: %s\n", current->cmd_path);
+        printf_debug("  Arguments: ");
+        int i = 0;
+        while (current->argv && current->argv[i])
+        {
+            printf_debug("\"%s\" ", current->argv[i]);
+            i++;
+        }
+        printf_debug("\n");
+        printf_debug("  Infile: %d\n", current->infile);
+        printf_debug("  Outfile: %d\n", current->outfile);
+        current = current->next;
+    }
+}
+
+const char	*obtain_token_type(t_token *token)
+{
+	if (!DEBUG)
+		return ("NULL");
+	if (token->type == CMD) return ("CMD");
+	else if (token->type == ARG) return ("ARG");
+	else if (token->type == FLAG) return ("FLAG");
+	else if (token->type == PIPE) return ("PIPE");
+	else if (token->type == RED_IN) return ("RED_IN");
+	else if (token->type == RED_OUT) return ("RED_OUT");
+	else if (token->type == APPEND) return ("APPEND");
+	else if (token->type == HEREDOC) return ("HEREDOC");
+	else if (token->type == QUOTE) return ("QUOTE");
+	else if (token->type == DQUOTE) return ("DQUOTE");
+	else return ("UNKNOWN");
+}
+
+// Funzione di debug 2
+void	debug_tokens(t_token *token)
+{
+	if (!DEBUG)
+		return ;
+	int i = 0;
+	while (token)
+	{
+		printf_debug("[%d] Token: \"%s\" | Type: %s", i, token->value, obtain_token_type(token));
+		if (token->is_quoted)
+			printf_debug(" (QUOTED)");
+		printf_debug("\n");
+		token = token->next;
+		i++;
+	}
 }
 
 void	init_shell(t_shell *shell)
@@ -68,7 +127,6 @@ void print_pwd(t_env *env_list)
 
 void	parser_builtin(t_shell *root, char *read_line)
 {
-	
 	char *try = NULL;
 
 	if (ft_strcmp(read_line, "env") == 0)
@@ -123,15 +181,15 @@ void	parser_builtin(t_shell *root, char *read_line)
 int main(int argc, char **argv, char **envp)
 {
     char    *line;
-    t_shell *shell;
+    t_shell shell;
 	t_env	*env = (t_env *){0};
-	shell = ft_calloc(1, sizeof(t_shell));
+	shell = (t_shell){0};
 	env = copy_env(envp);
-	shell->env = env;
+	shell.env = env;
     
     (void)argc;
     (void)argv;
-    init_shell(shell);
+    init_shell(&shell);
     while (1)
     {
         line = readline("minishell> ");
@@ -139,7 +197,6 @@ int main(int argc, char **argv, char **envp)
         {
             printf("\nExiting...\n");
 			free_env_list(env);
- 			free (shell);
             break;
         }
         // Ignora linee vuote
@@ -150,22 +207,21 @@ int main(int argc, char **argv, char **envp)
         }
         add_history(line);
         // Tokenizza l'input
-        if (!tokenize_input(&shell->token, line))
+        if (!tokenize_input(&shell.token, line))
         {
             ft_printf("Error: Tokenization failed\n");
             free(line);
             continue;
         }
         // Debug opzionale
-        #ifdef DEBUG
-        printf("Generated tokens:\n");
+        printf_debug("Generated tokens:\n");
         debug_tokens(shell.token.head);
-        #endif
+
         // Parsing
-        shell->cmd = parse_tokens(shell->token.head);
-        if (!shell->cmd)
+        shell.cmd = parse_tokens(shell.token.head);
+        if (!shell.cmd)
         {
-            cleanup_shell(shell);
+            cleanup_shell(&shell);
             free(line);
             continue;
         }
@@ -174,11 +230,11 @@ int main(int argc, char **argv, char **envp)
         printf("\nGenerated commands:\n");
         debug_cmds(shell.cmd);
         #endif
-        execute_command_list(shell);
-        cleanup_shell(shell);
+        execute_command_list(&shell);
+        cleanup_shell(&shell);
         free(line);
     }
-    cleanup_shell(shell);
+    cleanup_shell(&shell);
     return (0);
 }
 
@@ -193,7 +249,7 @@ int main(int argc, char **argv, char **envp)
 
 // 	root = ft_calloc(1, sizeof(t_shell));
 // 	env = copy_env(envp);
-// 	root->env = env;
+// 	rool.env = env;
 // 	(void)argc;
 // 	(void)argv;
 // 	signal(SIGINT, sigint_handler);

@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   ft_percent.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 14:31:11 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/02/04 15:57:56 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/06/14 16:38:23 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-int	ft_percent(void)
+int	ft_percent_fd(int fd)
 {
-	ft_putchar('%');
+	ft_putchar_pf(fd, '%');
 	return (1);
 }
