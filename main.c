@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 17:30:08 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/06/10 15:09:53 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/10 16:00:37 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,8 @@ void sigint_handler(int sig)
 	rl_redisplay();                  // Mostra il prompt di nuovo
 }
 
-void	init_shell(t_shell *shell, char **envp)
+void	init_shell(t_shell *shell)
 {
-	shell->envp = envp;
 	shell->cmd = NULL;
 	shell->n_cmds = 0;
 	shell->in_quote = false;
@@ -124,17 +123,23 @@ void	parser_builtin(t_shell *root, char *read_line)
 int main(int argc, char **argv, char **envp)
 {
     char    *line;
-    t_shell shell;
+    t_shell *shell;
+	t_env	*env = (t_env *){0};
+	shell = ft_calloc(1, sizeof(t_shell));
+	env = copy_env(envp);
+	shell->env = env;
     
     (void)argc;
     (void)argv;
-    init_shell(&shell, envp);
+    init_shell(shell);
     while (1)
     {
         line = readline("minishell> ");
         if (!line)
         {
             printf("\nExiting...\n");
+			free_env_list(env);
+ 			free (shell);
             break;
         }
         // Ignora linee vuote
@@ -145,7 +150,7 @@ int main(int argc, char **argv, char **envp)
         }
         add_history(line);
         // Tokenizza l'input
-        if (!tokenize_input(&shell.token, line))
+        if (!tokenize_input(&shell->token, line))
         {
             ft_printf("Error: Tokenization failed\n");
             free(line);
@@ -157,10 +162,10 @@ int main(int argc, char **argv, char **envp)
         debug_tokens(shell.token.head);
         #endif
         // Parsing
-        shell.cmd = parse_tokens(shell.token.head);
-        if (!shell.cmd)
+        shell->cmd = parse_tokens(shell->token.head);
+        if (!shell->cmd)
         {
-            cleanup_shell(&shell);
+            cleanup_shell(shell);
             free(line);
             continue;
         }
@@ -169,11 +174,11 @@ int main(int argc, char **argv, char **envp)
         printf("\nGenerated commands:\n");
         debug_cmds(shell.cmd);
         #endif
-        execute_command_list(&shell);
-        cleanup_shell(&shell);
+        execute_command_list(shell);
+        cleanup_shell(shell);
         free(line);
     }
-    cleanup_shell(&shell);
+    cleanup_shell(shell);
     return (0);
 }
 

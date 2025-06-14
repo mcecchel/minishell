@@ -1,30 +1,28 @@
 NAME		= minishell
 RM			= rm -f
 CFLAGS		= -Wall -Wextra -Werror -g -pedantic -I. -ILibft -Iincludes -lreadline
-VALFLAGS	= --quiet --leak-check=full --track-fds=yes --show-leak-kinds=all --track-origins=yes
+VALFLAGS	= --quiet --leak-check=full --track-fds=yes --show-leak-kinds=all --track-origins=yes --suppressions=readline.supp
 
 # Libft
 LIBFT_DIR	= Libft
 LIBFT_LIB	= $(LIBFT_DIR)/libft.a
 
 SRC		= 	main.c \
-		srcs/parsing/tokenizer.c \
-			src/parser.c \
-			src/path.c \
-			src/manage_cmd.c \
-			src/redirection.c \
-			src/utils.c \
-			main.c \
-		srcs/parsing/parser.c \
-		srcs/builtin/copy_free_env.c \
-		srcs/builtin/ft_unset.c \
-		srcs/builtin/sort_env.c \
-		srcs/builtin/utils_builtin.c \
-		srcs/builtin/ft_cd.c \
-		srcs/builtin/ft_export.c \
-		srcs/builtin/ft_pwd.c \
-		srcs/builtin/ft_exit.c \
-		# srcs/builtin/ft_echo.c \
+			srcs/parsing/tokenizer.c \
+			srcs/parsing/path.c \
+			srcs/parsing/manage_cmd.c \
+			srcs/parsing/redirection.c \
+			srcs/parsing/utils.c \
+			srcs/parsing/parser.c \
+			srcs/builtin/copy_free_env.c \
+			srcs/builtin/ft_unset.c \
+			srcs/builtin/sort_env.c \
+			srcs/builtin/utils_builtin.c \
+			srcs/builtin/ft_cd.c \
+			srcs/builtin/ft_export.c \
+			srcs/builtin/ft_pwd.c \
+			srcs/builtin/ft_exit.c \
+			# srcs/builtin/ft_echo.c \
 
 all: $(LIBFT_LIB) $(NAME)
 
@@ -48,7 +46,7 @@ fclean: clean
 	$(RM) $(NAME)
 	$(MAKE) fclean -C $(LIBFT_DIR)
 
-valgrind: $(NAME)
+val: $(NAME)
 	@valgrind $(VALFLAGS) ./$(NAME)
 
 re: fclean all
