@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 14:50:10 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/06/14 17:27:32 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/17 15:29:56 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,17 @@ int	printf_debug(const char *str, ...)
 		return (-1);
 	va_start(args, str);
 	count = printf_body(2, str, &args);
+	va_end(args);
+	return (count);
+}
+
+int	fd_printf(int fd, const char *str, ...)
+{
+	va_list		args;
+	int			count;
+
+	va_start(args, str);
+	count = printf_body(fd, str, &args);
 	va_end(args);
 	return (count);
 }

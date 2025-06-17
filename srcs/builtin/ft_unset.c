@@ -6,27 +6,27 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 14:31:15 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/06/06 14:38:07 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/17 15:16:12 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	ft_unset(t_shell *head, char *var_name)
+void	ft_unset(t_shell *shell)
 {
 	t_env	*current;
 
-	if (!head || !head || !var_name)
+	if (!shell || !shell->cmd->argv)
 		return ;
-	current = head->env;
+	current = shell->env;
 	while (current)
 	{
-		if (ft_strcmp(current->var, var_name) == 0)
+		if (ft_strcmp(current->var, shell->cmd->argv[1]) == 0)
 		{
 			if (current->prev)
 				current->prev->next = current->next;
 			else
-				head->env = current->next;
+				shell->env = current->next;
 			if (current->next)
 				current->next->prev = current->prev;
 			free(current->var);

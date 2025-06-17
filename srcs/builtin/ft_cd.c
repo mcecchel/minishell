@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 12:22:07 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/06/14 17:17:15 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/17 15:47:25 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,23 +45,52 @@ void	change_env(t_shell *root, char *old_path, char *current_path)
 	}
 }
 
-int	ft_cd(char *new_path, t_shell *root)
+static char	*get_target_path(t_shell *root)
+{
+	t_env	*home;
+
+	if (!root->cmd->argv[1])
+	{
+		home = find_env(root->env, "HOME");
+		if (!home || !home->arg)
+		{
+			fd_printf(2,"cd: HOME not set\n");
+			return (NULL);
+		}
+		return (home->arg);
+	}
+	else
+		return (root->cmd->argv[1]);
+}
+
+static int	change_directory(const char *target_path)
+{
+	if (chdir(target_path) == -1)
+	{
+		perror("cd");
+		return (1);
+	}
+	return (0);
+}
+
+int	ft_cd(t_shell *root)
 {
 	char	*current_path;
 	char	*old_path;
+	char	*target_path;
 
+	target_path = get_target_path(root);
+	if (!target_path)
+		return (1);
 	old_path = getcwd(NULL, 0);
-	ft_printf("%s\n", old_path);
-	if (chdir(new_path) == -1)
+	if (!old_path)
+		return (1);
+	if (change_directory(target_path))
 	{
-		perror("cd");
 		free(old_path);
 		return (1);
 	}
 	current_path = getcwd(NULL, 0);
-	ft_printf("%s\n", current_path);
-	if (new_path[0] == '-' && new_path[1] == '\0')
-		current_path = old_path;
 	change_env(root, old_path, current_path);
 	free(current_path);
 	free(old_path);

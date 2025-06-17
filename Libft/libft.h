@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 10:25:56 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/06/14 17:33:47 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/17 15:45:06 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,8 +77,6 @@ void	ft_putendl_fd(char *s, int fd);
 void	ft_putnbr_fd(int n, int fd);
 int		ft_putchar(char c);
 
-
-
 size_t	ft_strlen(const char *s);
 int		ft_counter(int nbr);
 
@@ -111,6 +109,8 @@ int		ft_puthexamai(int fd, unsigned int nbr);
 int		ft_putptr(int fd, void *ptr);
 int		ft_printf(const char *str, ...);
 int		printf_debug(const char *str, ...);
+int		fd_printf(int fd, const char *str, ...);
+
 
 // get_next_line functions
 char	*get_next_line(int fd);

@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 17:30:08 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/06/14 17:48:41 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/17 16:09:12 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,54 +125,23 @@ void print_pwd(t_env *env_list)
 		ft_printf("OLDPWD not found or has no value\n");
 }
 
-void	parser_builtin(t_shell *root, char *read_line)
+void	parser_builtin(t_shell *root)
 {
-	char *try = NULL;
+	//char *try = NULL;
 
-	if (ft_strcmp(read_line, "env") == 0)
+	if (ft_strcmp(root->cmd->argv[0], "env") == 0)
 		print_env_list(root->env, true);
-	if (ft_strncmp(read_line, "export", 6) == 0)
-	{
-		//a = ft_strcmp(read_line, "export");
-		//ft_printf("a is %d\n", ft_strcmp(read_line, "export"));
-		if (ft_strcmp(read_line, "export") == 0)
-		{
-			
-			//ft_printf("CIAO\n");
-			print_env_list(root->env, false);
-		}
-		else
-		{
-			try = ft_substr(read_line, 7, (ft_strlen(read_line) - 7));
-			ft_export(root, try);
-			ft_printf("to add is %s\n", try);
-			if (try != NULL)
-				free (try);
-		}
-	}
-	if (ft_strcmp(read_line, "pwd") == 0)
+	if (ft_strcmp(root->cmd->argv[0], "export") == 0)
+		ft_export(root);
+	if (ft_strcmp(root->cmd->argv[0], "pwd") == 0)
 		ft_pwd();
-	if (ft_strncmp(read_line, "unset", 5) == 0)
-	{
-		try = ft_substr(read_line, 6, (ft_strlen(read_line) - 6));
-		ft_unset(root, try);
-		if (try != NULL)
-				free (try);
-	}
-	if (ft_strncmp(read_line, "cd ", 3) == 0)
-	{
-		//ft_printf("%s", ft_substr(read_line, 3, (ft_strlen(read_line) - 3)));
-		try = ft_substr(read_line, 3, (ft_strlen(read_line) - 3));
-		ft_cd(try, root);
-		if (try != NULL)
-				free (try);
-	}
-	if (ft_strncmp(read_line, "exit", 4) == 0)
-	{
-		try = ft_substr(read_line, 5, (ft_strlen(read_line) - 5));
-		free(read_line);
-		ft_exit(try, root);
-	}
+	if (ft_strcmp(root->cmd->argv[0], "unset") == 0)
+		ft_unset(root);
+	if (ft_strcmp(root->cmd->argv[0], "cd") == 0)
+		ft_cd(root);
+	if (ft_strcmp(root->cmd->argv[0], "exit") == 0)
+		ft_exit(root);
+	// }
 		// if (i == 4)
 		// 	print_env_list(env);
 		//printf("%s\n", read_line);
@@ -180,62 +149,61 @@ void	parser_builtin(t_shell *root, char *read_line)
 
 int main(int argc, char **argv, char **envp)
 {
-    char    *line;
-    t_shell shell;
+	char    *line;
+	t_shell shell;
 	t_env	*env = (t_env *){0};
 	shell = (t_shell){0};
 	env = copy_env(envp);
 	shell.env = env;
-    
-    (void)argc;
-    (void)argv;
-    init_shell(&shell);
-    while (1)
-    {
-        line = readline("minishell> ");
-        if (!line)
-        {
-            printf("\nExiting...\n");
+	
+	(void)argc;
+	(void)argv;
+	init_shell(&shell);
+	while (1)
+	{
+		line = readline("minishell> ");
+		if (!line)
+		{
+			printf("\nExiting...\n");
 			free_env_list(env);
-            break;
-        }
-        // Ignora linee vuote
-        if (*line == '\0')
-        {
-            free(line);
-            continue;
-        }
-        add_history(line);
-        // Tokenizza l'input
-        if (!tokenize_input(&shell.token, line))
-        {
-            ft_printf("Error: Tokenization failed\n");
-            free(line);
-            continue;
-        }
-        // Debug opzionale
-        printf_debug("Generated tokens:\n");
-        debug_tokens(shell.token.head);
+			break;
+		}
+		// Ignora linee vuote
+		if (*line == '\0')
+		{
+			free(line);
+			continue;
+		}
+		add_history(line);
+		// Tokenizza l'input
+		if (!tokenize_input(&shell.token, line))
+		{
+			ft_printf("Error: Tokenization failed\n");
+			free(line);
+			continue;
+		}
+		// Debug opzionale
+		printf_debug("Generated tokens:\n");
+		debug_tokens(shell.token.head);
 
-        // Parsing
-        shell.cmd = parse_tokens(shell.token.head);
-        if (!shell.cmd)
-        {
-            cleanup_shell(&shell);
-            free(line);
-            continue;
-        }
-        // Debug opzionale
-        #ifdef DEBUG
-        printf("\nGenerated commands:\n");
-        debug_cmds(shell.cmd);
-        #endif
-        execute_command_list(&shell);
-        cleanup_shell(&shell);
-        free(line);
-    }
-    cleanup_shell(&shell);
-    return (0);
+		// Parsing
+		shell.cmd = parse_tokens(shell.token.head);
+		if (!shell.cmd)
+		{
+			cleanup_shell(&shell);
+			free(line);
+			continue;
+		}
+		// Debug opzionale
+		printf_debug("\nGenerated commands:\n");
+		debug_cmds(shell.cmd);
+		parser_builtin(&shell);
+		execute_command_list(&shell);
+		cleanup_shell(&shell);
+		free(line);
+	}
+	cleanup_shell(&shell);
+	return (0);
 }
 
 // int main(int argc, char **argv, char **envp)

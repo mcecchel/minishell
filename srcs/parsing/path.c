@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   path.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/10 12:21:50 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/06/10 12:38:33 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/06/17 14:29:02 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,14 @@
 
 char	*find_env_path(t_shell *shell)
 {
-	int	i;
+	t_env	*env;
 
-	i = 0;
-	while (shell->envp[i])
+	env = shell->env;
+	while (env)
 	{
-		if (ft_strncmp(shell->envp[i], "PATH=", 5) == 0)
-			return (shell->envp[i] + 5);
-		i++;
+		if (env->var && ft_strcmp(env->var, "PATH") == 0)
+			return (env->arg);
+		env = env->next;
 	}
 	return (NULL);
 }

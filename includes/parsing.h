@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 16:02:45 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/06/14 17:19:58 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/17 16:08:42 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,6 +153,7 @@ void			close_cmd_pipes(t_cmd *cmd);
 void			execute_cmd(t_shell *shell, t_cmd *cmd);
 void			execute_command_list(t_shell *shell);
 void			handle_exec_error(t_cmd *cmd, char **command, char *path);
+void			cleanup_shell(t_shell *shell);
 
 int				main(int argc, char **argv, char **envp);
 
