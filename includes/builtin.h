@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 16:54:11 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/06/17 16:09:08 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/17 16:47:01 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ long long int	ft_atoi_ll(const char *nptr);
 void			swap_env_content(t_env *a, t_env *b);
 t_env			*sort_env_list(t_env *m_env);
 
-
+//echo
+void	ft_echo(t_shell *shell);
 
 #endif

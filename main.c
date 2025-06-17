@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 17:30:08 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/06/17 16:09:12 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/17 16:48:11 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,10 +141,8 @@ void	parser_builtin(t_shell *root)
 		ft_cd(root);
 	if (ft_strcmp(root->cmd->argv[0], "exit") == 0)
 		ft_exit(root);
-	// }
-		// if (i == 4)
-		// 	print_env_list(env);
-		//printf("%s\n", read_line);
+	// if (ft_strcmp(root->cmd->argv[0], "echo") == 0)
+	// 	ft_echo(root);
 }
 
 int main(int argc, char **argv, char **envp)
