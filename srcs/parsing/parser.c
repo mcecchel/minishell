@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 14:59:11 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/06/14 17:17:15 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/18 15:16:21 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,11 +84,11 @@ int handle_redirection(t_cmd *cmd, t_token *token)
 		return (0);
 	}
 	if (token->type == RED_IN)
-		return (setup_input_redirection(cmd, token->next->value));
+		return (setup_input_redir(cmd, token->next->value));
 	else if (token->type == RED_OUT)
-		return (setup_output_redirection(cmd, token->next->value, 0));
+		return (setup_output_redir(cmd, token->next->value, 0));
 	else if (token->type == APPEND)
-		return (setup_output_redirection(cmd, token->next->value, 1));
+		return (setup_output_redir(cmd, token->next->value, 1));
 	else if (token->type == HEREDOC)
 		return (setup_heredoc(cmd, token->next->value));
 	else

@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 16:57:36 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/06/06 14:33:26 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/18 18:54:04 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,8 @@ t_env	*copy_env(char **env)
 		append_env_node(&head, &current, new_node);
 		i++;
 	}
-	add_oldpwd_node(&head, &current);
+	if (find_env(head, "OLDPWD") == NULL)
+		add_oldpwd_node(&head, &current);
 	if (head)
 		sort_env_list(head);
 	return (head);

@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 16:02:45 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/06/18 14:33:21 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/18 15:16:21 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,6 @@ typedef struct s_shell
     t_cmd	*cmd;
 	char	**envp;
 	int		exit_value;
-    int		n_cmds;
 	t_token	token;
 	bool	in_quote;
 }			t_shell;
@@ -116,9 +115,9 @@ void			add_cmd_to_list(t_cmd **cmd_list, t_cmd *new_cmd);
 void			add_argument_to_cmd(t_cmd *cmd, char *arg);
 
 // Redirection handling
-int setup_input_redirection(t_cmd *cmd, char *filename);
-int setup_output_redirection(t_cmd *cmd, char *filename, int append);
-int setup_heredoc(t_cmd *cmd, char *delimiter);
+int				setup_input_redir(t_cmd *cmd, char *filename);
+int				setup_output_redir(t_cmd *cmd, char *filename, int append);
+int				setup_heredoc(t_cmd *cmd, char *delimiter);
 
 // Command utilities
 void			debug_cmds(t_cmd *cmd_list);

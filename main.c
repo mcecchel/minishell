@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 17:30:08 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/06/17 16:48:11 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/18 18:48:50 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ void	debug_tokens(t_token *token)
 void	init_shell(t_shell *shell)
 {
 	shell->cmd = NULL;
-	shell->n_cmds = 0;
+	shell->exit_value = 0;
 	shell->in_quote = false;
 	shell->token.head = NULL;
 	shell->token.current = NULL;
@@ -125,24 +125,22 @@ void print_pwd(t_env *env_list)
 		ft_printf("OLDPWD not found or has no value\n");
 }
 
-void	parser_builtin(t_shell *root)
+int	parser_builtin(t_shell *root)
 {
-	//char *try = NULL;
-
 	if (ft_strcmp(root->cmd->argv[0], "env") == 0)
-		print_env_list(root->env, true);
+		return(print_env_list(root->env, true), 1);
 	if (ft_strcmp(root->cmd->argv[0], "export") == 0)
-		ft_export(root);
+		return(ft_export(root), 1);
 	if (ft_strcmp(root->cmd->argv[0], "pwd") == 0)
-		ft_pwd();
+		return(ft_pwd(), 1);
 	if (ft_strcmp(root->cmd->argv[0], "unset") == 0)
-		ft_unset(root);
+		return(ft_unset(root), 1);
 	if (ft_strcmp(root->cmd->argv[0], "cd") == 0)
-		ft_cd(root);
+		return(ft_cd(root), 1);
 	if (ft_strcmp(root->cmd->argv[0], "exit") == 0)
-		ft_exit(root);
-	// if (ft_strcmp(root->cmd->argv[0], "echo") == 0)
-	// 	ft_echo(root);
+		return(ft_exit(root), 1);
+	else
+		return (0);
 }
 
 int main(int argc, char **argv, char **envp)
@@ -163,7 +161,6 @@ int main(int argc, char **argv, char **envp)
 		if (!line)
 		{
 			printf("\nExiting...\n");
-			free_env_list(env);
 			break;
 		}
 		// Ignora linee vuote
@@ -195,8 +192,8 @@ int main(int argc, char **argv, char **envp)
 		// Debug opzionale
 		printf_debug("\nGenerated commands:\n");
 		debug_cmds(shell.cmd);
-		parser_builtin(&shell);
-		execute_command_list(&shell);
+		if(!parser_builtin(&shell))
+			execute_command_list(&shell);
 		cleanup_shell(&shell);
 		free(line);
 	}

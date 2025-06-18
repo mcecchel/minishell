@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 10:25:56 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/06/17 15:45:06 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/18 15:11:12 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 # endif
 
 # ifndef DEBUG
-#  define DEBUG 1
+#  define DEBUG 0
 # endif
 
 # include <stddef.h>

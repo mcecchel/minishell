@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 16:54:11 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/06/17 16:47:01 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/18 15:22:52 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 # include "libft.h"
 
-void			parser_builtin(t_shell *root);
+int			parser_builtin(t_shell *root);
 
 //cd
 t_env 			*find_env(t_env *env, char *to_change);
