@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 12:22:07 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/06/17 15:47:25 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/18 14:23:38 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,11 @@ int	ft_cd(t_shell *root)
 	char	*old_path;
 	char	*target_path;
 
+	if (root->cmd->argc > 2)
+	{
+		fd_printf(1, "bash: cd: too many arguments");
+		return (root->exit_value = 1, 1);
+	}
 	target_path = get_target_path(root);
 	if (!target_path)
 		return (1);

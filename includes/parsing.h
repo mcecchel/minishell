@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 16:02:45 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/06/17 16:08:42 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/18 14:33:21 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,8 +77,9 @@ typedef struct s_env
 typedef struct s_shell
 {
     t_env	*env;
-	char	**envp;
     t_cmd	*cmd;
+	char	**envp;
+	int		exit_value;
     int		n_cmds;
 	t_token	token;
 	bool	in_quote;
