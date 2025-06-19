@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:09:38 by marianna          #+#    #+#             */
-/*   Updated: 2025/06/18 19:19:00 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/19 15:30:16 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ void	execute_cmd(t_shell *shell, t_cmd *cmd)
 	path = get_cmd_path(shell, cmd, cmd->argv[0]);
 	if (!path)
 	{
+		cleanup_shell(shell);
 		free_env_list(shell->env);
 		close_cmd_fds(cmd);
 		exit(1);
@@ -37,6 +38,8 @@ void	execute_cmd(t_shell *shell, t_cmd *cmd)
 	{
 		if (dup2(cmd->infile, STDIN_FILENO) == -1)
 		{
+			cleanup_shell(shell);
+			free_env_list(shell->env);
 			perror("dup2 input");
 			free(path);
 			close_cmd_fds(cmd);
@@ -47,6 +50,8 @@ void	execute_cmd(t_shell *shell, t_cmd *cmd)
 	{
 		if (dup2(cmd->outfile, STDOUT_FILENO) == -1)
 		{
+			cleanup_shell(shell);
+			free_env_list(shell->env);
 			perror("dup2 output");
 			free(path);
 			close_cmd_fds(cmd);
@@ -58,6 +63,7 @@ void	execute_cmd(t_shell *shell, t_cmd *cmd)
 	free(path);
 	close_cmd_fds(cmd);
 	free_env_list(shell->env);
+	cleanup_shell(shell);
 	exit(1);
 }
 
