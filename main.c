@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 17:30:08 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/06/18 18:48:50 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/25 18:13:42 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,11 +145,13 @@ int	parser_builtin(t_shell *root)
 
 int main(int argc, char **argv, char **envp)
 {
-	char    *line;
+	char	*line;
 	t_shell shell;
 	t_env	*env = (t_env *){0};
 	shell = (t_shell){0};
 	env = copy_env(envp);
+	copy_system_envp_to_shell(envp, &shell);
+	print_envp_char(shell.envp);
 	shell.env = env;
 	
 	(void)argc;
@@ -161,6 +163,7 @@ int main(int argc, char **argv, char **envp)
 		if (!line)
 		{
 			printf("\nExiting...\n");
+			rl_clear_history();
 			break;
 		}
 		// Ignora linee vuote
@@ -192,6 +195,7 @@ int main(int argc, char **argv, char **envp)
 		// Debug opzionale
 		printf_debug("\nGenerated commands:\n");
 		debug_cmds(shell.cmd);
+		// print_envp_char(shell.envp);
 		if(!parser_builtin(&shell))
 			execute_command_list(&shell);
 		cleanup_shell(&shell);

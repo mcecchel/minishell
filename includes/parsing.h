@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 16:02:45 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/06/18 15:16:21 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/25 18:14:58 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,7 +154,13 @@ void			execute_cmd(t_shell *shell, t_cmd *cmd);
 void			execute_command_list(t_shell *shell);
 void			handle_exec_error(t_cmd *cmd, char **command, char *path);
 void			cleanup_shell(t_shell *shell);
+void			print_envp_char(char **envp);
+
 
 int				main(int argc, char **argv, char **envp);
+
+void			copy_system_envp_to_shell(char **system_envp, t_shell *shell);
+
+
 
 #endif

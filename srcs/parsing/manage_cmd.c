@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:09:38 by marianna          #+#    #+#             */
-/*   Updated: 2025/06/19 15:30:16 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/25 18:03:58 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ void	execute_cmd(t_shell *shell, t_cmd *cmd)
 	path = get_cmd_path(shell, cmd, cmd->argv[0]);
 	if (!path)
 	{
-		cleanup_shell(shell);
 		free_env_list(shell->env);
 		close_cmd_fds(cmd);
 		exit(1);
@@ -67,6 +66,26 @@ void	execute_cmd(t_shell *shell, t_cmd *cmd)
 	exit(1);
 }
 
+#include "minishell.h"
+
+void	print_envp_char(char **envp)
+{
+	int i = 0;
+	if (!envp)
+	{
+		printf("envp is NULL\n");
+		return;
+	}
+	while (envp[i])
+	{
+		printf("%s\n", envp[i]);
+		i++;
+	}
+}
+
+// Esempio di utilizzo:
+// print_envp(shell->envp);
+
 // Nuova funzione per eseguire la lista di comandi con pipe
 void	execute_command_list(t_shell *shell)
 {
@@ -76,7 +95,7 @@ void	execute_command_list(t_shell *shell)
 
 	current = shell->cmd;
 	prev_pipe = -1;
-
+	// print_envp(shell->envp);
 	while (current)
 	{
 		// Se non è l'ultimo comando, crea una pipe
@@ -85,14 +104,14 @@ void	execute_command_list(t_shell *shell)
 			if (pipe(fd_pipe) == -1)
 			{
 				perror("pipe");
-				return;
+				return ;
 			}
 		}
 		current->pid = fork();
 		if (current->pid == -1)
 		{
 			perror("fork");
-			return;
+			return ;
 		}
 		if (current->pid == 0)// Processo figlio
 		{

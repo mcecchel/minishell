@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 23:20:05 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/06/17 16:14:36 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/25 16:47:27 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,12 +30,14 @@ void	ft_exit(t_shell *root)
 			write(2, "exit\nbash: exit: ", 17);
 			write(2, root->cmd->argv[1], len);
 			write(2, ": numeric argument required\n", 28);
+			rl_clear_history();
 			exit(2);
 		}
 		exit_code = ft_atoi_ll(root->cmd->argv[1]);
 	}
 	write(1, "exit\n", 5);
 	cleanup_shell(root);
+	rl_clear_history();
 	exit(exit_code % 256);
 }
 
