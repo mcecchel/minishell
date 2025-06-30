@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 16:02:45 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/06/25 18:14:58 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/30 15:30:19 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,6 +160,7 @@ void			print_envp_char(char **envp);
 int				main(int argc, char **argv, char **envp);
 
 void			copy_system_envp_to_shell(char **system_envp, t_shell *shell);
+void			dup2_error_handler(t_shell *shell, char *path, int a);
 
 
 

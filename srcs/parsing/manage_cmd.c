@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:09:38 by marianna          #+#    #+#             */
-/*   Updated: 2025/06/25 18:03:58 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/30 16:26:27 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,52 +21,39 @@ void	handle_exec_error(t_cmd *cmd, char **command, char *path)
 	exit(1);
 }
 
+void	dup2_error_handler(t_shell *shell, char *path, int a)
+{	if (a == 0)
+		perror("dup2 error");
+	cleanup_shell(shell);
+	free_env_list(shell->env);
+	free_split(shell->envp);
+	free(path);
+	close_cmd_fds(shell->cmd);
+	exit(1);
+}
+
 void	execute_cmd(t_shell *shell, t_cmd *cmd)
 {
 	char	*path;
 
 	path = get_cmd_path(shell, cmd, cmd->argv[0]);
 	if (!path)
-	{
-		free_env_list(shell->env);
-		close_cmd_fds(cmd);
 		exit(1);
-	}
 	// Gestione delle redirezioni
 	if (cmd->infile != -1)
 	{
 		if (dup2(cmd->infile, STDIN_FILENO) == -1)
-		{
-			cleanup_shell(shell);
-			free_env_list(shell->env);
-			perror("dup2 input");
-			free(path);
-			close_cmd_fds(cmd);
-			exit(1);
-		}
+			dup2_error_handler(shell, path, 0);
 	}
 	if (cmd->outfile != -1)
 	{
 		if (dup2(cmd->outfile, STDOUT_FILENO) == -1)
-		{
-			cleanup_shell(shell);
-			free_env_list(shell->env);
-			perror("dup2 output");
-			free(path);
-			close_cmd_fds(cmd);
-			exit(1);
-		}
+			dup2_error_handler(shell, path, 0);
 	}
 	execve(path, cmd->argv, shell->envp);
 	perror("Execve failed");
-	free(path);
-	close_cmd_fds(cmd);
-	free_env_list(shell->env);
-	cleanup_shell(shell);
-	exit(1);
+	dup2_error_handler(shell, path, 1);
 }
-
-#include "minishell.h"
 
 void	print_envp_char(char **envp)
 {
@@ -74,7 +61,7 @@ void	print_envp_char(char **envp)
 	if (!envp)
 	{
 		printf("envp is NULL\n");
-		return;
+		return ;
 	}
 	while (envp[i])
 	{

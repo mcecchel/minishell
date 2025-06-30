@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 17:30:08 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/06/25 18:13:42 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/30 16:16:10 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,9 +151,9 @@ int main(int argc, char **argv, char **envp)
 	shell = (t_shell){0};
 	env = copy_env(envp);
 	copy_system_envp_to_shell(envp, &shell);
-	print_envp_char(shell.envp);
+	//print_envp_char(shell.envp);
 	shell.env = env;
-	
+
 	(void)argc;
 	(void)argv;
 	init_shell(&shell);
@@ -177,6 +177,7 @@ int main(int argc, char **argv, char **envp)
 		if (!tokenize_input(&shell.token, line))
 		{
 			ft_printf("Error: Tokenization failed\n");
+			cleanup_shell(&shell);
 			free(line);
 			continue;
 		}

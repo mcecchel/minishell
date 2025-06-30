@@ -6,14 +6,14 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 14:59:11 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/06/18 15:16:21 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/30 15:39:33 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 // Inizializzazione comando migliorata
-t_cmd   *init_new_cmd(void)
+t_cmd	*init_new_cmd(void)
 {
 	t_cmd   *new_cmd;
 
@@ -36,7 +36,7 @@ t_cmd   *init_new_cmd(void)
 	return (new_cmd);
 }
 
-void    add_cmd_to_list(t_cmd **cmd_list, t_cmd *new_cmd)
+void	add_cmd_to_list(t_cmd **cmd_list, t_cmd *new_cmd)
 {
 	t_cmd   *current;
 
@@ -51,7 +51,7 @@ void    add_cmd_to_list(t_cmd **cmd_list, t_cmd *new_cmd)
 	current->next = new_cmd;
 }
 
-void    add_argument_to_cmd(t_cmd *cmd, char *arg)
+void	add_argument_to_cmd(t_cmd *cmd, char *arg)
 {
 	if (!cmd || !arg || !cmd->argv)
 		return;
@@ -70,13 +70,13 @@ void    add_argument_to_cmd(t_cmd *cmd, char *arg)
 	cmd->argv[cmd->argc] = NULL; // SEMPRE termina l'array
 }
 
-int is_redirection_token(t_token_type type)
+int	is_redirection_token(t_token_type type)
 {
 	return (type == RED_IN || type == RED_OUT ||
 			type == APPEND || type == HEREDOC);
 }
 
-int handle_redirection(t_cmd *cmd, t_token *token)
+int	handle_redirection(t_cmd *cmd, t_token *token)
 {
 	if (!token->next)
 	{
@@ -95,7 +95,7 @@ int handle_redirection(t_cmd *cmd, t_token *token)
 		return (0);
 }
 
-void    free_cmd_list(t_cmd *cmd)
+void	free_cmd_list(t_cmd *cmd)
 {
 	t_cmd   *tmp;
 	

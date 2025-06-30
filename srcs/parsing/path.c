@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/10 12:21:50 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/06/25 16:55:25 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/30 15:35:26 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	is_valid_command(t_cmd *cmd, char *command)
 {
 	if (command == NULL || *command == '\0' || is_space(*command) == 1)
 	{
-		perror("Error: Invalid command");
+		perror("Error: Invalid command12");
 		if (cmd->infile != -1)
 			close(cmd->infile);
 		if (cmd->outfile != -1)
@@ -97,7 +97,9 @@ char	*get_cmd_path(t_shell *shell, t_cmd *cmd, char *command)
 	{
 		perror("Error: Command not found");
 		free_split(paths);
+		free_split(shell->envp);
 		close_cmd_fds(cmd);
+		free_env_list(shell->env);
 		return (NULL);
 	}
 	return (full_path);
