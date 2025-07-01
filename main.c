@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 17:30:08 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/01 13:21:28 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/01 16:26:11 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,17 @@
 #include <readline/history.h>
 #include <signal.h>
 
+// Variabile globale
+volatile pid_t current_child_pid = -1;
+
 void sigint_handler(int sig)
 {
 	(void)sig;
-	// Vai a capo e mostra di nuovo il prompt
+	if (current_child_pid > 0)
+	{
+		kill(current_child_pid, SIGKILL);  // Termina il processo figlio
+		current_child_pid = -1;
+	}
 	write(STDOUT_FILENO, "\n", 1);
 	rl_replace_line("", 0);          // Pulisce la riga corrente
 	rl_on_new_line();                // Si prepara a una nuova riga
@@ -28,27 +35,27 @@ void sigint_handler(int sig)
 
 void debug_cmds(t_cmd *cmd_list)
 {
-    int cmd_index = 0;
-    t_cmd *current = cmd_list;
+	int cmd_index = 0;
+	t_cmd *current = cmd_list;
 
 	if (!DEBUG)
 		return ;
-    while (current)
-    {
-        printf_debug("Command %d:\n", cmd_index++);
-        printf_debug("  Path: %s\n", current->cmd_path);
-        printf_debug("  Arguments: ");
-        int i = 0;
-        while (current->argv && current->argv[i])
-        {
-            printf_debug("\"%s\" ", current->argv[i]);
-            i++;
-        }
-        printf_debug("\n");
-        printf_debug("  Infile: %d\n", current->infile);
-        printf_debug("  Outfile: %d\n", current->outfile);
-        current = current->next;
-    }
+	while (current)
+	{
+		printf_debug("Command %d:\n", cmd_index++);
+		printf_debug("  Path: %s\n", current->cmd_path);
+		printf_debug("  Arguments: ");
+		int i = 0;
+		while (current->argv && current->argv[i])
+		{
+			printf_debug("\"%s\" ", current->argv[i]);
+			i++;
+		}
+		printf_debug("\n");
+		printf_debug("  Infile: %d\n", current->infile);
+		printf_debug("  Outfile: %d\n", current->outfile);
+		current = current->next;
+	}
 }
 
 const char	*obtain_token_type(t_token *token)
@@ -127,46 +134,38 @@ void print_pwd(t_env *env_list)
 
 int	parser_builtin(t_shell *root)
 {
+	root->exit_value = 0;
 	if (ft_strcmp(root->cmd->argv[0], "env") == 0)
-		return(print_env_list(root->env, true), 1);
+		return (print_env_list(root->env, ENV), 1);
 	if (ft_strcmp(root->cmd->argv[0], "export") == 0)
-		return(ft_export(root), 1);
+		return (ft_export(root), 1);
 	if (ft_strcmp(root->cmd->argv[0], "pwd") == 0)
-		return(ft_pwd(), 1);
+		return (root->exit_value = ft_pwd(), 1);
 	if (ft_strcmp(root->cmd->argv[0], "unset") == 0)
-		return(ft_unset(root), 1);
+		return (root->exit_value = ft_unset(root), 1);
 	if (ft_strcmp(root->cmd->argv[0], "cd") == 0)
-		return(ft_cd(root), 1);
+		return (root->exit_value = ft_cd(root), 1);
 	if (ft_strcmp(root->cmd->argv[0], "exit") == 0)
-		return(ft_exit(root), 1);
+		return (ft_exit(root), 1);
 	if (ft_strcmp(root->cmd->argv[0], "echo") == 0)
-		return(ft_echo(root), 1);
-	else
-		return (0);
+		return (root->exit_value = ft_echo(root), 1);
+	if (ft_strchr(root->cmd->argv[0], '='))
+		return (add_env(root, root->cmd->argv[0], VAR), 1);
+	return (0);
 }
-
-int main(int argc, char **argv, char **envp)
+void	reading(t_shell shell)
 {
-	char	*line;
-	t_shell shell;
-	t_env	*env = (t_env *){0};
-	shell = (t_shell){0};
-	env = copy_env(envp);
-	copy_system_envp_to_shell(envp, &shell);
-	//print_envp_char(shell.envp);
-	shell.env = env;
 
-	(void)argc;
-	(void)argv;
-	init_shell(&shell);
+	char	*line;
 	while (1)
 	{
 		line = readline("minishell> ");
 		if (!line)
 		{
-			printf("\nExiting...\n");
-			rl_clear_history();
-			break;
+			write (1, "exit\n", 5);
+			clean_exit(&shell);
+			cleanup_shell(&shell);
+			exit (1);
 		}
 		// Ignora linee vuote
 		if (*line == '\0')
@@ -176,7 +175,7 @@ int main(int argc, char **argv, char **envp)
 		}
 		add_history(line);
 		// Tokenizza l'input
-		if (!tokenize_input(&shell.token, line))
+		if (!tokenize_input(&shell.token, line, &shell))
 		{
 			ft_printf("Error: Tokenization failed\n");
 			cleanup_shell(&shell);
@@ -204,6 +203,24 @@ int main(int argc, char **argv, char **envp)
 		cleanup_shell(&shell);
 		free(line);
 	}
+}
+
+int main(int argc, char **argv, char **envp)
+{
+	t_shell shell;
+	t_env	*env = (t_env *){0};
+	shell = (t_shell){0};
+	env = copy_env(envp);
+	copy_system_envp_to_shell(envp, &shell);
+	//print_envp_char(shell.envp);
+	shell.env = env;
+
+	(void)argc;
+	(void)argv;
+	signal(SIGINT, sigint_handler);
+	signal(SIGQUIT, SIG_IGN); 
+	init_shell(&shell);
+	reading(shell);
 	cleanup_shell(&shell);
 	return (0);
 }
@@ -222,8 +239,6 @@ int main(int argc, char **argv, char **envp)
 // 	rool.env = env;
 // 	(void)argc;
 // 	(void)argv;
-// 	signal(SIGINT, sigint_handler);
-// 	signal(SIGQUIT, SIG_IGN);
 // 	while(1)
 // 	{
 // 		read_line = readline("");

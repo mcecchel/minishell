@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 16:02:45 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/06/30 17:44:00 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/01 16:07:32 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,13 @@ typedef enum e_token_type
 	DQUOTE,
 	UNKNOWN,
 }			t_token_type;
+
+typedef enum e_var
+{
+	EXPORT,
+	ENV,
+	VAR,
+}			t_var;
 
 typedef struct s_token
 {
@@ -88,9 +95,9 @@ typedef struct s_shell
 /*                          LEXER FUNCTIONS                                   */
 /* ************************************************************************** */
 // Tokenization functions
-int				tokenize_input(t_token *token, char *line);
-char			*extract_word(char *line, int *index);
-char			*extract_quote(char *line, int *index, int *is_quoted);
+int				tokenize_input(t_token *token, char *line, t_shell *shell);
+char			*extract_word(char *line, int *index, t_shell *shell);
+char			*extract_quote(char *line, int *index, int *is_quoted, t_shell *shell);
 char			*extract_operator(char *line, int *index);
 
 // Token classification
@@ -113,6 +120,8 @@ t_cmd			*init_new_cmd(void);
 void			add_cmd(t_cmd *cmd, t_cmd *new_cmd);
 void			add_cmd_to_list(t_cmd **cmd_list, t_cmd *new_cmd);
 void			add_argument_to_cmd(t_cmd *cmd, char *arg);
+char			*get_cmd_path(t_shell *shell, t_cmd *cmd, char *command);
+
 
 // Redirection handling
 int				setup_input_redir(t_cmd *cmd, char *filename);
@@ -129,22 +138,26 @@ void			free_cmd_list(t_cmd *cmd);
 // String utilities
 int				is_space(char c);
 int				find_spaces(char c);
+void			free_split(char **split);
+void			close_cmd_fds(t_cmd *cmd);
+
+
 
 // Environment handling
 char			*find_env_path(t_shell *shell);
 char			**get_paths(t_shell *shell);
 
-// Command path resolution
-char			*search_command(char **paths, char *cmd);
-char			*get_cmd_path(t_shell *shell, t_cmd *cmd, char *command);
-int				is_valid_command(t_cmd *cmd, char *command);
-
-// Memory management
-void			free_split(char **split);
-
-// File descriptor management
-void			close_cmd_fds(t_cmd *cmd);
-void			close_cmd_pipes(t_cmd *cmd);
+/* ************************************************************************** */
+/*                       VARIABLE EXPANSION                                  */
+/* ************************************************************************** */
+// Variable expansion functions
+char			*expand_variables(char *str, t_shell *shell, int in_quotes);
+char			*get_env_value(t_shell *shell, char *var_name);
+char			*extract_var_name(char *str, int *index);
+int				should_expand_in_quotes(int quote_type);
+char			*handle_special_vars(t_shell *shell, char *var_name);
+char			*process_variable(char *str, int *i, t_shell *shell, char *result);
+char			*process_literal_text(char *str, int *i, char *result);
 
 /* ************************************************************************** */
 /*                         EXECUTION FUNCTIONS                               */

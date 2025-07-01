@@ -14,6 +14,7 @@ SRC		= 	main.c \
 			srcs/parsing/redirection.c \
 			srcs/parsing/utils.c \
 			srcs/parsing/parser.c \
+			srcs/parsing/variable_expansion.c \
 			srcs/builtin/copy_free_env.c \
 			srcs/builtin/ft_unset.c \
 			srcs/builtin/sort_env.c \

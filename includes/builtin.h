@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 16:54:11 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/06/18 15:22:52 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/01 16:18:23 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,24 +27,27 @@ t_env			*create_env_node(char *env_str);
 t_env			*copy_env(char **env);
 void			append_env_node(t_env **head, t_env **current, t_env *new_node);
 void			free_env_list(t_env *env);
-void			add_oldpwd_node(t_env **head, t_env **current);
+void			add_node(t_env **head, t_env **current, char str, int ex_env);
+
 
 //ft_export
-void			add_env(t_shell *root, char *arg, bool is_env);
+void			add_env(t_shell *root, char *arg, int type);
 void			ft_export(t_shell *root);
 
 //exit
 void			ft_exit(t_shell *root);
+void			clean_exit(t_shell *root);
+
 
 //pwd
 int				ft_pwd();
 
 //unset
-void			ft_unset(t_shell *shell);
+int			ft_unset(t_shell *shell);
 
 //utils builtin
 char			*ft_strjoin_free_s2(char *s1, char *s2);
-void			print_env_list(t_env *root, bool is_env);
+void			print_env_list(t_env *root, int what);
 long long int	ft_atoi_ll(const char *nptr);
 
 //sort_env
@@ -52,6 +55,6 @@ void			swap_env_content(t_env *a, t_env *b);
 t_env			*sort_env_list(t_env *m_env);
 
 //echo
-void	ft_echo(t_shell *shell);
+int	ft_echo(t_shell *shell);
 
 #endif

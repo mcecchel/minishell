@@ -6,18 +6,18 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 14:31:15 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/06/17 15:16:12 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/01 16:18:23 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	ft_unset(t_shell *shell)
+int	ft_unset(t_shell *shell)
 {
 	t_env	*current;
 
 	if (!shell || !shell->cmd->argv)
-		return ;
+		return (1);
 	current = shell->env;
 	while (current)
 	{
@@ -33,10 +33,11 @@ void	ft_unset(t_shell *shell)
 			if (current->arg)
 				free(current->arg);
 			free(current);
-			return ;
+			return (0);
 		}
 		current = current->next;
 	}
+	return (0);
 }
 
 // int main(int argc, char **argv, char **envp)

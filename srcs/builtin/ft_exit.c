@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 23:20:05 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/01 13:29:24 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/01 15:47:09 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,12 @@
 
 void	clean_exit(t_shell *root)
 {
-	close_cmd_fds(root->cmd);
-	cleanup_shell(root);
-	free_env_list(root->env);
-	free_split(root->envp);
+	if (root->cmd)
+		close_cmd_fds(root->cmd);
+	if (root->env)
+		free_env_list(root->env);
+	if (root->envp)
+		free_split(root->envp);
 	rl_clear_history();
 }
 
@@ -46,6 +48,7 @@ void	ft_exit(t_shell *root)
 	}
 	write(1, "exit\n", 5);
 	clean_exit(root);
+	cleanup_shell(root);
 	exit(exit_code % 256);
 }
 

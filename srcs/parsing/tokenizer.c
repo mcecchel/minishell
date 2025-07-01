@@ -6,16 +6,17 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 14:58:50 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/01 13:17:56 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/01 15:59:23 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 // Estrae una parola fino a uno spazio / operatore
-char	*extract_word(char *line, int *index)
+char	*extract_word(char *line, int *index, t_shell *shell)
 {
 	char	*word;
+	char	*expanded;
 	int		start;
 	int		end;
 
@@ -33,15 +34,20 @@ char	*extract_word(char *line, int *index)
 		return (NULL);
 	}
 	*index = end;
-	return (word);
+	// Espandi le variabili (quote_type = 0 significa nessuna virgoletta)
+	expanded = expand_variables(word, shell, 0);
+	free(word);
+	return (expanded);
 }
 
-char *extract_quote(char *line, int *index, int *is_quoted)
+char *extract_quote(char *line, int *index, int *is_quoted, t_shell *shell)
 {
 	char	quote_char = line[*index];
 	int		start = *index + 1;
 	int		end = start;
 	char	*res;
+	char	*expanded;
+	int		quote_type;
 	
 	*is_quoted = 1;
 	// Trova la quote di chiusura
@@ -57,7 +63,17 @@ char *extract_quote(char *line, int *index, int *is_quoted)
 	if (!res)
 		return (NULL);
 	*index = end + 1;
-	return (res);
+	
+	// Determina il tipo di virgoletta per l'espansione
+	if (quote_char == '\'')
+		quote_type = 1; // Single quotes - non espandere
+	else
+		quote_type = 2; // Double quotes - espandere
+	
+	// Espandi le variabili solo se necessario
+	expanded = expand_variables(res, shell, quote_type);
+	free(res);
+	return (expanded);
 }
 
 char *extract_operator(char *line, int *index)
@@ -133,7 +149,7 @@ void	add_token_to_list(t_token *token_list, t_token *new_token)
 }
 
 // Tokenizer principale - VERSIONE CORRETTA
-int	tokenize_input(t_token *token_list, char *line)
+int	tokenize_input(t_token *token_list, char *line, t_shell *shell)
 {
 	int	i;
 	int	is_first_token;
@@ -156,7 +172,7 @@ int	tokenize_input(t_token *token_list, char *line)
 		// Gestione quote
 		if (line[i] == '\'' || line[i] == '\"')
 		{
-			content = extract_quote(line, &i, &is_quoted);
+			content = extract_quote(line, &i, &is_quoted, shell);
 			if (!content) // Errore nelle quote
 			{
 				free_tokens(token_list->head);
@@ -178,7 +194,7 @@ int	tokenize_input(t_token *token_list, char *line)
 		// Gestione parole normali
 		else
 		{
-			content = extract_word(line, &i);
+			content = extract_word(line, &i, shell);
 			if (!content)
 			{
 				free_tokens(token_list->head);

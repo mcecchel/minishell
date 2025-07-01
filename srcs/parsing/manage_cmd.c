@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:09:38 by marianna          #+#    #+#             */
-/*   Updated: 2025/07/01 13:47:24 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/01 16:18:23 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	execute_cmd(t_shell *shell, t_cmd *cmd)
 
 	path = get_cmd_path(shell, cmd, cmd->argv[0]);
 	if (!path)
-		exit(1);
+		exit(127); // Command not found
 	// Gestione delle redirezioni
 	if (cmd->infile != -1)
 	{
@@ -44,9 +44,16 @@ void	execute_cmd(t_shell *shell, t_cmd *cmd)
 		if (dup2(cmd->outfile, STDOUT_FILENO) == -1)
 			fork_error_handler(shell, path, 0);
 	}
-	execve(path, cmd->argv, shell->envp);
-	perror("Execve failed");
-	fork_error_handler(shell, path, 1);
+	if (execve(path, cmd->argv, shell->envp) == -1)
+	{
+		perror("Execve failed");
+		if (access(path, F_OK) != 0)
+			exit(127); // Command not found
+		else if (access(path, X_OK) != 0)
+			exit(126); // Permission denied
+		else
+			exit(1);   // Other execution error
+	}
 }
 
 void	print_envp_char(char **envp)
@@ -134,7 +141,15 @@ void	execute_command_list(t_shell *shell)
 	while (current)
 	{
 		if (current->pid > 0)
-			waitpid(current->pid, NULL, 0);
+		{
+			int status;
+			waitpid(current->pid, &status, 0);
+			// Aggiorna l'exit value con l'ultimo comando
+			if (WIFEXITED(status))
+				shell->exit_value = WEXITSTATUS(status);
+			else
+				shell->exit_value = 1;
+		}
 		current = current->next;
 	}
 	// Chiudi l'ultima pipe se esiste

@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 16:59:36 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/06/14 17:17:15 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/01 15:27:13 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,9 +39,9 @@ char	*ft_strjoin_free_s2(char *s1, char *s2)
 	return ((char *)l);
 }
 
-void	print_env_list(t_env *env, bool is_env)
+void	print_env_list(t_env *env, int what)
 {
-	while (env && is_env)
+	while (env && what == ENV)
 	{
 		if (env->ex_env == 1)
 		{
@@ -51,14 +51,17 @@ void	print_env_list(t_env *env, bool is_env)
 		}
 		env = env->next;
 	}
-	while (env && !is_env)
+	while (env && what == EXPORT)
 	{
-		ft_printf("declare -x ");
-		ft_printf("%s", env->var);
-		if (env->arg)
-			ft_printf("=%s\n", env->arg);
-		if (!env->arg)
-			ft_printf("\n");
+		if (env->ex_env != VAR)
+		{
+			ft_printf("declare -x ");
+			ft_printf("%s", env->var);
+			if (env->arg)
+				ft_printf("=%s\n", env->arg);
+			if (!env->arg)
+				ft_printf("\n");
+			}
 		env = env->next;
 	}
 }

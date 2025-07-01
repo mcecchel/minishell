@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 14:59:11 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/06/30 15:39:33 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/01 15:20:36 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 // Inizializzazione comando migliorata
 t_cmd	*init_new_cmd(void)
 {
-	t_cmd   *new_cmd;
+	t_cmd	*new_cmd;
 
 	new_cmd = ft_calloc(1, sizeof(t_cmd));
 	if (!new_cmd)
@@ -38,7 +38,7 @@ t_cmd	*init_new_cmd(void)
 
 void	add_cmd_to_list(t_cmd **cmd_list, t_cmd *new_cmd)
 {
-	t_cmd   *current;
+	t_cmd	*current;
 
 	if (!*cmd_list)
 	{
@@ -54,11 +54,11 @@ void	add_cmd_to_list(t_cmd **cmd_list, t_cmd *new_cmd)
 void	add_argument_to_cmd(t_cmd *cmd, char *arg)
 {
 	if (!cmd || !arg || !cmd->argv)
-		return;
+		return  ;
 	if (cmd->argc >= 99) // Limite di sicurezza
 	{
 		ft_printf("Error: Too many arguments\n");
-		return;
+		return ;
 	}
 	cmd->argv[cmd->argc] = ft_strdup(arg);
 	if (!cmd->argv[cmd->argc])
@@ -97,7 +97,7 @@ int	handle_redirection(t_cmd *cmd, t_token *token)
 
 void	free_cmd_list(t_cmd *cmd)
 {
-	t_cmd   *tmp;
+	t_cmd	*tmp;
 	
 	while (cmd)
 	{
@@ -125,9 +125,9 @@ void	free_cmd_list(t_cmd *cmd)
 
 t_cmd *parse_tokens(t_token *token_list)
 {
-	t_cmd   *cmd_list = NULL;
-	t_cmd   *current_cmd = NULL;
-	t_token *token = token_list;
+	t_cmd	*cmd_list = NULL;
+	t_cmd	*current_cmd = NULL;
+	t_token	*token = token_list;
 
 	while (token)
 	{
