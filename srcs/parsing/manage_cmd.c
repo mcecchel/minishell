@@ -6,28 +6,22 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:09:38 by marianna          #+#    #+#             */
-/*   Updated: 2025/06/30 16:26:27 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/06/30 17:44:39 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 // Funzione per gestire gli errori di esecuzione
-void	handle_exec_error(t_cmd *cmd, char **command, char *path)
-{
-	free_split(command);
-	free(path);
-	close_cmd_fds(cmd);
-	exit(1);
-}
 
-void	dup2_error_handler(t_shell *shell, char *path, int a)
+void	fork_error_handler(t_shell *shell, char *path, int a)
 {	if (a == 0)
 		perror("dup2 error");
 	cleanup_shell(shell);
 	free_env_list(shell->env);
 	free_split(shell->envp);
-	free(path);
+	if (path)
+		free(path);
 	close_cmd_fds(shell->cmd);
 	exit(1);
 }
@@ -43,16 +37,16 @@ void	execute_cmd(t_shell *shell, t_cmd *cmd)
 	if (cmd->infile != -1)
 	{
 		if (dup2(cmd->infile, STDIN_FILENO) == -1)
-			dup2_error_handler(shell, path, 0);
+			fork_error_handler(shell, path, 0);
 	}
 	if (cmd->outfile != -1)
 	{
 		if (dup2(cmd->outfile, STDOUT_FILENO) == -1)
-			dup2_error_handler(shell, path, 0);
+			fork_error_handler(shell, path, 0);
 	}
 	execve(path, cmd->argv, shell->envp);
 	perror("Execve failed");
-	dup2_error_handler(shell, path, 1);
+	fork_error_handler(shell, path, 1);
 }
 
 void	print_envp_char(char **envp)

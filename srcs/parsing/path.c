@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/10 12:21:50 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/06/30 15:35:26 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/01 13:17:05 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,10 +95,11 @@ char	*get_cmd_path(t_shell *shell, t_cmd *cmd, char *command)
 	full_path = search_command(paths, command);
 	if (!full_path)
 	{
-		perror("Error: Command not found");
+		perror("Errors: Command not found");
 		free_split(paths);
 		free_split(shell->envp);
 		close_cmd_fds(cmd);
+		cleanup_shell(shell);
 		free_env_list(shell->env);
 		return (NULL);
 	}
