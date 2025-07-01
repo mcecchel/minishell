@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 17:30:08 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/01 13:03:57 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/01 13:21:28 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,6 +139,8 @@ int	parser_builtin(t_shell *root)
 		return(ft_cd(root), 1);
 	if (ft_strcmp(root->cmd->argv[0], "exit") == 0)
 		return(ft_exit(root), 1);
+	if (ft_strcmp(root->cmd->argv[0], "echo") == 0)
+		return(ft_echo(root), 1);
 	else
 		return (0);
 }

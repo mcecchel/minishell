@@ -6,11 +6,20 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 23:20:05 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/06/25 16:47:27 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/01 13:29:24 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+void	clean_exit(t_shell *root)
+{
+	close_cmd_fds(root->cmd);
+	cleanup_shell(root);
+	free_env_list(root->env);
+	free_split(root->envp);
+	rl_clear_history();
+}
 
 void	ft_exit(t_shell *root)
 {
@@ -30,14 +39,13 @@ void	ft_exit(t_shell *root)
 			write(2, "exit\nbash: exit: ", 17);
 			write(2, root->cmd->argv[1], len);
 			write(2, ": numeric argument required\n", 28);
-			rl_clear_history();
+			clean_exit(root);
 			exit(2);
 		}
 		exit_code = ft_atoi_ll(root->cmd->argv[1]);
 	}
 	write(1, "exit\n", 5);
-	cleanup_shell(root);
-	rl_clear_history();
+	clean_exit(root);
 	exit(exit_code % 256);
 }
 
