@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 17:30:08 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/01 16:26:11 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/02 18:46:15 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include <readline/history.h>
 #include <signal.h>
 
-// Variabile globale
+/* // Variabile globale
 volatile pid_t current_child_pid = -1;
 
 void sigint_handler(int sig)
@@ -31,7 +31,7 @@ void sigint_handler(int sig)
 	rl_replace_line("", 0);          // Pulisce la riga corrente
 	rl_on_new_line();                // Si prepara a una nuova riga
 	rl_redisplay();                  // Mostra il prompt di nuovo
-}
+} */
 
 void debug_cmds(t_cmd *cmd_list)
 {
