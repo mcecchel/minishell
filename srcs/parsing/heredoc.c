@@ -6,7 +6,7 @@
 /*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 16:58:47 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/02 20:01:12 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/07/02 20:30:34 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,13 +35,16 @@ void	restore_signals(void)
 	signal(SIGQUIT, SIG_DFL); // Ripristina comportamento predefinito di SIGQUIT
 }
 
-char	*expand_heredoc(t_shell *shell, char *line)
+char	*expand_heredoc(t_shell *shell, char *line, int expand)
 {
 	char	*expanded_line;
 	char	*res;
 	if (!line)
 		return (NULL);
-	expanded_line = expand_variables(line, shell->env, shell->in_quote);
+	if (expand)
+		expanded_line = expand_variables(line, shell, 0);
+	else
+		expanded_line = ft_strdup(line);
 	if (!expanded_line)
 		return (NULL);
 	res = ft_strjoin(expanded_line, "\n");
@@ -61,6 +64,7 @@ int	is_delimiter_quoted(char *delimiter)
 		return (0);
 	if (delimiter[0] == '\'' || delimiter[0] == '\"')
 		return (1);
+	return (0);
 }
 
 // Rimuove le quote dal delimitatore (se presenti)
@@ -124,7 +128,8 @@ int	handle_heredoc_input(t_shell *shell, char *delimiter)
 	char	*tmp_file;
 	int		fd;
 	char	*expanded_line;
-	
+	int		ret_fd;
+
 	clean_delimiter = remove_quotes_from_delimiter(delimiter);
 	if (!clean_delimiter)
 	{
@@ -163,18 +168,65 @@ int	handle_heredoc_input(t_shell *shell, char *delimiter)
 			free(line);
 			break;// Esce dal ciclo se il delim e' stato inserito
 		}
-		expanded_line = expand_heredoc(shell, line);
+		expanded_line = expand_heredoc(shell, line, 1);
 		if (expanded_line)
 		{
 			write(fd, expanded_line, ft_strlen(expanded_line));
 			free(expanded_line);
 		}
 		free(line);
-		free(line);
 	}
 	close(fd);
+	ret_fd = open(tmp_file, O_RDONLY);
 	unlink(tmp_file);
 	free(clean_delimiter);
 	free(tmp_file);
-	return (0);
+	return (ret_fd);
+}
+
+int	setup_heredoc(t_shell *shell, t_cmd *cmd, char *delimiter)
+{
+	int	fd;
+	if (!shell || !cmd || !delimiter)
+		return (0);
+	// Inizializza infile se non già fatto
+	if (cmd->infile == 0)
+		cmd->infile = -1;
+	// Gestione input heredoc
+	fd = handle_heredoc_input(shell, delimiter);
+	if (fd < 0)
+	{
+		perror("Error: Failed to handle heredoc input");
+		return (0);
+	}
+	// Chiudo il file descriptor precedente (se esiste)
+	if (cmd->infile != -1)
+		close(cmd->infile);
+	cmd->infile = fd; // Imposto il file descriptor dell'heredoc
+	return (1);
+}
+
+// Processo tutti gli heredoc prima dell'esecuzione
+int	process_heredocs(t_shell *shell)
+{
+	t_cmd	*current_cmd;
+	int		ret;
+
+	if (!shell || !shell->cmd)
+		return (0);
+	current_cmd = shell->cmd;
+	while (current_cmd)
+	{
+		if (current_cmd->infile == -1) // Se infile è -1, non è stato ancora impostato
+		{
+			ret = setup_heredoc(shell, current_cmd, current_cmd->argv[0]);
+			if (!ret)
+			{
+				perror("Error: Failed to setup heredoc");
+				return (0);
+			}
+		}
+		current_cmd = current_cmd->next;
+	}
+	return (1);
 }

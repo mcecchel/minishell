@@ -6,7 +6,7 @@
 /*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 17:30:08 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/02 18:46:15 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/07/02 20:29:54 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include <readline/history.h>
 #include <signal.h>
 
-/* // Variabile globale
+// Variabile globale
 volatile pid_t current_child_pid = -1;
 
 void sigint_handler(int sig)
@@ -31,7 +31,7 @@ void sigint_handler(int sig)
 	rl_replace_line("", 0);          // Pulisce la riga corrente
 	rl_on_new_line();                // Si prepara a una nuova riga
 	rl_redisplay();                  // Mostra il prompt di nuovo
-} */
+}
 
 void debug_cmds(t_cmd *cmd_list)
 {
@@ -201,6 +201,57 @@ void	reading(t_shell shell)
 		if(!parser_builtin(&shell))
 			execute_command_list(&shell);
 		cleanup_shell(&shell);
+		free(line);
+	}
+}
+
+void process_shell_input(t_shell *shell)
+{
+	char *line;
+	while (1)
+	{
+		line = readline("minishell> ");
+		if (!line)
+		{
+			write(1, "exit\n", 5);
+			clean_exit(shell);
+			cleanup_shell(shell);
+			exit(1);
+		}
+		if (*line == '\0')
+		{
+			free(line);
+			continue;
+		}
+		add_history(line);
+		if (!tokenize_input(&shell->token, line, shell))
+		{
+			ft_printf("Error: Tokenization failed\n");
+			cleanup_shell(shell);
+			free(line);
+			continue;
+		}
+		printf_debug("Generated tokens:\n");
+		debug_tokens(shell->token.head);
+
+		shell->cmd = parse_tokens(shell->token.head);
+		if (!shell->cmd)
+		{
+			cleanup_shell(shell);
+			free(line);
+			continue;
+		}
+		printf_debug("\nGenerated commands:\n");
+		debug_cmds(shell->cmd);
+		if (!process_heredocs(shell))
+		{
+			cleanup_shell(shell);
+			free(line);
+			continue;
+		}
+		if (!parser_builtin(shell))
+			execute_command_list(shell);
+		cleanup_shell(shell);
 		free(line);
 	}
 }

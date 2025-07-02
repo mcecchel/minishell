@@ -6,7 +6,7 @@
 /*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 16:02:45 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/02 18:37:56 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/07/02 20:31:05 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,9 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <fcntl.h>
-# include <sys/wait.h>
 # include <signal.h>
+# include <sys/stat.h>
+# include <sys/wait.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 
@@ -71,6 +72,7 @@ typedef struct s_cmd
 	int				outfile;
 	int				pid;
 	struct s_cmd	*next;
+	char			*heredoc_delimiter;
 }					t_cmd;
 
 typedef struct s_env
@@ -128,7 +130,20 @@ char			*get_cmd_path(t_shell *shell, t_cmd *cmd, char *command);
 // Redirection handling
 int				setup_input_redir(t_cmd *cmd, char *filename);
 int				setup_output_redir(t_cmd *cmd, char *filename, int append);
-int				setup_heredoc(t_cmd *cmd, char *delimiter);
+int				setup_heredoc(t_shell *shell, t_cmd *cmd, char *delimiter);
+
+// Heredoc handling
+void			handle_heredoc_signal(int sig);
+void			setup_heredoc_signals(void);
+void			restore_signals(void);
+char			*expand_heredoc(t_shell *shell, char *line, int expand);
+int				is_delimiter_quoted(char *delimiter);
+char			*remove_quotes_from_delimiter(char *delimiter);
+char			*create_tmp_heredoc_file(void);
+int				handle_heredoc_input(t_shell *shell, char *delimiter);
+int				setup_heredoc(t_shell *shell, t_cmd *cmd, char *delimiter);
+int				process_heredocs(t_shell *shell);
+
 
 // Command utilities
 void			debug_cmds(t_cmd *cmd_list);

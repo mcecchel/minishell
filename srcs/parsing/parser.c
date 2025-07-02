@@ -3,16 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 14:59:11 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/01 15:20:36 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/02 20:16:49 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// Inizializzazione comando migliorata
 t_cmd	*init_new_cmd(void)
 {
 	t_cmd	*new_cmd;
@@ -28,11 +27,12 @@ t_cmd	*init_new_cmd(void)
 	}
 	new_cmd->cmd_path = NULL;
 	new_cmd->argc = 0;
-	new_cmd->argv[0] = NULL; // IMPORTANTE: Inizializza
+	new_cmd->argv[0] = NULL;
 	new_cmd->infile = -1;
 	new_cmd->outfile = -1;
 	new_cmd->pid = -1;
 	new_cmd->next = NULL;
+	new_cmd->heredoc_delimiter = NULL;
 	return (new_cmd);
 }
 
@@ -67,7 +67,7 @@ void	add_argument_to_cmd(t_cmd *cmd, char *arg)
 		return;
 	}
 	cmd->argc++;
-	cmd->argv[cmd->argc] = NULL; // SEMPRE termina l'array
+	cmd->argv[cmd->argc] = NULL; // termina SEMPRE l'array
 }
 
 int	is_redirection_token(t_token_type type)
@@ -90,7 +90,15 @@ int	handle_redirection(t_cmd *cmd, t_token *token)
 	else if (token->type == APPEND)
 		return (setup_output_redir(cmd, token->next->value, 1));
 	else if (token->type == HEREDOC)
-		return (setup_heredoc(cmd, token->next->value));
+	{
+		if (cmd->heredoc_delimiter)
+		{
+			free(cmd->heredoc_delimiter);
+			cmd->heredoc_delimiter = NULL;
+		}
+		cmd->heredoc_delimiter = ft_strdup(token->next->value);
+		return (cmd->heredoc_delimiter != NULL);
+	}
 	else
 		return (0);
 }
@@ -105,6 +113,8 @@ void	free_cmd_list(t_cmd *cmd)
 		cmd = cmd->next;
 		if (tmp->cmd_path)
 			free(tmp->cmd_path);
+		if (tmp->heredoc_delimiter)
+			free(tmp->heredoc_delimiter);
 		if (tmp->argv)
 		{
 			int i = 0;

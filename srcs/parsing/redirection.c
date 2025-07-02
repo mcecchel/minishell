@@ -6,13 +6,13 @@
 /*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 17:28:53 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/02 17:12:05 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/07/02 20:39:28 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int handle_heredoc(char *delimiter)
+/* int handle_heredoc(char *delimiter)
 {
 	int		pipe_fd[2];
 	char	*line;
@@ -44,8 +44,9 @@ int handle_heredoc(char *delimiter)
 	}
 	close(pipe_fd[1]);
 	return (pipe_fd[0]);
-}
+} */
 
+// sashi dice di lascire queste due da parte, dividere i comandi passati secondo le pipeline, eseguire heredoc
 int setup_input_redir(t_cmd *cmd, char *filename)
 {
 	int fd;
@@ -90,7 +91,7 @@ int setup_output_redir(t_cmd *cmd, char *filename, int append)
 	return (1);
 }
 
-int setup_heredoc(t_cmd *cmd, char *delimiter)
+/* int setup_heredoc(t_cmd *cmd, char *delimiter)
 {
 	int fd;
 
@@ -105,3 +106,4 @@ int setup_heredoc(t_cmd *cmd, char *delimiter)
 	cmd->infile = fd;
 	return (1);
 }
+ */
