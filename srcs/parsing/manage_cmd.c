@@ -3,16 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   manage_cmd.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:09:38 by marianna          #+#    #+#             */
-/*   Updated: 2025/07/03 17:25:06 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/03 18:33:34 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-// Funzione per gestire gli errori di esecuzione
 
 void	fork_error_handler(t_shell *shell, char *path, int a)
 {	if (a == 0)
@@ -26,6 +24,16 @@ void	fork_error_handler(t_shell *shell, char *path, int a)
 	exit(1);
 }
 
+// Funzione per gestire gli errori di esecuzione
+void	handle_exec_error(t_shell *shell, char **command, char *path)
+{
+	free_split(command);
+	if (path)
+		free(path);
+	close_cmd_fds(shell->cmd);
+	exit(1);
+}
+
 void	execute_cmd(t_shell *shell, t_cmd *cmd)
 {
 	char	*path;
@@ -33,27 +41,35 @@ void	execute_cmd(t_shell *shell, t_cmd *cmd)
 	path = get_cmd_path(shell, cmd, cmd->argv[0]);
 	if (!path)
 		exit(127); // Command not found
-	// Gestione delle redirezioni
+	// Gestione redirezioni INPUT
 	if (cmd->infile != -1)
 	{
 		if (dup2(cmd->infile, STDIN_FILENO) == -1)
-			fork_error_handler(shell, path, 0);
+		{
+			perror("Error in dup2 input");
+			free(path);
+			close_cmd_fds(cmd);
+			exit(1);
+		}
+		close(cmd->infile);
 	}
+	// Gestione redirezioni OUTPUT
 	if (cmd->outfile != -1)
 	{
 		if (dup2(cmd->outfile, STDOUT_FILENO) == -1)
-			fork_error_handler(shell, path, 0);
+		{
+			perror("dup2 output");
+			free(path);
+			close_cmd_fds(cmd);
+			exit(1);
+		}
+		close(cmd->outfile); // IMPORTANTE: chiudi dopo dup2
 	}
-	if (execve(path, cmd->argv, shell->envp) == -1)
-	{
-		perror("Execve failed");
-		if (access(path, F_OK) != 0)
-			exit(127); // Command not found
-		else if (access(path, X_OK) != 0)
-			exit(126); // Permission denied
-		else
-			exit(1);   // Other execution error
-	}
+	execve(path, cmd->argv, shell->envp);
+	perror("Execve failed");
+	free(path);
+	close_cmd_fds(cmd);
+	exit(1);
 }
 
 void	print_envp_char(char **envp)
@@ -71,10 +87,6 @@ void	print_envp_char(char **envp)
 	}
 }
 
-// Esempio di utilizzo:
-// print_envp(shell->envp);
-
-// Nuova funzione per eseguire la lista di comandi con pipe
 void	execute_command_list(t_shell *shell)
 {
 	t_cmd	*current;
@@ -83,7 +95,6 @@ void	execute_command_list(t_shell *shell)
 
 	current = shell->cmd;
 	prev_pipe = -1;
-	// print_envp(shell->envp);
 	while (current)
 	{
 		// Se non è l'ultimo comando, crea una pipe
@@ -91,38 +102,48 @@ void	execute_command_list(t_shell *shell)
 		{
 			if (pipe(fd_pipe) == -1)
 			{
-				perror("pipe");
-				return ;
+				perror("Pipe error");
+				return;
 			}
 		}
 		current->pid = fork();
 		if (current->pid == -1)
 		{
-			perror("fork");
-			return ;
+			perror("Fork error");
+			return;
 		}
-		if (current->pid == 0)// Processo figlio
+		if (current->pid == 0) // Processo figlio
 		{
 			// Collega l'input alla pipe precedente se esiste
 			if (prev_pipe != -1)
 			{
-				dup2(prev_pipe, STDIN_FILENO);
+				if (dup2(prev_pipe, STDIN_FILENO) == -1)
+				{
+					perror("Error dup2 prev_pipe");
+					exit(1);
+				}
 				close(prev_pipe);
 			}
 			// Se non è l'ultimo comando, collega l'output alla nuova pipe
 			if (current->next)
 			{
 				close(fd_pipe[0]);
-				// Se non c'è già un output specificato, usa la pipe
+				
+				// Solo se non c'è già una redirezione di output
 				if (current->outfile == -1)
-					dup2(fd_pipe[1], STDOUT_FILENO);
-				close(fd_pipe[1]);
+				{
+					if (dup2(fd_pipe[1], STDOUT_FILENO) == -1)
+					{
+						perror("dup2 pipe_out");
+						exit(1);
+					}
+				}
+				close(fd_pipe[1]); // Chiudi write end
 			}
 			execute_cmd(shell, current);
-			// NB : non dovremmo mai arrivare qui
-			exit(1);
+			exit(1);// NB: on dovremmo mai arrivare qui
 		}
-		else// Processo padre
+		else // Processo padre
 		{
 			// Chiudi la pipe precedente se esiste
 			if (prev_pipe != -1)
@@ -130,8 +151,8 @@ void	execute_command_list(t_shell *shell)
 			// Se non è l'ultimo comando, aggiorna prev_pipe
 			if (current->next)
 			{
-				close(fd_pipe[1]);
-				prev_pipe = fd_pipe[0];
+				close(fd_pipe[1]); // Chiudi write end
+				prev_pipe = fd_pipe[0]; // Salva read end
 			}
 			current = current->next;
 		}
@@ -141,21 +162,10 @@ void	execute_command_list(t_shell *shell)
 	while (current)
 	{
 		if (current->pid > 0)
-		{
-			int status;
-			if (waitpid(current->pid, &status, 0) != -1)
-			{
-				// Aggiorna l'exit value con l'ultimo comando
-				if (WIFEXITED(status))
-					shell->exit_value = WEXITSTATUS(status);
-				else
-					shell->exit_value = 1;
-			}
-		}
+			waitpid(current->pid, NULL, 0);
 		current = current->next;
 	}
 	// Chiudi l'ultima pipe se esiste
 	if (prev_pipe != -1)
 		close(prev_pipe);
 }
-

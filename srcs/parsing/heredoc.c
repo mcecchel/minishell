@@ -6,7 +6,7 @@
 /*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 16:58:47 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/02 20:30:34 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/07/03 18:33:14 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ char	*expand_heredoc(t_shell *shell, char *line, int expand)
 {
 	char	*expanded_line;
 	char	*res;
+
 	if (!line)
 		return (NULL);
 	if (expand)

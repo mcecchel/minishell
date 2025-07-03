@@ -6,13 +6,13 @@
 /*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 17:28:53 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/02 20:39:28 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/07/03 18:33:41 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-/* int handle_heredoc(char *delimiter)
+int handle_heredoc(char *delimiter)
 {
 	int		pipe_fd[2];
 	char	*line;
@@ -23,31 +23,33 @@
 		perror("pipe");
 		return (-1);
 	}
+	ft_printf("heredoc> ");
 	// Legge da stdin fino al delimitatore
 	while (1)
 	{
 		line = readline("> ");
-		if (!line)
+		if (!line) // EOF (Ctrl+D)
 		{
-			close(pipe_fd[1]);
-			return (pipe_fd[0]);
+			ft_printf("\nminishell: warning: here-document delimited by end-of-file (wanted `%s')\n", delimiter);
+			break;
 		}
-		// Se la linea è uguale al delimitatore, termina
+		// Se la linea è = a delimitatore, termina
 		if (ft_strcmp(line, delimiter) == 0)
 		{
 			free(line);
 			break;
 		}
-		// Scrivi nella pipe e aggiungi un newline
-		ft_putendl_fd(line, pipe_fd[1]);
+		// Scrive nella pipe e aggiunge newline
+		write(pipe_fd[1], line, ft_strlen(line));
+		write(pipe_fd[1], "\n", 1);
 		free(line);
 	}
 	close(pipe_fd[1]);
 	return (pipe_fd[0]);
-} */
+}
 
 // sashi dice di lascire queste due da parte, dividere i comandi passati secondo le pipeline, eseguire heredoc
-int setup_input_redir(t_cmd *cmd, char *filename)
+int	setup_input_redir(t_cmd *cmd, char *filename)
 {
 	int fd;
 
@@ -66,7 +68,7 @@ int setup_input_redir(t_cmd *cmd, char *filename)
 	return (1);
 }
 
-int setup_output_redir(t_cmd *cmd, char *filename, int append)
+int	setup_output_redir(t_cmd *cmd, char *filename, int append)
 {
 	int fd;
 	int flags;
@@ -91,7 +93,7 @@ int setup_output_redir(t_cmd *cmd, char *filename, int append)
 	return (1);
 }
 
-/* int setup_heredoc(t_cmd *cmd, char *delimiter)
+int	setup_heredoc(t_shell *shell, t_cmd *cmd, char *delimiter)
 {
 	int fd;
 
@@ -106,4 +108,3 @@ int setup_output_redir(t_cmd *cmd, char *filename, int append)
 	cmd->infile = fd;
 	return (1);
 }
- */

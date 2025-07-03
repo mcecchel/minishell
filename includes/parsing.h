@@ -6,7 +6,7 @@
 /*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 16:02:45 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/02 20:31:05 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/07/03 18:30:39 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,9 +128,8 @@ char			*get_cmd_path(t_shell *shell, t_cmd *cmd, char *command);
 
 
 // Redirection handling
-int				setup_input_redir(t_cmd *cmd, char *filename);
-int				setup_output_redir(t_cmd *cmd, char *filename, int append);
-int				setup_heredoc(t_shell *shell, t_cmd *cmd, char *delimiter);
+int				setup_input_redirection(t_cmd *cmd, char *filename);
+int				setup_output_redirection(t_cmd *cmd, char *filename, int append);
 
 // Heredoc handling
 void			handle_heredoc_signal(int sig);
@@ -141,7 +140,7 @@ int				is_delimiter_quoted(char *delimiter);
 char			*remove_quotes_from_delimiter(char *delimiter);
 char			*create_tmp_heredoc_file(void);
 int				handle_heredoc_input(t_shell *shell, char *delimiter);
-int				setup_heredoc(t_shell *shell, t_cmd *cmd, char *delimiter);
+int				setup_heredoc(t_shell *shell, char *delimiter);
 int				process_heredocs(t_shell *shell);
 
 
@@ -182,7 +181,7 @@ char			*process_literal_text(char *str, int *i, char *result);
 // Command execution
 void			execute_cmd(t_shell *shell, t_cmd *cmd);
 void			execute_command_list(t_shell *shell);
-void			handle_exec_error(t_cmd *cmd, char **command, char *path);
+void			handle_exec_error(t_shell *shell, char **command, char *path);
 void			cleanup_shell(t_shell *shell);
 void			print_envp_char(char **envp);
 
