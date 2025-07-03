@@ -6,7 +6,7 @@
 /*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 16:58:47 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/03 18:33:14 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/07/03 18:41:12 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,25 +185,23 @@ int	handle_heredoc_input(t_shell *shell, char *delimiter)
 	return (ret_fd);
 }
 
-int	setup_heredoc(t_shell *shell, t_cmd *cmd, char *delimiter)
+int setup_heredoc(t_cmd *cmd, char *delimiter)
 {
-	int	fd;
-	if (!shell || !cmd || !delimiter)
+	int fd;
+
+	if (!cmd || !delimiter)
 		return (0);
-	// Inizializza infile se non già fatto
-	if (cmd->infile == 0)
-		cmd->infile = -1;
 	// Gestione input heredoc
-	fd = handle_heredoc_input(shell, delimiter);
+	fd = handle_heredoc(delimiter);
 	if (fd < 0)
 	{
 		perror("Error: Failed to handle heredoc input");
 		return (0);
-	}
-	// Chiudo il file descriptor precedente (se esiste)
+	}	
+	// Chiudi il file descriptor precedente se esiste
 	if (cmd->infile != -1)
 		close(cmd->infile);
-	cmd->infile = fd; // Imposto il file descriptor dell'heredoc
+	cmd->infile = fd;
 	return (1);
 }
 
@@ -220,7 +218,7 @@ int	process_heredocs(t_shell *shell)
 	{
 		if (current_cmd->infile == -1) // Se infile è -1, non è stato ancora impostato
 		{
-			ret = setup_heredoc(shell, current_cmd, current_cmd->argv[0]);
+			ret = setup_heredoc(current_cmd, current_cmd->argv[0]);
 			if (!ret)
 			{
 				perror("Error: Failed to setup heredoc");

@@ -6,7 +6,7 @@
 /*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 16:02:45 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/03 18:30:39 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/07/03 18:37:39 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,7 +140,7 @@ int				is_delimiter_quoted(char *delimiter);
 char			*remove_quotes_from_delimiter(char *delimiter);
 char			*create_tmp_heredoc_file(void);
 int				handle_heredoc_input(t_shell *shell, char *delimiter);
-int				setup_heredoc(t_shell *shell, char *delimiter);
+int				setup_heredoc(t_cmd *cmd, char *delimiter);
 int				process_heredocs(t_shell *shell);
 
 
