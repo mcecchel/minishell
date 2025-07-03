@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 17:30:08 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/02 20:29:54 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/07/03 15:23:29 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,7 +177,6 @@ void	reading(t_shell shell)
 		// Tokenizza l'input
 		if (!tokenize_input(&shell.token, line, &shell))
 		{
-			ft_printf("Error: Tokenization failed\n");
 			cleanup_shell(&shell);
 			free(line);
 			continue;
