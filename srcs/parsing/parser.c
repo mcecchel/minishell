@@ -3,15 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 14:59:11 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/03 18:32:57 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/07/04 17:44:06 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+// Inizializzazione comando migliorata
 t_cmd	*init_new_cmd(void)
 {
 	t_cmd	*new_cmd;
@@ -27,7 +28,7 @@ t_cmd	*init_new_cmd(void)
 	}
 	new_cmd->cmd_path = NULL;
 	new_cmd->argc = 0;
-	new_cmd->argv[0] = NULL;
+	new_cmd->argv[0] = NULL; // IMPORTANTE: Inizializza
 	new_cmd->infile = -1;
 	new_cmd->outfile = -1;
 	new_cmd->pid = -1;
@@ -66,7 +67,7 @@ void	add_argument_to_cmd(t_cmd *cmd, char *arg)
 		return;
 	}
 	cmd->argc++;
-	cmd->argv[cmd->argc] = NULL;
+	cmd->argv[cmd->argc] = NULL; // SEMPRE termina l'array
 }
 
 int	is_redirection_token(t_token_type type)
@@ -82,18 +83,17 @@ int	handle_redirection(t_cmd *cmd, t_token *token)
 		ft_printf("Error: Missing file for redirection\n");
 		return (0);
 	}
-	// Verifica che il prossimo token sia un argomento/filename
 	if (token->next->type != ARG && token->next->type != CMD)
 	{
 		ft_printf("Error: Invalid redirection target\n");
 		return (0);
 	}
 	if (token->type == RED_IN)
-		return (setup_input_redirection(cmd, token->next->value));
+		return (setup_input_redir(cmd, token->next->value));
 	else if (token->type == RED_OUT)
-		return (setup_output_redirection(cmd, token->next->value, 0));
+		return (setup_output_redir(cmd, token->next->value, 0));
 	else if (token->type == APPEND)
-		return (setup_output_redirection(cmd, token->next->value, 1));
+		return (setup_output_redir(cmd, token->next->value, 1));
 	else if (token->type == HEREDOC)
 		return (setup_heredoc(cmd, token->next->value));
 	else
@@ -103,7 +103,6 @@ int	handle_redirection(t_cmd *cmd, t_token *token)
 void	free_cmd_list(t_cmd *cmd)
 {
 	t_cmd	*tmp;
-	int		i;
 	
 	while (cmd)
 	{
@@ -113,7 +112,7 @@ void	free_cmd_list(t_cmd *cmd)
 			free(tmp->cmd_path);
 		if (tmp->argv)
 		{
-			i = 0;
+			int i = 0;
 			while (tmp->argv[i])
 			{
 				free(tmp->argv[i]);
@@ -131,13 +130,10 @@ void	free_cmd_list(t_cmd *cmd)
 
 t_cmd *parse_tokens(t_token *token_list)
 {
-	t_cmd	*cmd_list;
-	t_cmd	*current_cmd;
-	t_token	*token;
+	t_cmd	*cmd_list = NULL;
+	t_cmd	*current_cmd = NULL;
+	t_token	*token = token_list;
 
-	cmd_list = NULL;
-	current_cmd = NULL;
-	token = token_list;
 	while (token)
 	{
 		if (token->type == CMD)
@@ -181,7 +177,7 @@ t_cmd *parse_tokens(t_token *token_list)
 		else if (token->type == PIPE)
 		{
 			// Verifica che ci sia un comando dopo il pipe
-			if (!token->next || token->next->type != CMD)
+			if (!token->next)
 			{
 				ft_printf("Error: Pipe without following command\n");
 				free_cmd_list(cmd_list);

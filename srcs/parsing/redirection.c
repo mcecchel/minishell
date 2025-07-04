@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirection.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 17:28:53 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/04 15:12:18 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/07/04 17:44:43 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ int handle_heredoc(char *delimiter)
 }
 
 // sashi dice di lascire queste due da parte, dividere i comandi passati secondo le pipeline, eseguire heredoc
-int	setup_input_redirection(t_cmd *cmd, char *filename)
+int	setup_input_redir(t_cmd *cmd, char *filename)
 {
 	int fd;
 
@@ -67,7 +67,7 @@ int	setup_input_redirection(t_cmd *cmd, char *filename)
 	return (1);
 }
 
-int	setup_output_redirection(t_cmd *cmd, char *filename, int append)
+int	setup_output_redir(t_cmd *cmd, char *filename, int append)
 {
 	int fd;
 	int flags;

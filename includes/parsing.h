@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 16:02:45 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/03 18:37:39 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/07/04 17:45:40 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,8 +128,8 @@ char			*get_cmd_path(t_shell *shell, t_cmd *cmd, char *command);
 
 
 // Redirection handling
-int				setup_input_redirection(t_cmd *cmd, char *filename);
-int				setup_output_redirection(t_cmd *cmd, char *filename, int append);
+int				setup_input_redir(t_cmd *cmd, char *filename);
+int				setup_output_redir(t_cmd *cmd, char *filename, int append);
 
 // Heredoc handling
 void			handle_heredoc_signal(int sig);
@@ -189,7 +189,8 @@ void			print_envp_char(char **envp);
 int				main(int argc, char **argv, char **envp);
 
 void			copy_system_envp_to_shell(char **system_envp, t_shell *shell);
-void			fork_error_handler(t_shell *shell, char *path, int a);
+void			fork_error_handler(t_shell *shell, char *path, int err, int exit_code);
+
 
 
 
