@@ -6,7 +6,7 @@
 /*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 17:28:53 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/03 18:42:20 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/07/04 15:12:18 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ int handle_heredoc(char *delimiter)
 		perror("pipe");
 		return (-1);
 	}
-	ft_printf("heredoc> ");
 	// Legge da stdin fino al delimitatore
 	while (1)
 	{

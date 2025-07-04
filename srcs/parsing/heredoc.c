@@ -6,12 +6,11 @@
 /*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 16:58:47 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/03 18:41:12 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/07/04 15:11:21 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <signal.h>
 
 // Configurazione segnali per heredoc
 void	handle_heredoc_signal(int sig)
@@ -154,7 +153,7 @@ int	handle_heredoc_input(t_shell *shell, char *delimiter)
 	setup_heredoc_signals();
 	while (1)
 	{
-		line = readline("heredoc> ");
+		line = readline("> ");
 		if (!line)
 		{
 			write(STDOUT_FILENO, "\n", 1);
