@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 16:54:11 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/01 16:18:23 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/07 16:33:54 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void			clean_exit(t_shell *root);
 
 
 //pwd
-int				ft_pwd();
+int				ft_pwd(t_shell *shell);
 
 //unset
 int			ft_unset(t_shell *shell);
@@ -48,6 +48,7 @@ int			ft_unset(t_shell *shell);
 //utils builtin
 char			*ft_strjoin_free_s2(char *s1, char *s2);
 void			print_env_list(t_env *root, int what);
+void			print_env_list_fd(t_env *env, int what, int fd);
 long long int	ft_atoi_ll(const char *nptr);
 
 //sort_env

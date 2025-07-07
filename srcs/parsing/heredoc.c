@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 16:58:47 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/04 15:11:21 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/07/07 17:34:40 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,47 +184,34 @@ int	handle_heredoc_input(t_shell *shell, char *delimiter)
 	return (ret_fd);
 }
 
-int setup_heredoc(t_cmd *cmd, char *delimiter)
+int setup_heredoc(t_cmd *cmd, char *delimiter, t_shell *shell)
 {
 	int fd;
 
 	if (!cmd || !delimiter)
 		return (0);
-	// Gestione input heredoc
-	fd = handle_heredoc(delimiter);
+	
+	// Processa immediatamente l'heredoc
+	fd = handle_heredoc_input(shell, delimiter);
 	if (fd < 0)
 	{
-		perror("Error: Failed to handle heredoc input");
+		ft_printf("Error: Failed to handle heredoc input\n");
 		return (0);
-	}	
+	}
+	
 	// Chiudi il file descriptor precedente se esiste
 	if (cmd->infile != -1)
 		close(cmd->infile);
 	cmd->infile = fd;
+	
 	return (1);
 }
 
 // Processo tutti gli heredoc prima dell'esecuzione
 int	process_heredocs(t_shell *shell)
 {
-	t_cmd	*current_cmd;
-	int		ret;
-
-	if (!shell || !shell->cmd)
-		return (0);
-	current_cmd = shell->cmd;
-	while (current_cmd)
-	{
-		if (current_cmd->infile == -1) // Se infile è -1, non è stato ancora impostato
-		{
-			ret = setup_heredoc(current_cmd, current_cmd->argv[0]);
-			if (!ret)
-			{
-				perror("Error: Failed to setup heredoc");
-				return (0);
-			}
-		}
-		current_cmd = current_cmd->next;
-	}
+	// Gli heredoc sono già processati durante il parsing
+	// Questa funzione non fa nulla
+	(void)shell;
 	return (1);
 }

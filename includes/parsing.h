@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 16:02:45 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/04 17:45:40 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/07 16:57:48 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,7 @@ int				handle_heredoc(char *delimiter);
 /* ************************************************************************** */
 
 // Command parsing
-t_cmd			*parse_tokens(t_token *token_list);
+t_cmd			*parse_tokens(t_token *token_list, t_shell *shell);
 t_cmd			*init_new_cmd(void);
 void			add_cmd(t_cmd *cmd, t_cmd *new_cmd);
 void			add_cmd_to_list(t_cmd **cmd_list, t_cmd *new_cmd);
@@ -140,7 +140,7 @@ int				is_delimiter_quoted(char *delimiter);
 char			*remove_quotes_from_delimiter(char *delimiter);
 char			*create_tmp_heredoc_file(void);
 int				handle_heredoc_input(t_shell *shell, char *delimiter);
-int				setup_heredoc(t_cmd *cmd, char *delimiter);
+int				setup_heredoc(t_cmd *cmd, char *delimiter, t_shell *shell);
 int				process_heredocs(t_shell *shell);
 
 
@@ -156,8 +156,6 @@ int				is_space(char c);
 int				find_spaces(char c);
 void			free_split(char **split);
 void			close_cmd_fds(t_cmd *cmd);
-
-
 
 // Environment handling
 char			*find_env_path(t_shell *shell);
@@ -190,6 +188,7 @@ int				main(int argc, char **argv, char **envp);
 
 void			copy_system_envp_to_shell(char **system_envp, t_shell *shell);
 void			fork_error_handler(t_shell *shell, char *path, int err, int exit_code);
+int				which_fd(t_shell *shell);
 
 
 

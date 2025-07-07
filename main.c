@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 17:30:08 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/03 15:23:29 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/07 16:55:58 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,7 +140,7 @@ int	parser_builtin(t_shell *root)
 	if (ft_strcmp(root->cmd->argv[0], "export") == 0)
 		return (ft_export(root), 1);
 	if (ft_strcmp(root->cmd->argv[0], "pwd") == 0)
-		return (root->exit_value = ft_pwd(), 1);
+		return (root->exit_value = ft_pwd(root), 1);
 	if (ft_strcmp(root->cmd->argv[0], "unset") == 0)
 		return (root->exit_value = ft_unset(root), 1);
 	if (ft_strcmp(root->cmd->argv[0], "cd") == 0)
@@ -186,7 +186,7 @@ void	reading(t_shell shell)
 		debug_tokens(shell.token.head);
 
 		// Parsing
-		shell.cmd = parse_tokens(shell.token.head);
+		shell.cmd = parse_tokens(shell.token.head, &shell);
 		if (!shell.cmd)
 		{
 			cleanup_shell(&shell);
@@ -196,9 +196,28 @@ void	reading(t_shell shell)
 		// Debug opzionale
 		printf_debug("\nGenerated commands:\n");
 		debug_cmds(shell.cmd);
+		
+		// Processa gli heredoc prima dell'esecuzione
+		if (!process_heredocs(&shell))
+		{
+			cleanup_shell(&shell);
+			free(line);
+			continue;
+		}
+		
 		// print_envp_char(shell.envp);
-		if(!parser_builtin(&shell))
+		
+		// Gestisci built-in nel processo padre solo se è un comando singolo
+		if (shell.cmd && !shell.cmd->next && parser_builtin(&shell))
+		{
+			// Built-in eseguita nel processo padre per modificare lo stato della shell
+		}
+		else
+		{
+			// Comandi esterni o pipeline (incluse built-in in pipeline)
 			execute_command_list(&shell);
+		}
+
 		cleanup_shell(&shell);
 		free(line);
 	}
@@ -233,7 +252,7 @@ void process_shell_input(t_shell *shell)
 		printf_debug("Generated tokens:\n");
 		debug_tokens(shell->token.head);
 
-		shell->cmd = parse_tokens(shell->token.head);
+		shell->cmd = parse_tokens(shell->token.head, shell);
 		if (!shell->cmd)
 		{
 			cleanup_shell(shell);
@@ -248,8 +267,7 @@ void process_shell_input(t_shell *shell)
 			free(line);
 			continue;
 		}
-		if (!parser_builtin(shell))
-			execute_command_list(shell);
+		execute_command_list(shell);
 		cleanup_shell(shell);
 		free(line);
 	}

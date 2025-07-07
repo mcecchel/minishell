@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:09:38 by marianna          #+#    #+#             */
-/*   Updated: 2025/07/04 16:41:27 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/07 17:08:23 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@ void	fork_error_handler(t_shell *shell, char *path, int err, int exit_code)
 		perror("Error dup2 prev_pipe");
 	if (err == 3)
 		perror("dup2 pipe_out");
+	if (err == 4)
+		;
 	close_cmd_fds(shell->cmd);
 	cleanup_shell(shell);
 	free_env_list(shell->env);
@@ -35,16 +37,22 @@ void	execute_cmd(t_shell *shell, t_cmd *cmd)
 {
 	char	*path;
 
-	path = get_cmd_path(shell, cmd, cmd->argv[0]);
-	if (!path)
-		exit(127); // Command not found
+	shell->cmd = cmd;
 	if (cmd->infile != -1) // Gestione redirezioni INPUT
 	{
 		if (dup2(cmd->infile, STDIN_FILENO) == -1)
-			fork_error_handler(shell, path, 0, 1);
+			fork_error_handler(shell, NULL, 0, 1);
 	}
 	if (cmd->outfile != -1) // Gestione redirezioni OUTPUT
-		fork_error_handler(shell, path, 0, 1);
+	{
+		if (dup2(cmd->outfile, STDOUT_FILENO) == -1)
+			fork_error_handler(shell, NULL, 0, 1);
+	}
+	if (parser_builtin(shell))
+		fork_error_handler(shell, NULL, 4, shell->exit_value);
+	path = get_cmd_path(shell, cmd, cmd->argv[0]);
+	if (!path)
+		exit(127); // Command not found
 	execve(path, cmd->argv, shell->envp);
 	if (access(path, F_OK) != 0)
 		fork_error_handler(shell, path, 1, 127);

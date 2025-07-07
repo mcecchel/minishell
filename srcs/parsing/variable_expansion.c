@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 16:00:00 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/01 16:07:32 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/07 16:40:08 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,7 @@ char	*process_variable(char *str, int *i, t_shell *shell, char *result)
 	char	*var_name;
 	char	*var_value;
 	char	*temp;
+	char	*new_result;
 
 	(*i)++; // Skip $
 	var_name = extract_var_name(str, i);
@@ -84,8 +85,16 @@ char	*process_variable(char *str, int *i, t_shell *shell, char *result)
 		if (var_value)
 		{
 			temp = result;
-			result = ft_strjoin(result, var_value);
-			free(temp);
+			new_result = ft_strjoin(result, var_value);
+			if (new_result)
+			{
+				free(temp);
+				result = new_result;
+			}
+			else
+			{
+				result = temp; // Mantieni il result originale se join fallisce
+			}
 			if (ft_strcmp(var_name, "?") == 0 || ft_strcmp(var_name, "$") == 0)
 				free(var_value);
 		}
@@ -106,10 +115,16 @@ char	*process_literal_text(char *str, int *i, char *result)
 	if (*i > start)
 	{
 		temp = ft_substr(str, start, *i - start);
+		if (!temp)
+			return (result);
 		new_result = ft_strjoin(result, temp);
-		free(result);
 		free(temp);
-		result = new_result;
+		if (new_result)
+		{
+			free(result);
+			result = new_result;
+		}
+		// Se ft_strjoin fallisce, mantieni result originale
 	}
 	return (result);
 }
@@ -117,18 +132,31 @@ char	*process_literal_text(char *str, int *i, char *result)
 char	*expand_variables(char *str, t_shell *shell, int quote_type)
 {
 	char	*result;
+	char	*temp;
 	int		i;
 
 	if (!str)
 		return (NULL);
 	result = ft_strdup("");
+	if (!result)
+		return (NULL);
 	i = 0;
 	while (str[i])
 	{
 		if (str[i] == '$' && should_expand_in_quotes(quote_type))
-			result = process_variable(str, &i, shell, result);
+		{
+			temp = process_variable(str, &i, shell, result);
+			if (!temp)			
+				return (free(result), NULL);
+			result = temp;
+		}
 		else
-			result = process_literal_text(str, &i, result);
+		{
+			temp = process_literal_text(str, &i, result);
+			if (!temp)
+				return (free(result), NULL);
+			result = temp;
+		}
 	}
 	return (result);
 }

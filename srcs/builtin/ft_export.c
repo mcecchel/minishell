@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 16:45:25 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/01 15:14:48 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/07 16:42:35 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,18 +35,30 @@ static int	update_env(t_env *env, char *name, char *value, int type)
 static void	add_new_env(t_shell *root, char *name, char *value, int type)
 {
 	t_env	*new_env;
+	t_env	*sorted_env;
 
 	new_env = ft_calloc(1, sizeof(t_env));
+	if (!new_env)
+	{
+		free(name);
+		free(value);
+		return ;
+	}
 	new_env->var = name;
 	new_env->arg = value;
 	new_env->ex_env = 0;
 	if (type == ENV)
 		new_env->ex_env = 1;
+	if (type == VAR)
+		new_env->ex_env = 2;
 	new_env->next = root->env;
 	if (root->env)
 		root->env->prev = new_env;
-	new_env = sort_env_list(new_env);
-	root->env = new_env;
+	sorted_env = sort_env_list(new_env);
+	if (sorted_env)
+		root->env = sorted_env;
+	else
+		root->env = new_env;
 }
 
 void	add_env(t_shell *root, char *arg, int type)
@@ -59,9 +71,18 @@ void	add_env(t_shell *root, char *arg, int type)
 	while (arg[i] && arg[i] != '=')
 		i++;
 	name = ft_substr(arg, 0, i);
+	if (!name)
+		return ;
 	value = NULL;
 	if (arg[i] == '=')
+	{
 		value = ft_strdup(arg + i + 1);
+		if (!value)
+		{
+			free(name);
+			return ;
+		}
+	}
 	if (update_env(root->env, name, value, type))
 		return ;
 	add_new_env(root, name, value, type);
@@ -70,22 +91,27 @@ void	add_env(t_shell *root, char *arg, int type)
 void	ft_export(t_shell *root)
 {
 	int i;
+	int fd;
 
 	i = 0;
 	if (ft_strcmp(root->cmd->argv[0], "export") == 0)
 		i = 1;
 	if (root->cmd->argc == 1)
 	{
-		print_env_list(root->env, EXPORT);
+		fd = which_fd(root);
+		print_env_list_fd(root->env, EXPORT, fd);
 		return ;
 	}
 	while (root->cmd->argv[i] != NULL)
 	{
 		if (ft_strchr(root->cmd->argv[i], '=')
-			&& ft_strcmp(root->cmd->argv[0], "export") != 0)
+			&& ft_strcmp(root->cmd->argv[0], "export") == 0)
 			add_env(root, root->cmd->argv[i], ENV);
 		if (ft_strcmp(root->cmd->argv[0], "export") == 0)
 			add_env(root, root->cmd->argv[i], EXPORT);
+		if ((ft_strchr(root->cmd->argv[i], '=')
+			&& ft_strcmp(root->cmd->argv[0], "export") != 0))
+			add_env(root, root->cmd->argv[i], VAR);
 		i++;
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 14:59:11 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/04 17:44:06 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/07 16:59:00 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,8 @@ void	add_cmd_to_list(t_cmd **cmd_list, t_cmd *new_cmd)
 
 void	add_argument_to_cmd(t_cmd *cmd, char *arg)
 {
+	char	*new_arg;
+
 	if (!cmd || !arg || !cmd->argv)
 		return  ;
 	if (cmd->argc >= 99) // Limite di sicurezza
@@ -60,12 +62,13 @@ void	add_argument_to_cmd(t_cmd *cmd, char *arg)
 		ft_printf("Error: Too many arguments\n");
 		return ;
 	}
-	cmd->argv[cmd->argc] = ft_strdup(arg);
-	if (!cmd->argv[cmd->argc])
+	new_arg = ft_strdup(arg);
+	if (!new_arg)
 	{
 		ft_printf("Error: Memory allocation failed\n");
 		return;
 	}
+	cmd->argv[cmd->argc] = new_arg;
 	cmd->argc++;
 	cmd->argv[cmd->argc] = NULL; // SEMPRE termina l'array
 }
@@ -76,7 +79,7 @@ int	is_redirection_token(t_token_type type)
 			type == APPEND || type == HEREDOC);
 }
 
-int	handle_redirection(t_cmd *cmd, t_token *token)
+int	handle_redirection(t_cmd *cmd, t_token *token, t_shell *shell)
 {
 	if (!token->next)
 	{
@@ -95,7 +98,7 @@ int	handle_redirection(t_cmd *cmd, t_token *token)
 	else if (token->type == APPEND)
 		return (setup_output_redir(cmd, token->next->value, 1));
 	else if (token->type == HEREDOC)
-		return (setup_heredoc(cmd, token->next->value));
+		return (setup_heredoc(cmd, token->next->value, shell));
 	else
 		return (0);
 }
@@ -110,6 +113,8 @@ void	free_cmd_list(t_cmd *cmd)
 		cmd = cmd->next;
 		if (tmp->cmd_path)
 			free(tmp->cmd_path);
+		if (tmp->heredoc_delimiter)
+			free(tmp->heredoc_delimiter);
 		if (tmp->argv)
 		{
 			int i = 0;
@@ -128,12 +133,13 @@ void	free_cmd_list(t_cmd *cmd)
 	}
 }
 
-t_cmd *parse_tokens(t_token *token_list)
+t_cmd *parse_tokens(t_token *token_list, t_shell *shell)
 {
 	t_cmd	*cmd_list = NULL;
 	t_cmd	*current_cmd = NULL;
 	t_token	*token = token_list;
 
+	(void)shell;
 	while (token)
 	{
 		if (token->type == CMD)
@@ -193,7 +199,7 @@ t_cmd *parse_tokens(t_token *token_list)
 				free_cmd_list(cmd_list);
 				return (NULL);
 			}
-			if (!handle_redirection(current_cmd, token))
+			if (!handle_redirection(current_cmd, token, shell))
 			{
 				free_cmd_list(cmd_list);
 				return (NULL);
