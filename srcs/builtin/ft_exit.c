@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 23:20:05 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/01 15:47:09 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/09 16:55:08 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	clean_exit(t_shell *root)
 	if (root->env)
 		free_env_list(root->env);
 	if (root->envp)
-		free_split(root->envp);
+		free_matrix(root->envp);
 	rl_clear_history();
 }
 

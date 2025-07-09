@@ -16,7 +16,8 @@ SRC		= 	main.c \
 			srcs/parsing/parser.c \
 			srcs/parsing/variable_expansion.c \
 			srcs/parsing/heredoc.c \
-			srcs/builtin/copy_free_env.c \
+			srcs/builtin/copy_free_env_list.c \
+			srcs/builtin/utils_matrix_env.c \
 			srcs/builtin/ft_unset.c \
 			srcs/builtin/sort_env.c \
 			srcs/builtin/utils_builtin.c \

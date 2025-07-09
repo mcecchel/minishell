@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:09:38 by marianna          #+#    #+#             */
-/*   Updated: 2025/07/07 17:08:23 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/09 16:55:08 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	fork_error_handler(t_shell *shell, char *path, int err, int exit_code)
 	close_cmd_fds(shell->cmd);
 	cleanup_shell(shell);
 	free_env_list(shell->env);
-	free_split(shell->envp);
+	free_matrix(shell->envp);
 	if (path)
 		free(path);
 	exit (exit_code);
@@ -104,6 +104,9 @@ void	execute_command_list(t_shell *shell)
 		}
 		if (current->pid == 0) // Processo figlio
 		{
+			// Aggiorna il PID per il processo figlio (nuovo processo)
+			shell->shell_pid = generate_child_pid();
+			
 			// Collega l'input alla pipe precedente se esiste
 			if (prev_pipe != -1)
 			{

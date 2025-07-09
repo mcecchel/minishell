@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 16:39:49 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/07 18:00:24 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/09 21:26:32 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,9 @@
 int	which_arg(t_shell *shell)
 {
 	if(ft_strcmp(shell->cmd->argv[0], "echo") == 0 
-		&& ft_strcmp(shell->cmd->argv[0], "-n") == 0)
-		return(2);
+		&& ft_strncmp(shell->cmd->argv[1], "-n", 2) == 0
+		&& ft_strcmp(shell->cmd->argv[1], "n") == 0)
+		return(3);
 	return (1);
 }
 
@@ -39,12 +40,12 @@ int	ft_echo(t_shell *shell)
 	}
 	while (shell->cmd->argv[i] != NULL)
 	{
-		if (i > 1)
+		if (i > 1 && shell->token.type != QUOTE)
 			write(fd, " ", 1);
 		fd_printf(fd, shell->cmd->argv[i]);
 		i++;
 	}
-	if(shell->token.type != FLAG)
+	if(which_arg(shell) != 2)
 		write(fd, "\n", 1);
 	return (0);
 }

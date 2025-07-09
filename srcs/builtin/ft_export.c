@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 16:45:25 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/07 16:42:35 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/09 16:57:19 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,8 +84,14 @@ void	add_env(t_shell *root, char *arg, int type)
 		}
 	}
 	if (update_env(root->env, name, value, type))
+	{
+		// Aggiorna envp dopo aver modificato la lista
+		update_shell_envp(root);
 		return ;
+	}
 	add_new_env(root, name, value, type);
+	// Aggiorna envp dopo aver aggiunto un nuovo environment
+	update_shell_envp(root);
 }
 
 void	ft_export(t_shell *root)

@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 12:22:07 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/07 16:33:41 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/09 17:00:05 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ void	change_env(t_shell *root, char *old_path, char *current_path)
 		oldpwd->arg = ft_strdup(old_path);
 		oldpwd->ex_env = 1;
 	}
+	update_shell_envp(root);
 }
 
 static char	*get_target_path(t_shell *root)

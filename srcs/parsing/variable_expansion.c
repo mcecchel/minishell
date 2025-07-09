@@ -6,11 +6,35 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 16:00:00 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/07 16:40:08 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/09 14:58:26 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+int	generate_shell_pid(void)
+{
+	static int	main_shell_pid = 0;
+	
+	if (main_shell_pid == 0)
+	{
+		// Inizializza il PID principale una sola volta
+		main_shell_pid = 1000 + ((unsigned long)&main_shell_pid % 9000);
+	}
+	return (main_shell_pid);
+}
+
+int	generate_child_pid(void)
+{
+	static int	child_counter = 0;
+	static int	base_pid = 0;
+	
+	if (base_pid == 0)
+	{
+		base_pid = 2000 + ((unsigned long)&child_counter % 8000);
+	}
+	return (base_pid + (++child_counter));
+}
 
 char	*get_env_value(t_shell *shell, char *var_name)
 {
@@ -33,7 +57,7 @@ char	*handle_special_vars(t_shell *shell, char *var_name)
 	if (ft_strcmp(var_name, "?") == 0)
 		return (ft_itoa(shell->exit_value));
 	if (ft_strcmp(var_name, "$") == 0)
-		return (ft_itoa(getpid()));
+		return (ft_itoa(shell->shell_pid));
 	return (get_env_value(shell, var_name));
 }
 

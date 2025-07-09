@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 16:02:45 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/07 16:57:48 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/09 17:14:29 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,7 @@ typedef struct s_shell
     t_cmd	*cmd;
 	char	**envp;
 	int		exit_value;
+	int		shell_pid;
 	t_token	token;
 	bool	in_quote;
 }			t_shell;
@@ -160,6 +161,9 @@ void			close_cmd_fds(t_cmd *cmd);
 // Environment handling
 char			*find_env_path(t_shell *shell);
 char			**get_paths(t_shell *shell);
+char			**env_list_to_array(t_env *env);
+void			free_env_array(char **envp);
+void			update_shell_envp(t_shell *shell);
 
 /* ************************************************************************** */
 /*                       VARIABLE EXPANSION                                  */
@@ -172,6 +176,8 @@ int				should_expand_in_quotes(int quote_type);
 char			*handle_special_vars(t_shell *shell, char *var_name);
 char			*process_variable(char *str, int *i, t_shell *shell, char *result);
 char			*process_literal_text(char *str, int *i, char *result);
+int				generate_shell_pid(void);
+int				generate_child_pid(void);
 
 /* ************************************************************************** */
 /*                         EXECUTION FUNCTIONS                               */
@@ -183,14 +189,11 @@ void			handle_exec_error(t_shell *shell, char **command, char *path);
 void			cleanup_shell(t_shell *shell);
 void			print_envp_char(char **envp);
 
-
 int				main(int argc, char **argv, char **envp);
 
 void			copy_system_envp_to_shell(char **system_envp, t_shell *shell);
 void			fork_error_handler(t_shell *shell, char *path, int err, int exit_code);
 int				which_fd(t_shell *shell);
-
-
-
+void			free_matrix(char **str);
 
 #endif

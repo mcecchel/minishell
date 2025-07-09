@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 16:54:11 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/07 16:33:54 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/09 16:40:22 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 # include "libft.h"
 
-int			parser_builtin(t_shell *root);
+int				parser_builtin(t_shell *root);
 
 //cd
 t_env 			*find_env(t_env *env, char *to_change);
@@ -29,7 +29,6 @@ void			append_env_node(t_env **head, t_env **current, t_env *new_node);
 void			free_env_list(t_env *env);
 void			add_node(t_env **head, t_env **current, char str, int ex_env);
 
-
 //ft_export
 void			add_env(t_shell *root, char *arg, int type);
 void			ft_export(t_shell *root);
@@ -37,7 +36,6 @@ void			ft_export(t_shell *root);
 //exit
 void			ft_exit(t_shell *root);
 void			clean_exit(t_shell *root);
-
 
 //pwd
 int				ft_pwd(t_shell *shell);
@@ -56,6 +54,6 @@ void			swap_env_content(t_env *a, t_env *b);
 t_env			*sort_env_list(t_env *m_env);
 
 //echo
-int	ft_echo(t_shell *shell);
+int				ft_echo(t_shell *shell);
 
 #endif

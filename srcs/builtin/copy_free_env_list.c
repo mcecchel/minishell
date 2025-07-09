@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   copy_free_env.c                                    :+:      :+:    :+:   */
+/*   copy_free_env_list.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 16:57:36 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/01 14:48:53 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/09 17:11:55 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,9 +84,6 @@ t_env	*copy_env(char **env)
 	}
 	if (find_env(head, "OLDPWD") == NULL)
 		add_oldpwd_node(&head, &current);
-	new_node = find_env(head, "_");
-	if (new_node != NULL)
-	new_node->ex_env = 0;
 	if (head)
 		sort_env_list(head);
 	return (head);

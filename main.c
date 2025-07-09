@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 17:30:08 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/07 16:55:58 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/09 14:58:26 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,7 @@ void	init_shell(t_shell *shell)
 {
 	shell->cmd = NULL;
 	shell->exit_value = 0;
+	shell->shell_pid = generate_shell_pid(); // PID simulato dinamico
 	shell->in_quote = false;
 	shell->token.head = NULL;
 	shell->token.current = NULL;
@@ -153,7 +154,7 @@ int	parser_builtin(t_shell *root)
 		return (add_env(root, root->cmd->argv[0], VAR), 1);
 	return (0);
 }
-void	reading(t_shell shell)
+void	reading(t_shell *shell)
 {
 
 	char	*line;
@@ -163,8 +164,8 @@ void	reading(t_shell shell)
 		if (!line)
 		{
 			write (1, "exit\n", 5);
-			clean_exit(&shell);
-			cleanup_shell(&shell);
+			clean_exit(shell);
+			cleanup_shell(shell);
 			exit (1);
 		}
 		// Ignora linee vuote
@@ -175,50 +176,42 @@ void	reading(t_shell shell)
 		}
 		add_history(line);
 		// Tokenizza l'input
-		if (!tokenize_input(&shell.token, line, &shell))
+		if (!tokenize_input(&shell->token, line, shell))
 		{
-			cleanup_shell(&shell);
+			cleanup_shell(shell);
 			free(line);
 			continue;
 		}
 		// Debug opzionale
 		printf_debug("Generated tokens:\n");
-		debug_tokens(shell.token.head);
+		debug_tokens(shell->token.head);
 
 		// Parsing
-		shell.cmd = parse_tokens(shell.token.head, &shell);
-		if (!shell.cmd)
+		shell->cmd = parse_tokens(shell->token.head, shell);
+		if (!shell->cmd)
 		{
-			cleanup_shell(&shell);
+			cleanup_shell(shell);
 			free(line);
 			continue;
 		}
 		// Debug opzionale
 		printf_debug("\nGenerated commands:\n");
-		debug_cmds(shell.cmd);
-		
-		// Processa gli heredoc prima dell'esecuzione
-		if (!process_heredocs(&shell))
-		{
-			cleanup_shell(&shell);
-			free(line);
-			continue;
-		}
+		debug_cmds(shell->cmd);
 		
 		// print_envp_char(shell.envp);
 		
 		// Gestisci built-in nel processo padre solo se è un comando singolo
-		if (shell.cmd && !shell.cmd->next && parser_builtin(&shell))
+		if (shell->cmd && !shell->cmd->next && parser_builtin(shell))
 		{
 			// Built-in eseguita nel processo padre per modificare lo stato della shell
 		}
 		else
 		{
 			// Comandi esterni o pipeline (incluse built-in in pipeline)
-			execute_command_list(&shell);
+			execute_command_list(shell);
 		}
 
-		cleanup_shell(&shell);
+		cleanup_shell(shell);
 		free(line);
 	}
 }
@@ -261,12 +254,6 @@ void process_shell_input(t_shell *shell)
 		}
 		printf_debug("\nGenerated commands:\n");
 		debug_cmds(shell->cmd);
-		if (!process_heredocs(shell))
-		{
-			cleanup_shell(shell);
-			free(line);
-			continue;
-		}
 		execute_command_list(shell);
 		cleanup_shell(shell);
 		free(line);
@@ -288,7 +275,7 @@ int main(int argc, char **argv, char **envp)
 	signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, SIG_IGN); 
 	init_shell(&shell);
-	reading(shell);
+	reading(&shell);
 	cleanup_shell(&shell);
 	return (0);
 }
