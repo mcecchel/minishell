@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 17:30:08 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/09 14:58:26 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/11 18:29:42 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,6 @@ void	init_shell(t_shell *shell)
 {
 	shell->cmd = NULL;
 	shell->exit_value = 0;
-	shell->shell_pid = generate_shell_pid(); // PID simulato dinamico
 	shell->in_quote = false;
 	shell->token.head = NULL;
 	shell->token.current = NULL;
@@ -132,26 +131,32 @@ void print_pwd(t_env *env_list)
 	else
 		ft_printf("OLDPWD not found or has no value\n");
 }
+void	new_exit_code(t_shell *shell, int status)
+{
+	shell->exit_value = status;
+}
 
-int	parser_builtin(t_shell *root)
+
+int	parser_builtin(t_shell *root, t_cmd *cmd)
 {
 	root->exit_value = 0;
-	if (ft_strcmp(root->cmd->argv[0], "env") == 0)
+	
+	if (ft_strcmp(cmd->argv[0], "env") == 0)
 		return (print_env_list(root->env, ENV), 1);
-	if (ft_strcmp(root->cmd->argv[0], "export") == 0)
-		return (ft_export(root), 1);
-	if (ft_strcmp(root->cmd->argv[0], "pwd") == 0)
-		return (root->exit_value = ft_pwd(root), 1);
-	if (ft_strcmp(root->cmd->argv[0], "unset") == 0)
-		return (root->exit_value = ft_unset(root), 1);
-	if (ft_strcmp(root->cmd->argv[0], "cd") == 0)
-		return (root->exit_value = ft_cd(root), 1);
-	if (ft_strcmp(root->cmd->argv[0], "exit") == 0)
-		return (ft_exit(root), 1);
-	if (ft_strcmp(root->cmd->argv[0], "echo") == 0)
-		return (root->exit_value = ft_echo(root), 1);
-	if (ft_strchr(root->cmd->argv[0], '='))
-		return (add_env(root, root->cmd->argv[0], VAR), 1);
+	if (ft_strcmp(cmd->argv[0], "export") == 0)
+		return (new_exit_code(root, ft_export(root, cmd)), 1);
+	if (ft_strcmp(cmd->argv[0], "pwd") == 0)
+		return (new_exit_code(root, ft_pwd(root, cmd)), 1);
+	if (ft_strcmp(cmd->argv[0], "unset") == 0)
+		return (new_exit_code(root, ft_unset(root, cmd)), 1);
+	if (ft_strcmp(cmd->argv[0], "cd") == 0)
+		return (new_exit_code(root, ft_cd(root, cmd)), 1);
+	if (ft_strcmp(cmd->argv[0], "exit") == 0)
+		return (ft_exit(root, cmd), 1);
+	if (ft_strcmp(cmd->argv[0], "echo") == 0)
+		return (new_exit_code(root, ft_echo(root, cmd)), 1);
+	if (ft_strchr(cmd->argv[0], '='))
+		return (add_env(root, cmd->argv[0], VAR), 1);
 	return (0);
 }
 void	reading(t_shell *shell)
@@ -201,7 +206,7 @@ void	reading(t_shell *shell)
 		// print_envp_char(shell.envp);
 		
 		// Gestisci built-in nel processo padre solo se è un comando singolo
-		if (shell->cmd && !shell->cmd->next && parser_builtin(shell))
+		if (shell->cmd && !shell->cmd->next && parser_builtin(shell, shell->cmd))
 		{
 			// Built-in eseguita nel processo padre per modificare lo stato della shell
 		}

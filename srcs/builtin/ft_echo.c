@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 16:39:49 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/09 21:26:32 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/11 15:26:15 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,28 +21,20 @@ int	which_arg(t_shell *shell)
 	return (1);
 }
 
-int	ft_echo(t_shell *shell)
+int	ft_echo(t_shell *shell, t_cmd *cmd)
 {
 	int		i;
 	int		fd;
-	char	*line;
 
+	if (!shell || !(cmd->argc > 1) || !cmd->argv)
+		return (1);
 	i = which_arg(shell);
 	fd = which_fd(shell);
-	if (shell->cmd->argv[1] == NULL && shell->cmd->infile != -1)
-	{
-		while ((line = get_next_line(shell->cmd->infile)) != NULL)
-		{
-			write(fd, line, ft_strlen(line));
-			free(line);
-		}
-		return (0);
-	}
-	while (shell->cmd->argv[i] != NULL)
+	while (cmd->argv[i] != NULL)
 	{
 		if (i > 1 && shell->token.type != QUOTE)
 			write(fd, " ", 1);
-		fd_printf(fd, shell->cmd->argv[i]);
+		fd_printf(fd, cmd->argv[i]);
 		i++;
 	}
 	if(which_arg(shell) != 2)

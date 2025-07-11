@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 10:25:56 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/09 14:32:03 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/11 17:12:57 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,17 @@
 # include <stdint.h>
 # include <stdbool.h>
 # include <fcntl.h>
+
+typedef enum e_what
+{
+	EMPTY,
+	ALPHA,
+	NUM,
+	ALPHANUM,
+	ALL,
+	OTHERS,
+
+}			t_what;
 
 int		ft_isalnum(int c);
 int		ft_isalpha(int c);

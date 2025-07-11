@@ -1,7 +1,7 @@
 NAME		= minishell
 RM			= rm -f
 CFLAGS		= -Wall -Wextra -Werror -g -pedantic -I. -ILibft -Iincludes -lreadline
-VALFLAGS	= --quiet --leak-check=full --track-fds=yes --show-leak-kinds=all --track-origins=yes --suppressions=readline.supp
+VALFLAGS	= --quiet --leak-check=full --track-fds=yes --trace-children=yes --show-leak-kinds=all --track-origins=yes --suppressions=good.supp
 
 # Libft
 LIBFT_DIR	= Libft

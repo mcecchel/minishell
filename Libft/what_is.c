@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 14:51:45 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/06/06 16:16:23 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/11 17:17:59 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,18 +15,18 @@
 int	what_ret(int num, int alpha, int other)
 {
 	if (alpha == 0 && num == 0 && other == 0)
-		return (0);
+		return (EMPTY);
 	if (alpha == 1 && num == 0 && other == 0)
-		return (1);
+		return (ALPHA);
 	if (alpha == 0 && num == 1 && other == 0)
-		return (2);
+		return (NUM);
 	if (alpha == 1 && num == 1 && other == 0)
-		return (3);
+		return (ALPHANUM);
 	if ((alpha == 1 && num == 1 && other == 1) || (alpha == 0 && num == 1
 			&& other == 1) || (alpha == 1 && num == 0 && other == 1))
-		return (4);
+		return (ALL);
 	if (alpha == 0 && num == 0 && other == 1)
-		return (5);
+		return (OTHERS);
 	return (-1);
 }
 

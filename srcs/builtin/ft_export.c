@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 16:45:25 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/09 16:57:19 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/11 18:39:58 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,30 @@ static void	add_new_env(t_shell *root, char *name, char *value, int type)
 		root->env = new_env;
 }
 
+int	check_export(t_shell *shell, char *arg)
+{
+	int i;
+
+	i = 0;
+	if (arg[0] != '_' && !ft_isalpha(arg[0]))
+	{
+		fd_printf(2, "Invalid argument to export\n");
+		shell->exit_value = 1;
+		return (1);
+	}
+	while (arg[i] != '\0')
+	{
+		if (arg[i] != '_' && !ft_isalnum(arg[i]) && arg[i] != '=')
+		{
+			fd_printf(2, "Invalid argument to export\n");
+			shell->exit_value = 1;
+			return (1);
+		}
+		i++;
+	}
+	return (0);
+}
+
 void	add_env(t_shell *root, char *arg, int type)
 {
 	char	*name;
@@ -85,39 +109,45 @@ void	add_env(t_shell *root, char *arg, int type)
 	}
 	if (update_env(root->env, name, value, type))
 	{
-		// Aggiorna envp dopo aver modificato la lista
 		update_shell_envp(root);
 		return ;
 	}
 	add_new_env(root, name, value, type);
-	// Aggiorna envp dopo aver aggiunto un nuovo environment
 	update_shell_envp(root);
 }
 
-void	ft_export(t_shell *root)
+void	where_it_goes(t_shell *root, t_cmd *cmd, int i)
 {
-	int i;
-	int fd;
+	while (cmd->argv[i] != NULL)
+	{
+		if (ft_strchr(cmd->argv[i], '=') && check_export(root, cmd->argv[i]) == 0)
+			add_env(root, cmd->argv[i], ENV);
+		else if (check_export(root, cmd->argv[i]) == 0)
+			add_env(root, cmd->argv[i], EXPORT);
+		else if (ft_strchr(cmd->argv[i], '=')
+			&& check_export(root, cmd->argv[i]) == 0)
+			add_env(root, cmd->argv[i], VAR);
 
-	i = 0;
-	if (ft_strcmp(root->cmd->argv[0], "export") == 0)
-		i = 1;
-	if (root->cmd->argc == 1)
-	{
-		fd = which_fd(root);
-		print_env_list_fd(root->env, EXPORT, fd);
-		return ;
-	}
-	while (root->cmd->argv[i] != NULL)
-	{
-		if (ft_strchr(root->cmd->argv[i], '=')
-			&& ft_strcmp(root->cmd->argv[0], "export") == 0)
-			add_env(root, root->cmd->argv[i], ENV);
-		if (ft_strcmp(root->cmd->argv[0], "export") == 0)
-			add_env(root, root->cmd->argv[i], EXPORT);
-		if ((ft_strchr(root->cmd->argv[i], '=')
-			&& ft_strcmp(root->cmd->argv[0], "export") != 0))
-			add_env(root, root->cmd->argv[i], VAR);
 		i++;
 	}
 }
+
+int	ft_export(t_shell *root, t_cmd *cmd)
+{
+	int	i;
+	int	fd;
+
+	i = 0;
+	if (ft_strcmp(cmd->argv[0], "export") == 0)
+		i = 1;
+	if (cmd->argc == 1)
+	{
+		fd = which_fd(root);
+		print_env_list_fd(root->env, EXPORT, fd);
+		return (0);
+	}
+	where_it_goes(root, cmd, i);
+	return (root->exit_value);
+}
+
+

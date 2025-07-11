@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 12:22:07 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/09 17:00:05 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/11 17:02:41 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,13 +74,13 @@ static int	change_directory(const char *target_path)
 	return (0);
 }
 
-int	ft_cd(t_shell *root)
+int	ft_cd(t_shell *root, t_cmd *cmd)
 {
 	char	*current_path;
 	char	*old_path;
 	char	*target_path;
 
-	if (root->cmd->argc > 2)
+	if (cmd->argc > 2)
 	{
 		fd_printf(2, "bash: cd: too many arguments\n");
 		return (root->exit_value = 1, 1);

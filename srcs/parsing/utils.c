@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/10 12:22:22 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/09 17:11:56 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/11 14:43:25 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,18 @@ void	free_matrix(char **str)
 		i++;
 	}
 	free(str);
+}
+
+void	close_all_cmd_fds(t_cmd *head)
+{
+	t_cmd	*current;
+
+	current = head;
+	while (current)
+	{
+		close_cmd_fds(current);
+		current = current->next;
+	}
 }
 
 void	close_cmd_fds(t_cmd *cmd)

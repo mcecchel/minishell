@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 16:59:36 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/07 16:37:23 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/11 14:56:03 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ void	print_env_list_fd(t_env *env, int what, int fd)
 			fd_printf(fd, "declare -x ");
 			fd_printf(fd, "%s", env->var);
 			if (env->arg)
-				fd_printf(fd, "=%s\n", env->arg);
+				fd_printf(fd, "=\"%s\"\n", env->arg);
 			if (!env->arg)
 				fd_printf(fd, "\n");
 			}
