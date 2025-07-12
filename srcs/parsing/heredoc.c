@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 16:58:47 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/07 17:34:40 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/11 19:49:10 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -207,11 +207,3 @@ int setup_heredoc(t_cmd *cmd, char *delimiter, t_shell *shell)
 	return (1);
 }
 
-// Processo tutti gli heredoc prima dell'esecuzione
-int	process_heredocs(t_shell *shell)
-{
-	// Gli heredoc sono già processati durante il parsing
-	// Questa funzione non fa nulla
-	(void)shell;
-	return (1);
-}

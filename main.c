@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 17:30:08 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/11 18:29:42 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/12 15:53:39 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -216,50 +216,6 @@ void	reading(t_shell *shell)
 			execute_command_list(shell);
 		}
 
-		cleanup_shell(shell);
-		free(line);
-	}
-}
-
-void process_shell_input(t_shell *shell)
-{
-	char *line;
-	while (1)
-	{
-		line = readline("minishell> ");
-		if (!line)
-		{
-			write(1, "exit\n", 5);
-			clean_exit(shell);
-			cleanup_shell(shell);
-			exit(1);
-		}
-		if (*line == '\0')
-		{
-			free(line);
-			continue;
-		}
-		add_history(line);
-		if (!tokenize_input(&shell->token, line, shell))
-		{
-			ft_printf("Error: Tokenization failed\n");
-			cleanup_shell(shell);
-			free(line);
-			continue;
-		}
-		printf_debug("Generated tokens:\n");
-		debug_tokens(shell->token.head);
-
-		shell->cmd = parse_tokens(shell->token.head, shell);
-		if (!shell->cmd)
-		{
-			cleanup_shell(shell);
-			free(line);
-			continue;
-		}
-		printf_debug("\nGenerated commands:\n");
-		debug_cmds(shell->cmd);
-		execute_command_list(shell);
 		cleanup_shell(shell);
 		free(line);
 	}

@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 16:02:45 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/11 13:24:55 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/11 19:49:13 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,7 +141,6 @@ char			*remove_quotes_from_delimiter(char *delimiter);
 char			*create_tmp_heredoc_file(void);
 int				handle_heredoc_input(t_shell *shell, char *delimiter);
 int				setup_heredoc(t_cmd *cmd, char *delimiter, t_shell *shell);
-int				process_heredocs(t_shell *shell);
 
 
 // Command utilities

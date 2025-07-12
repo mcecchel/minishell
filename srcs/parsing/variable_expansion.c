@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 16:00:00 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/11 13:25:19 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/12 16:31:35 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,13 @@ char	*process_literal_text(char *str, int *i, char *result)
 	start = *i;
 	while (str[*i] && str[*i] != '$')
 		(*i)++;
-	if (*i > start)
+	if (str[*i] == '$')
+		(*i)++;
+	if (str[*i] == '_' || ft_isalpha(str[*i] ))
+		(*i)++;
+	while (ft_isalnum(str[*i]) || str[*i] == '_')
+		(*i)++;
+	if (*i >= start)
 	{
 		temp = ft_substr(str, start, *i - start);
 		if (!temp)
@@ -135,13 +141,15 @@ char	*expand_variables(char *str, t_shell *shell, int quote_type)
 
 	if (!str)
 		return (NULL);
+	if (!should_expand_in_quotes(quote_type))
+		return (ft_strdup(str));
 	result = ft_strdup("");
 	if (!result)
 		return (NULL);
 	i = 0;
 	while (str[i])
 	{
-		if (str[i] == '$' && should_expand_in_quotes(quote_type))
+		if (str[i] == '$')
 		{
 			temp = process_variable(str, &i, shell, result);
 			if (!temp)			
@@ -150,10 +158,14 @@ char	*expand_variables(char *str, t_shell *shell, int quote_type)
 		}
 		else
 		{
-			temp = process_literal_text(str, &i, result);
-			if (!temp)
+			temp = ft_calloc(ft_strlen(result) + 2, sizeof(char));
+			if (!temp)			
 				return (free(result), NULL);
+			ft_memmove(temp, result, ft_strlen(result));
+			temp[ft_strlen(result)] = str[i];
+			free(result);
 			result = temp;
+			i++;
 		}
 	}
 	return (result);
