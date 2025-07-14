@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 16:00:00 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/12 16:31:35 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/14 16:41:27 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,11 +70,28 @@ int	should_expand_in_quotes(int quote_type)
 
 char	*process_variable(char *str, int *i, t_shell *shell, char *result)
 {
-	char	*var_name;
-	char	*var_value;
-	char	*temp;
-	char	*new_result;
+	char *var_name = NULL;
+	char *var_value = NULL;
+	char *temp = NULL;
+	char *new_result = NULL;
 
+	// NON incrementare subito l'indice, controlla il carattere dopo $
+	int next = *i + 1;
+	if (!str[next] || is_space(str[next]) || str[next] == '\'' || str[next] == '"' || str[next] == '$' || str[next] == '|')
+	{
+		// Caso: solo $ oppure $ seguito da spazio o carattere non valido
+		temp = result;
+		new_result = ft_strjoin(result, "$\0");
+		if (new_result)
+		{
+			free(temp);
+			result = new_result;
+		}
+		else
+			result = temp;
+		(*i)++; // Avanza oltre il $
+		return result;
+	}
 	(*i)++; // Skip $
 	var_name = extract_var_name(str, i);
 	if (var_name)

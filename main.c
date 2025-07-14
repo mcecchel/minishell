@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: odudniak <odudniak@student.42firenze.it    +#+  +:+       +#+        */
+/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 17:30:08 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/14 13:55:12 by odudniak         ###   ########.fr       */
+/*   Updated: 2025/07/14 16:56:34 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,7 +136,8 @@ void	new_exit_code(t_shell *shell, int status)
 int	parser_builtin(t_shell *root, t_cmd *cmd)
 {
 	root->exit_value = 0;
-	
+	if (ft_strcmp(cmd->argv[0], "env") == 0 && cmd->argc != 1)
+		return (write(2, "Invalid command\n", 16), 1);
 	if (ft_strcmp(cmd->argv[0], "env") == 0)
 		return (print_env_list(root->env, ENV), 1);
 	if (ft_strcmp(cmd->argv[0], "export") == 0)

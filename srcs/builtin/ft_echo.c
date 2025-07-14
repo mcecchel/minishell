@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 16:39:49 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/14 13:28:30 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/14 17:11:03 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,16 +28,17 @@ int	only_char(const char *str, int a, int b, char flag)
 	return (1);
 }
 
-
 int which_arg(t_cmd *cmd)
 {
-	int i = 1;
+	int i;
+
+	i = 1;
 	if (!cmd || !cmd->argv)
-		return 1;
+		return (1);
 	while (cmd->argv[i] && cmd->argv[i][0] == '-' && only_char(cmd->argv[i], 
-		1, ft_strlen(cmd->argv[i]), 'n'))
+		1, ft_strlen(cmd->argv[i]), 'n') && cmd->argv[i][1] == 'n')
 		i++;
-	return i;
+	return (i);
 }
 
 int ft_echo(t_shell *shell, t_cmd *cmd)
@@ -55,7 +56,7 @@ int ft_echo(t_shell *shell, t_cmd *cmd)
 	{
 		if (i > which_arg(cmd))
 			write(fd, " ", 1);
-		fd_printf(fd, cmd->argv[i]);
+		write(fd, cmd->argv[i], ft_strlen(cmd->argv[i]));
 		i++;
 	}
 	if (!n_flag)

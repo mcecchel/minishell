@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 23:20:05 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/11 18:29:22 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/14 16:42:12 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,16 @@ void	clean_exit(t_shell *root)
 	if (root->envp)
 		free_matrix(root->envp);
 	rl_clear_history();
+}
+
+void	too_much_args(t_shell *root, t_cmd *cmd, int len)
+{
+	write(2, "exit\nbash: exit: ", 17);
+	write(2, cmd->argv[1], len);
+	write(2, ": numeric argument required\n", 28);
+	clean_exit(root);
+	cleanup_shell(root);
+	exit(2);
 }
 
 void	ft_exit(t_shell *root, t_cmd *cmd)
@@ -38,14 +48,7 @@ void	ft_exit(t_shell *root, t_cmd *cmd)
 	if (cmd->argc > 1)
 	{
 		if (what_is(cmd->argv[1], (int)len) != 2)
-		{
-			write(2, "exit\nbash: exit: ", 17);
-			write(2, cmd->argv[1], len);
-			write(2, ": numeric argument required\n", 28);
-			clean_exit(root);
-			cleanup_shell(root);
-			exit(2);
-		}
+			too_much_args(root, cmd, len);
 		exit_code = ft_atoi_ll(cmd->argv[1]);
 	}
 	write(1, "exit\n", 5);
@@ -53,14 +56,4 @@ void	ft_exit(t_shell *root, t_cmd *cmd)
 	cleanup_shell(root);
 	exit((unsigned char)exit_code);
 }
-
-	// if (cmd_no_permission or no -x permission) //ex. root
-	// 	exit(126);
-	// if (cmd_not_found)
-	// 	exit (127);
-	// if (ctrl+C)
-	// 	exit (130);
-
-
-
 
