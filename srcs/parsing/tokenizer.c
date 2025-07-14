@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 14:58:50 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/12 16:18:20 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/14 13:12:51 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,74 +151,94 @@ void	add_token_to_list(t_token *token_list, t_token *new_token)
 // Tokenizer principale - VERSIONE CORRETTA
 int	tokenize_input(t_token *token_list, char *line, t_shell *shell)
 {
-	int	i;
-	int	is_first_token;
-
-	i = 0;
-	is_first_token = 1;
-	// Inizializza la lista
+	int	i = 0;
+	int	is_first_token = 1;
 	token_list->head = NULL;
 	token_list->current = NULL;
+
 	while (line[i])
 	{
-		// Salta spazi bianchi
 		while (is_space(line[i]))
 			i++;
 		if (line[i] == '\0')
 			break;
 
+		// Concatenazione quote e testo adiacente
 		char *content = NULL;
 		int is_quoted = 0;
-		// Gestione quote
-		if (line[i] == '\'' || line[i] == '\"')
+		while (line[i] && !is_space(line[i]) && line[i] != '|' && line[i] != '<' && line[i] != '>')
 		{
-			content = extract_quote(line, &i, &is_quoted, shell);
-			if (!content) // Errore nelle quote
+			char *tmp = NULL;
+			int tmp_quoted = 0;
+			if (line[i] == '\'' || line[i] == '\"')
+				tmp = extract_quote(line, &i, &tmp_quoted, shell);
+			else
+				tmp = extract_word(line, &i, shell);
+
+			if (!tmp)
 			{
+				free(content);
 				free_tokens(token_list->head);
 				token_list->head = NULL;
 				return (0);
 			}
+			// Se una delle parti è quotata, segna is_quoted
+			if (tmp_quoted)
+				is_quoted = 1;
+			if (!content)
+				content = tmp;
+			else
+			{
+				char *joined = ft_strjoin(content, tmp);
+				free(content);
+				free(tmp);
+				content = joined;
+			}
 		}
+		// Se abbiamo costruito un argomento, creiamo il token
+		if (content)
+		{
+			t_token_type type = classify_token(content, is_first_token, is_quoted);
+			t_token *new_token = create_token(content, type, is_quoted);
+			if (!new_token)
+			{
+				free(content);
+				free_tokens(token_list->head);
+				token_list->head = NULL;
+				return (0);
+			}
+			add_token_to_list(token_list, new_token);
+			if (type == PIPE)
+				is_first_token = 1;
+			else if (is_first_token)
+				is_first_token = 0;
+		}
+
 		// Gestione operatori
-		else if (line[i] == '|' || line[i] == '<' || line[i] == '>')
+		if (line[i] == '|' || line[i] == '<' || line[i] == '>')
 		{
-			content = extract_operator(line, &i);
-			if (!content)
+			char *op = extract_operator(line, &i);
+			if (!op)
 			{
 				free_tokens(token_list->head);
 				token_list->head = NULL;
 				return (0);
 			}
-		}
-		// Gestione parole normali
-		else
-		{
-			content = extract_word(line, &i, shell);
-			if (!content)
+			t_token_type type = classify_token(op, is_first_token, 0);
+			t_token *new_token = create_token(op, type, 0);
+			if (!new_token)
 			{
+				free(op);
 				free_tokens(token_list->head);
 				token_list->head = NULL;
 				return (0);
 			}
+			add_token_to_list(token_list, new_token);
+			if (type == PIPE)
+				is_first_token = 1;
+			else if (is_first_token)
+				is_first_token = 0;
 		}
-		// Classifica e crea il token
-		t_token_type type = classify_token(content, is_first_token, is_quoted);
-		t_token *new_token = create_token(content, type, is_quoted);
-		if (!new_token)
-		{
-			free(content);
-			free_tokens(token_list->head);
-			token_list->head = NULL;
-			return (0);
-		}
-		// Aggiungi alla lista
-		add_token_to_list(token_list, new_token);
-		// Aggiorna il flag per il primo token
-		if (type == PIPE)
-			is_first_token = 1; // Reset dopo pipe
-		else if (is_first_token)
-			is_first_token = 0; // Non più il primo token
 	}
 	return (1);
 }
