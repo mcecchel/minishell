@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: odudniak <odudniak@student.42firenze.it    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 17:30:08 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/12 15:53:39 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/14 13:55:12 by odudniak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,16 +17,12 @@
 #include <signal.h>
 
 // Variabile globale
-volatile pid_t current_child_pid = -1;
+int current_child_pid = -1;
 
 void sigint_handler(int sig)
 {
 	(void)sig;
-	if (current_child_pid > 0)
-	{
-		kill(current_child_pid, SIGKILL);  // Termina il processo figlio
-		current_child_pid = -1;
-	}
+	current_child_pid = sig;
 	write(STDOUT_FILENO, "\n", 1);
 	rl_replace_line("", 0);          // Pulisce la riga corrente
 	rl_on_new_line();                // Si prepara a una nuova riga
@@ -166,6 +162,14 @@ void	reading(t_shell *shell)
 	while (1)
 	{
 		line = readline("minishell> ");
+		if (current_child_pid != -1)
+		{
+			if (current_child_pid == SIGINT)
+				shell->exit_value = 130;
+			else if (current_child_pid == SIGQUIT)
+				shell->exit_value = 131;
+			current_child_pid = -1;
+		}
 		if (!line)
 		{
 			write (1, "exit\n", 5);

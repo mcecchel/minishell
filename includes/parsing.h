@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 16:02:45 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/11 19:49:13 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/14 14:09:52 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,6 +191,8 @@ void			copy_system_envp_to_shell(char **system_envp, t_shell *shell);
 void			fork_error_handler(t_shell *shell, char *path, int err, int exit_code);
 int				which_fd(t_shell *shell);
 void			free_matrix(char **str);
+t_token			*ft_last(t_token *lst);
+
 
 
 #endif

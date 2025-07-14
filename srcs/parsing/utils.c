@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/10 12:22:22 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/11 14:43:25 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/14 14:09:18 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,15 @@ void	close_cmd_fds(t_cmd *cmd)
 		close(cmd->outfile);
 		cmd->outfile = -1;
 	}
+}
+
+t_token	*ft_last(t_token *lst)
+{
+	if (lst == NULL)
+		return (NULL);
+	while (lst->next != NULL)
+		lst = lst->next;
+	return (lst);
 }
 
 

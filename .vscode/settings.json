@@ -3,7 +3,9 @@
 		"history.h": "c",
 		"libft.h": "c",
 		"minishell.h": "c",
-		"readline.h": "c"
+		"readline.h": "c",
+		"compare": "c",
+		"type_traits": "c"
 	},
 	"makefile.configureOnOpen": true
 }

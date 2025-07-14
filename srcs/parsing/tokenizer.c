@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 14:58:50 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/14 13:12:51 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/14 14:38:43 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,15 @@
 // Estrae una parola fino a uno spazio / operatore
 char	*extract_word(char *line, int *index, t_shell *shell)
 {
-	char	*word;
-	char	*expanded;
-	int		start;
-	int		end;
+	char			*word;
+	char			*expanded;
+	int				start;
+	int				end;
+	t_token			*lst;
 
 	start = *index;
 	end = start;
+	expanded = NULL;
 	// Incrementa `end` fino a uno spazio o un operatore
 	while (line[end] && !is_space(line[end]) &&
 		line[end] != '|' && line[end] != '>' && line[end] != '<' &&
@@ -35,8 +37,15 @@ char	*extract_word(char *line, int *index, t_shell *shell)
 	}
 	*index = end;
 	// Espandi le variabili (quote_type = 0 significa nessuna virgoletta)
-	expanded = expand_variables(word, shell, 0);
-	free(word);
+	expanded = word;
+	lst = NULL;
+	if (shell->token.head)
+		lst = ft_last(shell->token.head);
+	if (!lst || lst->type != HEREDOC)
+	{
+		expanded = expand_variables(word, shell, 0);
+		free(word);
+	}
 	return (expanded);
 }
 
@@ -48,7 +57,9 @@ char *extract_quote(char *line, int *index, int *is_quoted, t_shell *shell)
 	char	*res;
 	char	*expanded;
 	int		quote_type;
-	
+	t_token	*lst;
+
+	expanded = NULL;
 	*is_quoted = 1;
 	// Trova la quote di chiusura
 	while (line[end] && line[end] != quote_char)
@@ -71,8 +82,15 @@ char *extract_quote(char *line, int *index, int *is_quoted, t_shell *shell)
 		quote_type = 2; // Double quotes - espandere
 	
 	// Espandi le variabili solo se necessario
-	expanded = expand_variables(res, shell, quote_type);
-	free(res);
+	lst = NULL;
+	if (shell->token.head)
+		lst = ft_last(shell->token.head);
+	expanded = res;
+	if (!lst || lst->type != HEREDOC)
+	{
+		expanded = expand_variables(res, shell, quote_type);
+		free(res);
+	}
 	return (expanded);
 }
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   manage_cmd.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: odudniak <odudniak@student.42firenze.it    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:09:38 by marianna          #+#    #+#             */
-/*   Updated: 2025/07/11 14:43:42 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/14 13:53:19 by odudniak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,8 @@ void	fork_error_handler(t_shell *shell, char *path, int err, int exit_code)
 	if (err == 3)
 		perror("dup2 pipe_out");
 	if (err == 4)
-		;
+	{
+	}
 	close_cmd_fds(shell->cmd);
 	cleanup_shell(shell);
 	free_env_list(shell->env);
@@ -53,7 +54,7 @@ void	execute_cmd(t_shell *shell, t_cmd *cmd)
 		fork_error_handler(shell, NULL, 4, shell->exit_value);
 	path = get_cmd_path(shell, cmd, cmd->argv[0]);
 	if (!path)
-		exit(127); // Command not found
+		fork_error_handler(shell, path, 1, 127); // Command not found
 	execve(path, cmd->argv, shell->envp);
 	if (access(path, F_OK) != 0)
 		fork_error_handler(shell, path, 1, 127);
@@ -77,6 +78,7 @@ void	print_envp_char(char **envp)
 		i++;
 	}
 }
+void sigint_handler(int sig);
 
 void	execute_command_list(t_shell *shell)
 {
@@ -105,6 +107,8 @@ void	execute_command_list(t_shell *shell)
 		}
 		if (current->pid == 0) // Processo figlio
 		{
+			signal(SIGINT, SIG_DFL);
+			signal(SIGQUIT, SIG_DFL);
 			// Collega l'input alla pipe precedente se esiste
 			if (prev_pipe != -1)
 			{
@@ -129,6 +133,7 @@ void	execute_command_list(t_shell *shell)
 		}
 		else // Processo padre
 		{
+			signal(SIGINT, SIG_IGN);
 			// Chiudi la pipe precedente se esiste
 			if (prev_pipe != -1)
 				close(prev_pipe);
@@ -153,12 +158,19 @@ void	execute_command_list(t_shell *shell)
 				// Aggiorna l'exit value con l'ultimo comando
 				if (WIFEXITED(status))
 					shell->exit_value = WEXITSTATUS(status);
-				else
-					shell->exit_value = 1;
+				else if (WIFSIGNALED(status))
+				{
+					int sig = WTERMSIG(status);
+					if (sig == SIGINT)
+						shell->exit_value = 130;
+					else if (sig == SIGQUIT)
+						shell->exit_value = 131;
+				}
 			}
 		}
 		current = current->next;
 	}
+	signal(SIGINT, sigint_handler);
 	// Chiudi l'ultima pipe se esiste
 	if (prev_pipe != -1)
 		close(prev_pipe);

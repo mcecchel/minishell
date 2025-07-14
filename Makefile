@@ -1,6 +1,7 @@
 NAME		= minishell
 RM			= rm -f
-CFLAGS		= -Wall -Wextra -Werror -g -pedantic -I. -ILibft -Iincludes -lreadline
+CC			= clang
+CFLAGS		= -Wall -Wextra -Werror -gdwarf-4 -pedantic -I. -ILibft -Iincludes -lreadline
 VALFLAGS	= --quiet --leak-check=full --track-fds=yes --trace-children=yes --show-leak-kinds=all --track-origins=yes --suppressions=good.supp
 
 # Libft
@@ -38,10 +39,6 @@ $(NAME): $(SRC)
 	$(CC) $(CFLAGS) $(SRC) -o $(NAME) $(LIBFT_LIB) -lm
 	$(MAKE) kira
 
-%.o: %.c
-	@echo "🛠  Compilando $<..."
-	$(CC) $(CFLAGS) -c $< -o $@
-
 clean:
 	$(MAKE) clean -C $(LIBFT_DIR)
 
@@ -49,7 +46,8 @@ fclean: clean
 	$(RM) $(NAME)
 	$(MAKE) fclean -C $(LIBFT_DIR)
 
-val: $(NAME)
+val: all
+	clear
 	@valgrind $(VALFLAGS) ./$(NAME)
 
 re: fclean all

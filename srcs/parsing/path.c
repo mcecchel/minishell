@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   path.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: odudniak <odudniak@student.42firenze.it    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/10 12:21:50 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/09 16:55:08 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/14 13:41:40 by odudniak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,10 +97,6 @@ char	*get_cmd_path(t_shell *shell, t_cmd *cmd, char *command)
 	{
 		perror("Error: Command not found");
 		free_matrix(paths);
-		free_matrix(shell->envp);
-		close_cmd_fds(cmd);
-		cleanup_shell(shell);
-		free_env_list(shell->env);
 		return (NULL);
 	}
 	return (full_path);
