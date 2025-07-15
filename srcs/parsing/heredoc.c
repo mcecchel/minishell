@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 16:58:47 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/15 14:56:33 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/15 16:19:52 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,7 +188,7 @@ int setup_heredoc(t_cmd *cmd, char *delimiter, t_shell *shell)
 {
 	int fd;
 
-	if (!cmd || !delimiter)
+	if (!delimiter)
 		return (0);
 	fd = handle_heredoc_input(shell, delimiter);
 	if (fd < 0)

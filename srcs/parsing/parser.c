@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 14:59:11 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/14 16:28:57 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/15 16:35:06 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,12 +146,11 @@ t_cmd *parse_tokens(t_token *token_list, t_shell *shell)
 		{
 			// Crea nuovo comando
 			current_cmd = init_new_cmd();
-			if (!current_cmd)
-			{
-				free_cmd_list(cmd_list);
-				return (NULL);
-			}
-			// Imposta comando e primo argomento
+			// if (!current_cmd || token->type == RED_IN)
+			// {
+			// 	free_cmd_list(cmd_list);
+			// 	return (NULL);
+			// }
 			current_cmd->cmd_path = ft_strdup(token->value);
 			if (!current_cmd->cmd_path)
 			{
@@ -185,7 +184,7 @@ t_cmd *parse_tokens(t_token *token_list, t_shell *shell)
 			// Verifica che ci sia un comando dopo il pipe
 			if (!token->next)
 			{
-				ft_printf("Error: Pipe without following command\n");
+				ft_printf("Pipe syntax error\n");
 				free_cmd_list(cmd_list);
 				return (NULL);
 			}
@@ -193,7 +192,7 @@ t_cmd *parse_tokens(t_token *token_list, t_shell *shell)
 		}
 		else if (is_redirection_token(token->type))
 		{
-			if (!current_cmd)
+			if (!current_cmd && token->type == RED_IN)
 			{
 				ft_printf("Error: Redirection without command\n");
 				free_cmd_list(cmd_list);
@@ -208,7 +207,6 @@ t_cmd *parse_tokens(t_token *token_list, t_shell *shell)
 			if (token->next)
 				token = token->next;
 		}
-
 		token = token->next;
 	}
 	// Verifica che abbiamo almeno un comando

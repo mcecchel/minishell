@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 17:28:53 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/04 17:44:43 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/15 16:20:04 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ int	setup_output_redir(t_cmd *cmd, char *filename, int append)
 	int fd;
 	int flags;
 
-	if (!cmd || !filename)
+	if (!filename)
 		return (0);
 	// Scegli i flag in base al tipo di redirezione
 	if (append)

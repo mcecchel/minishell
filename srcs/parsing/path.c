@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   path.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: odudniak <odudniak@student.42firenze.it    +#+  +:+       +#+        */
+/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/10 12:21:50 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/14 13:41:40 by odudniak         ###   ########.fr       */
+/*   Updated: 2025/07/15 16:15:20 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	is_valid_command(t_cmd *cmd, char *command)
 {
 	if (command == NULL || *command == '\0' || is_space(*command) == 1)
 	{
-		perror("Error: Invalid command12");
+		perror("Error: Invalid command");
 		if (cmd->infile != -1)
 			close(cmd->infile);
 		if (cmd->outfile != -1)
@@ -94,10 +94,6 @@ char	*get_cmd_path(t_shell *shell, t_cmd *cmd, char *command)
 		return (NULL);
 	full_path = search_command(paths, command);
 	if (!full_path)
-	{
-		perror("Error: Command not found");
-		free_matrix(paths);
-		return (NULL);
-	}
+		return (free_matrix(paths), NULL);
 	return (full_path);
 }
