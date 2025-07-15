@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 12:22:07 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/11 17:02:41 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/15 16:36:55 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,22 +102,3 @@ int	ft_cd(t_shell *root, t_cmd *cmd)
 	free(old_path);
 	return (0);
 }
-
-// int main(int argc, char **argv, char **envp)
-// {
-// 	char	**mini_env;
-// 	int 	i;
-// 	int		k;
-
-// 	i = 0;
-// 	k = 0;
-// 	mini_env = copy_env(envp);
-// 	//print_env(mini_env);
-// 	//ft_cd("Libft/ft_printf", mini_env);
-// 	ft_cd(argv[1], mini_env);
-// 	printf("///////////////////////////////////////////////////////////////\n");
-// 	sort_env(mini_env);
-// 	print_env(mini_env);
-// 	free_matrix(mini_env);
-// 	return(0);
-// }

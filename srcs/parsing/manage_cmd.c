@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   manage_cmd.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: odudniak <odudniak@student.42firenze.it    +#+  +:+       +#+        */
+/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:09:38 by marianna          #+#    #+#             */
-/*   Updated: 2025/07/14 13:53:19 by odudniak         ###   ########.fr       */
+/*   Updated: 2025/07/15 16:50:46 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,11 @@ void	execute_cmd(t_shell *shell, t_cmd *cmd)
 			fork_error_handler(shell, NULL, 0, 1);
 	}
 	close_all_cmd_fds(shell->cmd);
+	
+	// Se è un comando dummy (solo redirezione), esci subito
+	if (cmd->cmd_path && ft_strlen(cmd->cmd_path) == 0)
+		fork_error_handler(shell, NULL, 4, 0);
+	
 	if (parser_builtin(shell, cmd))
 		fork_error_handler(shell, NULL, 4, shell->exit_value);
 	path = get_cmd_path(shell, cmd, cmd->argv[0]);

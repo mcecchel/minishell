@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 14:59:11 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/15 16:35:06 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/15 16:50:46 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -192,11 +192,21 @@ t_cmd *parse_tokens(t_token *token_list, t_shell *shell)
 		}
 		else if (is_redirection_token(token->type))
 		{
-			if (!current_cmd && token->type == RED_IN)
+			// Se non c'è un comando corrente, crea un comando dummy per la redirezione
+			if (!current_cmd)
 			{
-				ft_printf("Error: Redirection without command\n");
-				free_cmd_list(cmd_list);
-				return (NULL);
+				current_cmd = init_new_cmd();
+				if (!current_cmd)
+				{
+					free_cmd_list(cmd_list);
+					return (NULL);
+				}
+				// Comando dummy che non fa nulla
+				current_cmd->cmd_path = ft_strdup("");
+				current_cmd->argv[0] = ft_strdup("");
+				current_cmd->argc = 1;
+				current_cmd->argv[1] = NULL;
+				add_cmd_to_list(&cmd_list, current_cmd);
 			}
 			if (!handle_redirection(current_cmd, token, shell))
 			{
