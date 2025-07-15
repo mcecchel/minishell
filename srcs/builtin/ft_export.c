@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 16:45:25 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/14 17:03:57 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/15 15:37:08 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,24 +63,26 @@ static void	add_new_env(t_shell *root, char *name, char *value, int type)
 
 int	check_export(t_shell *shell, char *arg)
 {
-int i = 0;
-while (arg[i] && arg[i] != '=')
-{
-	if (i == 0 && arg[i] != '_' && !ft_isalpha(arg[i]))
+	int i;
+
+	i = 0;
+	if (arg[0] != '_' && !ft_isalpha(arg[0]))
 	{
 		fd_printf(2, "Invalid argument to export\n");
 		shell->exit_value = 1;
 		return (1);
 	}
-	else if (i > 0 && arg[i] != '_' && !ft_isalnum(arg[i]))
+	while (arg[i] != '\0')
 	{
-		fd_printf(2, "Invalid argument to export\n");
-		shell->exit_value = 1;
-		return (1);
+		if (arg[i] != '_' && !ft_isalnum(arg[i]) && arg[i] != '=')
+		{
+			fd_printf(2, "Invalid argument to export\n");
+			shell->exit_value = 1;
+			return (1);
+		}
+		i++;
 	}
-	i++;
-}
-return (0);
+	return (0);
 }
 
 void	add_env(t_shell *root, char *arg, int type)
@@ -146,5 +148,3 @@ int	ft_export(t_shell *root, t_cmd *cmd)
 	where_it_goes(root, cmd, i);
 	return (root->exit_value);
 }
-
-

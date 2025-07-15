@@ -193,12 +193,12 @@ t_cmd *parse_tokens(t_token *token_list, t_shell *shell)
 		}
 		else if (is_redirection_token(token->type))
 		{
-			// if (!current_cmd)
-			// {
-			// 	ft_printf("Error: Redirection without command\n");
-			// 	free_cmd_list(cmd_list);
-			// 	return (NULL);
-			// }
+			if (!current_cmd)
+			{
+				ft_printf("Error: Redirection without command\n");
+				free_cmd_list(cmd_list);
+				return (NULL);
+			}
 			if (!handle_redirection(current_cmd, token, shell))
 			{
 				free_cmd_list(cmd_list);

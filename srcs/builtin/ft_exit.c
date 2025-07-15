@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 23:20:05 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/14 16:42:12 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/15 15:37:04 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,3 +57,8 @@ void	ft_exit(t_shell *root, t_cmd *cmd)
 	exit((unsigned char)exit_code);
 }
 
+/* Exit codes reference:
+ * 126: Command found but not executable (permission denied)
+ * 127: Command not found
+ * 130: Terminated by Ctrl+C (SIGINT)
+ */

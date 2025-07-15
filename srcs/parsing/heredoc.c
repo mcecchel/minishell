@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 16:58:47 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/11 19:49:10 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/15 14:56:33 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,7 +166,7 @@ int	handle_heredoc_input(t_shell *shell, char *delimiter)
 		if (ft_strcmp(line, clean_delimiter) == 0)
 		{
 			free(line);
-			break;// Esce dal ciclo se il delim e' stato inserito
+			break ;// Esce dal ciclo se il delim e' stato inserito
 		}
 		expanded_line = expand_heredoc(shell, line, 1);
 		if (expanded_line)
@@ -190,20 +190,12 @@ int setup_heredoc(t_cmd *cmd, char *delimiter, t_shell *shell)
 
 	if (!cmd || !delimiter)
 		return (0);
-	
-	// Processa immediatamente l'heredoc
 	fd = handle_heredoc_input(shell, delimiter);
 	if (fd < 0)
-	{
-		ft_printf("Error: Failed to handle heredoc input\n");
-		return (0);
-	}
-	
-	// Chiudi il file descriptor precedente se esiste
+		return (fd_printf(2, "Error: Failed to handle heredoc input\n"), 0);
 	if (cmd->infile != -1)
 		close(cmd->infile);
 	cmd->infile = fd;
-	
 	return (1);
 }
 
