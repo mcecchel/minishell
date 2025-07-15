@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 22:54:32 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/11 15:29:48 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/15 17:41:07 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,5 +33,3 @@ int	ft_pwd(t_shell *shell, t_cmd *cmd)
 	free(pwd);
 	return (0);
 }
-
-

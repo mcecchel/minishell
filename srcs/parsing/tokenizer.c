@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 14:58:50 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/14 14:38:43 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/15 18:07:03 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,9 @@ char	*extract_word(char *line, int *index, t_shell *shell)
 	start = *index;
 	end = start;
 	expanded = NULL;
-	// Incrementa `end` fino a uno spazio o un operatore
-	while (line[end] && !is_space(line[end]) &&
-		line[end] != '|' && line[end] != '>' && line[end] != '<' &&
-		line[end] != '\'' && line[end] != '\"')
+	while (line[end] && !is_space(line[end])
+		&& line[end] != '|' && line[end] != '>' && line[end] != '<'
+		&& line[end] != '\'' && line[end] != '\"')
 			end++;
 	word = ft_substr(line, start, end - start);
 	if (!word)
@@ -36,7 +35,6 @@ char	*extract_word(char *line, int *index, t_shell *shell)
 		return (NULL);
 	}
 	*index = end;
-	// Espandi le variabili (quote_type = 0 significa nessuna virgoletta)
 	expanded = word;
 	lst = NULL;
 	if (shell->token.head)
@@ -61,9 +59,8 @@ char *extract_quote(char *line, int *index, int *is_quoted, t_shell *shell)
 
 	expanded = NULL;
 	*is_quoted = 1;
-	// Trova la quote di chiusura
 	while (line[end] && line[end] != quote_char)
-		end++; 
+		end++;
 	if (line[end] != quote_char)
 	{
 		ft_printf("minishell: syntax error: unclosed quote\n");
@@ -74,14 +71,10 @@ char *extract_quote(char *line, int *index, int *is_quoted, t_shell *shell)
 	if (!res)
 		return (NULL);
 	*index = end + 1;
-	
-	// Determina il tipo di virgoletta per l'espansione
 	if (quote_char == '\'')
-		quote_type = 1; // Single quotes - non espandere
+		quote_type = 1;
 	else
-		quote_type = 2; // Double quotes - espandere
-	
-	// Espandi le variabili solo se necessario
+		quote_type = 2;
 	lst = NULL;
 	if (shell->token.head)
 		lst = ft_last(shell->token.head);
@@ -94,18 +87,19 @@ char *extract_quote(char *line, int *index, int *is_quoted, t_shell *shell)
 	return (expanded);
 }
 
-char *extract_operator(char *line, int *index)
+char	*extract_operator(char *line, int *index)
 {
-	int start = *index;
-	// Gestisce operatori singoli o doppi (<<, >>)
-	if ((line[*index] == '<' && line[*index + 1] == '<') || 
-		(line[*index] == '>' && line[*index + 1] == '>'))
+	int	start;
+
+	start = *index;
+	if ((line[*index] == '<' && line[*index + 1] == '<')
+		|| (line[*index] == '>' && line[*index + 1] == '>'))
 		*index += 2; // Salta gli operatori doppi
 	else if (line[*index] == '|' || line[*index] == '<' || line[*index] == '>')
 		(*index)++;
 	else
-		return (NULL); // Non è un operatore
-	return ft_substr(line, start, *index - start);
+		return (NULL);
+	return (ft_substr(line, start, *index - start));
 }
 
 // Classificazione token migliorata

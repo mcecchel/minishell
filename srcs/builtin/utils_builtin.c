@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 16:59:36 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/11 14:56:03 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/15 18:02:54 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ void	print_env_list_fd(t_env *env, int what, int fd)
 		{
 			fd_printf(fd, "%s", env->var);
 			if (env->arg)
-				fd_printf(fd, "=\"%s\"\n", env->arg);
+				fd_printf(fd, "=%s\n", env->arg);
 		}
 		env = env->next;
 	}
@@ -61,14 +61,9 @@ void	print_env_list_fd(t_env *env, int what, int fd)
 				fd_printf(fd, "=\"%s\"\n", env->arg);
 			if (!env->arg)
 				fd_printf(fd, "\n");
-			}
+		}
 		env = env->next;
 	}
-}
-
-void	print_env_list(t_env *env, int what)
-{
-	print_env_list_fd(env, what, 1);
 }
 
 long long int	ft_atoi_ll(const char *nptr)
@@ -97,11 +92,31 @@ long long int	ft_atoi_ll(const char *nptr)
 
 int	which_fd(t_shell *shell)
 {
-	int fd;
+	int	fd;
 
 	if (shell->cmd->outfile != -1)
 		fd = shell->cmd->outfile;
 	else
 		fd = 1;
 	return (fd);
+}
+
+void	copy_system_envp_to_shell(char **system_envp, t_shell *shell)
+{
+	int	count;
+	int	i;
+
+	count = 0;
+	i = 0;
+	while (system_envp[count])
+		count++;
+	shell->envp = ft_calloc(count + 1, sizeof(char *));
+	if (!shell->envp)
+		return ;
+	while (i < count)
+	{
+		shell->envp[i] = ft_strdup(system_envp[i]);
+		i++;
+	}
+	shell->envp[i] = NULL;
 }

@@ -6,31 +6,11 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 16:58:05 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/09 21:26:32 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/15 18:02:40 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-void	copy_system_envp_to_shell(char **system_envp, t_shell *shell)
-{
-	int	count;
-	int	i;
-
-	count = 0;
-	i = 0;
-	while (system_envp[count])
-		count++;
-	shell->envp = ft_calloc(count + 1, sizeof(char *));
-	if (!shell->envp)
-		return;
-	while (i < count)
-	{
-		shell->envp[i] = ft_strdup(system_envp[i]);
-		i++;
-	}
-	shell->envp[i] = NULL;
-}
 
 static int	count_env_list(t_env *env)
 {

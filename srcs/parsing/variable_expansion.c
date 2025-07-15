@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 16:00:00 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/14 16:41:27 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/15 18:05:17 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,9 +63,9 @@ char	*extract_var_name(char *str, int *index)
 
 int	should_expand_in_quotes(int quote_type)
 {
-	if (quote_type == 1)  // Single quotes
+	if (quote_type == 1)
 		return (0);
-	return (1);  // Double quotes or no quotes
+	return (1);
 }
 
 char	*process_variable(char *str, int *i, t_shell *shell, char *result)
@@ -75,11 +75,9 @@ char	*process_variable(char *str, int *i, t_shell *shell, char *result)
 	char *temp = NULL;
 	char *new_result = NULL;
 
-	// NON incrementare subito l'indice, controlla il carattere dopo $
 	int next = *i + 1;
 	if (!str[next] || is_space(str[next]) || str[next] == '\'' || str[next] == '"' || str[next] == '$' || str[next] == '|')
 	{
-		// Caso: solo $ oppure $ seguito da spazio o carattere non valido
 		temp = result;
 		new_result = ft_strjoin(result, "$\0");
 		if (new_result)
@@ -89,10 +87,10 @@ char	*process_variable(char *str, int *i, t_shell *shell, char *result)
 		}
 		else
 			result = temp;
-		(*i)++; // Avanza oltre il $
-		return result;
+		(*i)++;
+		return (result);
 	}
-	(*i)++; // Skip $
+	(*i)++;
 	var_name = extract_var_name(str, i);
 	if (var_name)
 	{
@@ -108,7 +106,7 @@ char	*process_variable(char *str, int *i, t_shell *shell, char *result)
 			}
 			else
 			{
-				result = temp; // Mantieni il result originale se join fallisce
+				result = temp;
 			}
 			if (ft_strcmp(var_name, "?") == 0 || ft_strcmp(var_name, "$") == 0)
 				free(var_value);
@@ -129,7 +127,7 @@ char	*process_literal_text(char *str, int *i, char *result)
 		(*i)++;
 	if (str[*i] == '$')
 		(*i)++;
-	if (str[*i] == '_' || ft_isalpha(str[*i] ))
+	if (str[*i] == '_' || ft_isalpha(str[*i]))
 		(*i)++;
 	while (ft_isalnum(str[*i]) || str[*i] == '_')
 		(*i)++;
@@ -145,7 +143,6 @@ char	*process_literal_text(char *str, int *i, char *result)
 			free(result);
 			result = new_result;
 		}
-		// Se ft_strjoin fallisce, mantieni result originale
 	}
 	return (result);
 }
@@ -169,14 +166,14 @@ char	*expand_variables(char *str, t_shell *shell, int quote_type)
 		if (str[i] == '$')
 		{
 			temp = process_variable(str, &i, shell, result);
-			if (!temp)			
+			if (!temp)
 				return (free(result), NULL);
 			result = temp;
 		}
 		else
 		{
 			temp = ft_calloc(ft_strlen(result) + 2, sizeof(char));
-			if (!temp)			
+			if (!temp)
 				return (free(result), NULL);
 			ft_memmove(temp, result, ft_strlen(result));
 			temp[ft_strlen(result)] = str[i];

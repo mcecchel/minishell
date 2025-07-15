@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 16:02:45 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/14 14:09:52 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/15 20:59:46 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include <fcntl.h>
 # include <signal.h>
 # include <sys/stat.h>
+# include <sys/ioctl.h>
 # include <sys/wait.h>
 # include <readline/readline.h>
 # include <readline/history.h>
@@ -112,7 +113,6 @@ t_token			*add_token(t_token *token, char *value, int is_quoted);
 void			print_token_type(t_token *token);
 void			debug_tokens(t_token *token);
 void			free_tokens(t_token *token);
-int				handle_heredoc(char *delimiter);
 
 /* ************************************************************************** */
 /*                          PARSER FUNCTIONS                                 */
@@ -135,7 +135,7 @@ int				setup_output_redir(t_cmd *cmd, char *filename, int append);
 void			handle_heredoc_signal(int sig);
 void			setup_heredoc_signals(void);
 void			restore_signals(void);
-char			*expand_heredoc(t_shell *shell, char *line, int expand);
+char			*expand_heredoc(t_shell *shell, char *line, int exp, int quote);
 int				is_delimiter_quoted(char *delimiter);
 char			*remove_quotes_from_delimiter(char *delimiter);
 char			*create_tmp_heredoc_file(void);

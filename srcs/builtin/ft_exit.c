@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 23:20:05 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/15 15:37:04 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/15 17:38:59 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,10 @@ void	too_much_args(t_shell *root, t_cmd *cmd, int len)
 
 void	ft_exit(t_shell *root, t_cmd *cmd)
 {
-	long long int	exit_code = 0;
+	long long int	exit_code;
 	size_t			len;
 
+	exit_code = 0;
 	len = ft_strlen(cmd->argv[1]);
 	if (cmd->argc > 2 && what_is(cmd->argv[1], (int)len) == 2)
 	{

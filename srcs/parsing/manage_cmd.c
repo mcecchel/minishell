@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:09:38 by marianna          #+#    #+#             */
-/*   Updated: 2025/07/15 16:50:46 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/15 18:09:05 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,72 +95,63 @@ void	execute_command_list(t_shell *shell)
 	prev_pipe = -1;
 	while (current)
 	{
-		// Se non è l'ultimo comando, crea una pipe
 		if (current->next)
 		{
 			if (pipe(fd_pipe) == -1)
 			{
 				perror("Pipe error");
-				return;
+				return ;
 			}
 		}
 		current->pid = fork();
 		if (current->pid == -1)
 		{
 			perror("Fork error");
-			return;
+			return ;
 		}
-		if (current->pid == 0) // Processo figlio
+		if (current->pid == 0)
 		{
 			signal(SIGINT, SIG_DFL);
 			signal(SIGQUIT, SIG_DFL);
-			// Collega l'input alla pipe precedente se esiste
 			if (prev_pipe != -1)
 			{
 				if (dup2(prev_pipe, STDIN_FILENO) == -1)
 					fork_error_handler(shell, NULL, 2, 1);
 				close(prev_pipe);
 			}
-			// Se non è l'ultimo comando, collega l'output alla nuova pipe
 			if (current->next)
 			{
 				close(fd_pipe[0]);
-				
-				// Solo se non c'è già una redirezione di output
 				if (current->outfile == -1)
 				{
 					if (dup2(fd_pipe[1], STDOUT_FILENO) == -1)
 						fork_error_handler(shell, NULL, 3, 1);
 				}
-				close(fd_pipe[1]); // Chiudi write end
+				close(fd_pipe[1]);
 			}
 			execute_cmd(shell, current);
 		}
-		else // Processo padre
+		else
 		{
 			signal(SIGINT, SIG_IGN);
-			// Chiudi la pipe precedente se esiste
 			if (prev_pipe != -1)
 				close(prev_pipe);
-			// Se non è l'ultimo comando, aggiorna prev_pipe
 			if (current->next)
 			{
-				close(fd_pipe[1]); // Chiudi write end
-				prev_pipe = fd_pipe[0]; // Salva read end
+				close(fd_pipe[1]);
+				prev_pipe = fd_pipe[0];
 			}
 			current = current->next;
 		}
 	}
-	// Aspetta che tutti i processi figli terminino
 	current = shell->cmd;
 	while (current)
 	{
 		if (current->pid > 0)
 		{
-			int status;
+			int	status;
 			if (waitpid(current->pid, &status, 0) != -1)
 			{
-				// Aggiorna l'exit value con l'ultimo comando
 				if (WIFEXITED(status))
 					shell->exit_value = WEXITSTATUS(status);
 				else if (WIFSIGNALED(status))
@@ -176,7 +167,6 @@ void	execute_command_list(t_shell *shell)
 		current = current->next;
 	}
 	signal(SIGINT, sigint_handler);
-	// Chiudi l'ultima pipe se esiste
 	if (prev_pipe != -1)
 		close(prev_pipe);
 }

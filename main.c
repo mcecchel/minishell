@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 17:30:08 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/14 16:56:34 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/15 18:35:45 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,14 +132,27 @@ void	new_exit_code(t_shell *shell, int status)
 	shell->exit_value = status;
 }
 
+void status_code_update(t_shell *shell)
+{
+	if (current_child_pid == SIGINT)
+		shell->exit_value = 130;
+	else if (current_child_pid == SIGQUIT)
+		shell->exit_value = 131;
+	current_child_pid = -1;
+}
 
 int	parser_builtin(t_shell *root, t_cmd *cmd)
 {
+	int fd;
+	
 	root->exit_value = 0;
 	if (ft_strcmp(cmd->argv[0], "env") == 0 && cmd->argc != 1)
 		return (write(2, "Invalid command\n", 16), 1);
 	if (ft_strcmp(cmd->argv[0], "env") == 0)
-		return (print_env_list(root->env, ENV), 1);
+	{
+		fd = which_fd(root);
+		return (print_env_list_fd(root->env, ENV, fd), 1);
+	}
 	if (ft_strcmp(cmd->argv[0], "export") == 0)
 		return (new_exit_code(root, ft_export(root, cmd)), 1);
 	if (ft_strcmp(cmd->argv[0], "pwd") == 0)
@@ -163,14 +176,7 @@ void	reading(t_shell *shell)
 	while (1)
 	{
 		line = readline("minishell> ");
-		if (current_child_pid != -1)
-		{
-			if (current_child_pid == SIGINT)
-				shell->exit_value = 130;
-			else if (current_child_pid == SIGQUIT)
-				shell->exit_value = 131;
-			current_child_pid = -1;
-		}
+		status_code_update(shell);
 		if (!line)
 		{
 			write (1, "exit\n", 5);
@@ -207,17 +213,17 @@ void	reading(t_shell *shell)
 		// Debug opzionale
 		printf_debug("\nGenerated commands:\n");
 		debug_cmds(shell->cmd);
-		
-		// print_envp_char(shell.envp);
-		
-		// Gestisci built-in nel processo padre solo se è un comando singolo
-		if (shell->cmd && !shell->cmd->next && parser_builtin(shell, shell->cmd))
+
+		// Gestisci built-in nel processo padre solo se è un comando singolo SENZA redirezioni
+		if (shell->cmd && !shell->cmd->next && 
+			shell->cmd->infile == -1 && shell->cmd->outfile == -1 &&
+			parser_builtin(shell, shell->cmd))
 		{
 			// Built-in eseguita nel processo padre per modificare lo stato della shell
 		}
 		else
 		{
-			// Comandi esterni o pipeline (incluse built-in in pipeline)
+			// Comandi esterni o pipeline (incluse built-in in pipeline o con redirezioni)
 			execute_command_list(shell);
 		}
 

@@ -5,7 +5,9 @@
 		"minishell.h": "c",
 		"readline.h": "c",
 		"compare": "c",
-		"type_traits": "c"
+		"type_traits": "c",
+		"wait.h": "c",
+		"parsing.h": "c"
 	},
 	"makefile.configureOnOpen": true
 }

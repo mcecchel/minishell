@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 14:59:11 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/15 16:50:46 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/15 18:11:59 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ t_cmd	*init_new_cmd(void)
 	}
 	new_cmd->cmd_path = NULL;
 	new_cmd->argc = 0;
-	new_cmd->argv[0] = NULL; // IMPORTANTE: Inizializza
+	new_cmd->argv[0] = NULL;
 	new_cmd->infile = -1;
 	new_cmd->outfile = -1;
 	new_cmd->pid = -1;
@@ -43,7 +43,7 @@ void	add_cmd_to_list(t_cmd **cmd_list, t_cmd *new_cmd)
 	if (!*cmd_list)
 	{
 		*cmd_list = new_cmd;
-		return;
+		return ;
 	}
 	current = *cmd_list;
 	while (current->next)
@@ -56,8 +56,8 @@ void	add_argument_to_cmd(t_cmd *cmd, char *arg)
 	char	*new_arg;
 
 	if (!cmd || !arg || !cmd->argv)
-		return  ;
-	if (cmd->argc >= 99) // Limite di sicurezza
+		return ;
+	if (cmd->argc >= 99)
 	{
 		ft_printf("Error: Too many arguments\n");
 		return ;
@@ -66,17 +66,17 @@ void	add_argument_to_cmd(t_cmd *cmd, char *arg)
 	if (!new_arg)
 	{
 		ft_printf("Error: Memory allocation failed\n");
-		return;
+		return ;
 	}
 	cmd->argv[cmd->argc] = new_arg;
 	cmd->argc++;
-	cmd->argv[cmd->argc] = NULL; // SEMPRE termina l'array
+	cmd->argv[cmd->argc] = NULL;
 }
 
 int	is_redirection_token(t_token_type type)
 {
-	return (type == RED_IN || type == RED_OUT ||
-			type == APPEND || type == HEREDOC);
+	return (type == RED_IN || type == RED_OUT
+		|| type == APPEND || type == HEREDOC);
 }
 
 int	handle_redirection(t_cmd *cmd, t_token *token, t_shell *shell)
@@ -106,7 +106,7 @@ int	handle_redirection(t_cmd *cmd, t_token *token, t_shell *shell)
 void	free_cmd_list(t_cmd *cmd)
 {
 	t_cmd	*tmp;
-	
+
 	while (cmd)
 	{
 		tmp = cmd;
@@ -181,18 +181,16 @@ t_cmd *parse_tokens(t_token *token_list, t_shell *shell)
 		}
 		else if (token->type == PIPE)
 		{
-			// Verifica che ci sia un comando dopo il pipe
 			if (!token->next)
 			{
 				ft_printf("Pipe syntax error\n");
 				free_cmd_list(cmd_list);
 				return (NULL);
 			}
-			current_cmd = NULL; // Reset per il prossimo comando
+			current_cmd = NULL;
 		}
 		else if (is_redirection_token(token->type))
 		{
-			// Se non c'è un comando corrente, crea un comando dummy per la redirezione
 			if (!current_cmd)
 			{
 				current_cmd = init_new_cmd();
@@ -201,7 +199,6 @@ t_cmd *parse_tokens(t_token *token_list, t_shell *shell)
 					free_cmd_list(cmd_list);
 					return (NULL);
 				}
-				// Comando dummy che non fa nulla
 				current_cmd->cmd_path = ft_strdup("");
 				current_cmd->argv[0] = ft_strdup("");
 				current_cmd->argc = 1;
@@ -213,13 +210,11 @@ t_cmd *parse_tokens(t_token *token_list, t_shell *shell)
 				free_cmd_list(cmd_list);
 				return (NULL);
 			}
-			// Salta il token del filename
 			if (token->next)
 				token = token->next;
 		}
 		token = token->next;
 	}
-	// Verifica che abbiamo almeno un comando
 	if (!cmd_list)
 	{
 		ft_printf("Error: No valid commands found\n");

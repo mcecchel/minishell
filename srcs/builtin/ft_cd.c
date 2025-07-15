@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 12:22:07 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/15 16:36:55 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/15 17:40:53 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ static char	*get_target_path(t_shell *root)
 		home = find_env(root->env, "HOME");
 		if (!home || !home->arg)
 		{
-			fd_printf(2,"cd: HOME not set\n");
+			fd_printf(2, "cd: HOME not set\n");
 			return (NULL);
 		}
 		return (home->arg);
