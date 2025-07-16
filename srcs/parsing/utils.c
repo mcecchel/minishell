@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/10 12:22:22 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/14 14:09:18 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/16 20:21:36 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,5 +69,3 @@ t_token	*ft_last(t_token *lst)
 		lst = lst->next;
 	return (lst);
 }
-
-

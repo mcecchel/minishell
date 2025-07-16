@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_export.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 16:45:25 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/16 17:15:29 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/16 20:34:16 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,19 +15,30 @@
 int	check_export(t_shell *shell, char *arg)
 {
 	int	i;
+	int	check;
 
 	i = 0;
+	check = 0;
 	while (arg[i] && arg[i] != '=')
 	{
 		if (i == 0 && arg[i] != '_' && !ft_isalpha(arg[i]))
 		{
-			fd_printf(2, "Invalid argument to export\n");
+			if (check == 0)
+			{
+				fd_printf(2, "1Invalid argument to export\n");
+				check ++;
+			}
 			shell->exit_value = 1;
 			return (1);
 		}
 		else if (i > 0 && arg[i] != '_' && !ft_isalnum(arg[i]))
 		{
-			fd_printf(2, "Invalid argument to export\n");
+			if (check == 0)
+			{
+				fd_printf(2, "2Invalid argument to export\n");
+				check ++;
+				return (1);
+			}
 			shell->exit_value = 1;
 			return (1);
 		}

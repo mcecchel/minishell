@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 14:58:50 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/16 20:01:56 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/16 20:21:25 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ char	*extract_word(char *line, int *index, t_shell *shell)
 	while (line[end] && !is_space(line[end])
 		&& line[end] != '|' && line[end] != '>' && line[end] != '<'
 		&& line[end] != '\'' && line[end] != '\"')
-			end++;
+		end++;
 	word = ft_substr(line, start, end - start);
 	if (!word)
 	{
@@ -106,29 +106,29 @@ char	*extract_operator(char *line, int *index)
 t_token_type	classify_token(char *str, int is_first_token, int is_quoted)
 {
 	if (!str)
-		return UNKNOWN;
-	// Se è quotato, determina il tipo in base al contesto
+		return (UNKNOWN);
 	if (is_quoted)
 	{
 		if (is_first_token)
-			return CMD;
+			return (CMD);
 		else
-			return ARG;
+			return (ARG);
 	}
-	// Controlla operatori (solo se non quotato)
-	if (ft_strcmp(str, "|") == 0) return PIPE;
-	if (ft_strcmp(str, ">") == 0) return RED_OUT;
-	if (ft_strcmp(str, "<") == 0) return RED_IN;
-	if (ft_strcmp(str, "<<") == 0) return HEREDOC;
-	if (ft_strcmp(str, ">>") == 0) return APPEND;
-	// Se è il primo token, è un comando
+	if (ft_strcmp(str, "|") == 0)
+		return (PIPE);
+	if (ft_strcmp(str, ">") == 0)
+		return (RED_OUT);
+	if (ft_strcmp(str, "<") == 0)
+		return (RED_IN);
+	if (ft_strcmp(str, "<<") == 0)
+		return (HEREDOC);
+	if (ft_strcmp(str, ">>") == 0)
+		return (APPEND);
 	if (is_first_token)
-		return CMD;
-	// Se inizia con '-' ed ha altri caratteri, è un flag
+		return (CMD);
 	if (str[0] == '-' && str[1] != '\0')
-		return FLAG;
-	// Altrimenti è un argomento
-	return ARG;
+		return (FLAG);
+	return (ARG);
 }
 
 t_token	*create_token(char *content, t_token_type type, int is_quoted)
@@ -138,7 +138,7 @@ t_token	*create_token(char *content, t_token_type type, int is_quoted)
 	new_token = ft_calloc(1, sizeof(t_token));
 	if (!new_token)
 		return (NULL);
-	new_token->value = content; // Il content è già allocato
+	new_token->value = content;
 	new_token->type = type;
 	new_token->is_quoted = is_quoted;
 	new_token->next = NULL;
@@ -195,7 +195,6 @@ int	tokenize_input(t_token *token_list, char *line, t_shell *shell)
 				token_list->head = NULL;
 				return (0);
 			}
-			// Se una delle parti è quotata, segna is_quoted
 			if (tmp_quoted)
 				is_quoted = 1;
 			if (!content)
@@ -208,7 +207,6 @@ int	tokenize_input(t_token *token_list, char *line, t_shell *shell)
 				content = joined;
 			}
 		}
-		// Se abbiamo costruito un argomento, creiamo il token
 		if (content)
 		{
 			t_token_type type = classify_token(content, is_first_token, is_quoted);
@@ -234,7 +232,6 @@ int	tokenize_input(t_token *token_list, char *line, t_shell *shell)
 			is_first_token = 0;
 		}
 
-		// Gestione operatori
 		if (line[i] == '|' || line[i] == '<' || line[i] == '>')
 		{
 			char *op = extract_operator(line, &i);
@@ -262,7 +259,7 @@ int	tokenize_input(t_token *token_list, char *line, t_shell *shell)
 			else if (type == HEREDOC || type == RED_IN || type == RED_OUT || type == APPEND)
 				waiting_for_redirect_arg = 1;
 			else if (waiting_for_redirect_arg)
-				waiting_for_redirect_arg = 0; // Non cambiamo is_first_token - il prossimo token potrebbe essere CMD
+				waiting_for_redirect_arg = 0;
 			else if (is_first_token)
 				is_first_token = 0;
 		}
@@ -273,8 +270,9 @@ int	tokenize_input(t_token *token_list, char *line, t_shell *shell)
 void	free_tokens(t_token *token)
 {
 	t_token	*tmp;
+
 	if (!token)
-		return;
+		return ;
 	while (token)
 	{
 		tmp = token;

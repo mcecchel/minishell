@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 16:02:45 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/16 19:48:55 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/16 20:13:15 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -200,6 +200,8 @@ void	merge_dummy_to_real(t_cmd *dummy, t_cmd *real);
 t_cmd	*remove_dummy_from_list(t_cmd *cmd_list, t_cmd *to_remove);
 t_cmd	*optimize_command_list(t_cmd *cmd_list);
 
+void	close_all_cmd_fds(t_cmd *head);
+void	sigint_handler(int sig);
 
 
 #endif

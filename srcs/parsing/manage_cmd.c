@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   manage_cmd.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:09:38 by marianna          #+#    #+#             */
-/*   Updated: 2025/07/16 18:13:45 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/16 20:13:08 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 void	fork_error_handler(t_shell *shell, char *path, int err, int exit_code)
-{	
+{
 	if (err == 0)
 		perror("dup2 error");
 	if (err == 1)
@@ -33,32 +33,29 @@ void	fork_error_handler(t_shell *shell, char *path, int err, int exit_code)
 		free(path);
 	exit (exit_code);
 }
-void	close_all_cmd_fds(t_cmd *head);
 
 void	execute_cmd(t_shell *shell, t_cmd *cmd)
 {
 	char	*path;
 
-	if (cmd->infile != -1) // Gestione redirezioni INPUT
+	if (cmd->infile != -1)
 	{
 		if (dup2(cmd->infile, STDIN_FILENO) == -1)
 			fork_error_handler(shell, NULL, 0, 1);
 	}
-	if (cmd->outfile != -1) // Gestione redirezioni OUTPUT
+	if (cmd->outfile != -1)
 	{
 		if (dup2(cmd->outfile, STDOUT_FILENO) == -1)
 			fork_error_handler(shell, NULL, 0, 1);
 	}
 	close_all_cmd_fds(shell->cmd);
-	
-	// Se è un comando dummy (solo redirezione), esci subito
 	if (cmd->cmd_path && ft_strlen(cmd->cmd_path) == 0)
 		fork_error_handler(shell, NULL, 4, 0);
 	if (parser_builtin(shell, cmd))
 		fork_error_handler(shell, NULL, 4, shell->exit_value);
 	path = get_cmd_path(shell, cmd, cmd->argv[0]);
 	if (!path)
-		fork_error_handler(shell, path, 1, 127); // Command not found
+		fork_error_handler(shell, path, 1, 127);
 	execve(path, cmd->argv, shell->envp);
 	if (access(path, F_OK) != 0)
 		fork_error_handler(shell, path, 1, 127);
@@ -70,7 +67,9 @@ void	execute_cmd(t_shell *shell, t_cmd *cmd)
 
 void	print_envp_char(char **envp)
 {
-	int i = 0;
+	int	i;
+
+	i = 0;
 	if (!envp)
 	{
 		printf("envp is NULL\n");
@@ -82,7 +81,6 @@ void	print_envp_char(char **envp)
 		i++;
 	}
 }
-void sigint_handler(int sig);
 
 void	execute_command_list(t_shell *shell)
 {

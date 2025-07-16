@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   dummy.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 19:49:10 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/16 19:54:13 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/16 20:09:45 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,21 +62,21 @@ void	merge_dummy_to_real(t_cmd *dummy, t_cmd *real)
 		if (real->infile != -1)
 			close(real->infile);
 		real->infile = dummy->infile;
-		dummy->infile = -1; // Evita doppia chiusura
+		dummy->infile = -1;
 	}
 	if (dummy->outfile != -1)
 	{
 		if (real->outfile != -1)
 			close(real->outfile);
 		real->outfile = dummy->outfile;
-		dummy->outfile = -1; // Evita doppia chiusura
+		dummy->outfile = -1;
 	}
 	if (dummy->heredoc_delimiter)
 	{
 		if (real->heredoc_delimiter)
 			free(real->heredoc_delimiter);
 		real->heredoc_delimiter = dummy->heredoc_delimiter;
-		dummy->heredoc_delimiter = NULL; // Evita doppia free
+		dummy->heredoc_delimiter = NULL;
 	}
 }
 
@@ -111,18 +111,16 @@ t_cmd	*remove_dummy_from_list(t_cmd *cmd_list, t_cmd *to_remove)
 // Ottimizza la lista dei comandi rimuovendo i dummy e facendo merge
 t_cmd	*optimize_command_list(t_cmd *cmd_list)
 {
-	t_cmd *current;
+	t_cmd	*current;
 
 	current = cmd_list;
 	while (current)
 	{
-		if (is_dummy_command(current) && current->next && !is_dummy_command(current->next))
+		if (is_dummy_command(current) && current->next
+			&& !is_dummy_command(current->next))
 		{
-			// Merge dummy con il prossimo comando reale
 			merge_dummy_to_real(current, current->next);
-			// Rimuovi il dummy dalla lista
 			cmd_list = remove_dummy_from_list(cmd_list, current);
-			// Ricomincia dall'inizio per sicurezza
 			current = cmd_list;
 		}
 		else

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 16:58:47 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/16 17:31:17 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/16 20:10:36 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,20 +18,20 @@ void	handle_heredoc_signal(int sig)
 	(void)sig;
 	current_child_pid = sig;
 	ioctl(STDIN_FILENO, TIOCSTI, "\n");
-	rl_replace_line("", 0);// Pulisce la riga corrente
-	rl_on_new_line();// Si prepara a una nuova riga
+	rl_replace_line("", 0);
+	rl_on_new_line();
 }
 
 void	setup_heredoc_signals(void)
 {
 	signal(SIGINT, handle_heredoc_signal);
-	signal(SIGQUIT, SIG_IGN); // Ignora SIGQUIT durante l'heredoc
+	signal(SIGQUIT, SIG_IGN);
 }
 
 void	restore_signals(void)
 {
-	signal(SIGINT, SIG_DFL); // Ripristina comportamento predefinito di SIGINT
-	signal(SIGQUIT, SIG_DFL); // Ripristina comportamento predefinito di SIGQUIT
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
 }
 
 char	*expand_heredoc(t_shell *shell, char *line, int exp, int quote)
@@ -168,4 +168,3 @@ int	setup_heredoc(t_cmd *cmd, char *delimiter, t_shell *shell, int quoted)
 	cmd->infile = fd;
 	return (1);
 }
-

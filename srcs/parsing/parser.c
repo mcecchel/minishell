@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 14:59:11 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/16 19:28:05 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/16 20:20:40 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,8 @@ int	handle_redirection(t_cmd *cmd, t_token *token, t_shell *shell)
 	else if (token->type == APPEND)
 		return (setup_output_redir(cmd, token->next->value, 1));
 	else if (token->type == HEREDOC)
-		return (setup_heredoc(cmd, token->next->value, shell, token->next->is_quoted));
+		return (setup_heredoc(cmd, token->next->value, shell,
+				token->next->is_quoted));
 	else
 		return (0);
 }
@@ -106,6 +107,7 @@ int	handle_redirection(t_cmd *cmd, t_token *token, t_shell *shell)
 void	free_cmd_list(t_cmd *cmd)
 {
 	t_cmd	*tmp;
+	int		i;
 
 	while (cmd)
 	{
@@ -117,7 +119,7 @@ void	free_cmd_list(t_cmd *cmd)
 			free(tmp->heredoc_delimiter);
 		if (tmp->argv)
 		{
-			int i = 0;
+			i = 0;
 			while (tmp->argv[i])
 			{
 				free(tmp->argv[i]);
@@ -144,13 +146,7 @@ t_cmd *parse_tokens(t_token *token_list, t_shell *shell)
 	{
 		if (token->type == CMD)
 		{
-			// Crea nuovo comando
 			current_cmd = init_new_cmd();
-			// if (!current_cmd || token->type == RED_IN)
-			// {
-			// 	free_cmd_list(cmd_list);
-			// 	return (NULL);
-			// }
 			current_cmd->cmd_path = ft_strdup(token->value);
 			if (!current_cmd->cmd_path)
 			{
@@ -213,7 +209,6 @@ t_cmd *parse_tokens(t_token *token_list, t_shell *shell)
 			}
 			if (token->next)
 				token = token->next;
-
 		}
 		token = token->next;
 	}
