@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 16:58:47 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/16 14:27:07 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/16 17:31:17 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,6 @@ char	*create_tmp_heredoc_file(void)
 	return (filename);
 }
 
-// Gestione input heredoc
 int	handle_heredoc_input(t_shell *shell, char *delimiter, int quoted)
 {
 	char	*line;

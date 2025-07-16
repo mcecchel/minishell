@@ -28,6 +28,7 @@ SRC		= 	main.c \
 			srcs/builtin/ft_exit.c \
 			srcs/builtin/ft_echo.c \
 			srcs/builtin/utils_env.c \
+			srcs/parsing/dummy.c \
 
 all: $(LIBFT_LIB) $(NAME)
 

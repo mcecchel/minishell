@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 17:30:08 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/15 18:35:45 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/16 19:53:33 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,7 +144,7 @@ void status_code_update(t_shell *shell)
 int	parser_builtin(t_shell *root, t_cmd *cmd)
 {
 	int fd;
-	
+
 	root->exit_value = 0;
 	if (ft_strcmp(cmd->argv[0], "env") == 0 && cmd->argc != 1)
 		return (write(2, "Invalid command\n", 16), 1);
@@ -171,7 +171,6 @@ int	parser_builtin(t_shell *root, t_cmd *cmd)
 }
 void	reading(t_shell *shell)
 {
-
 	char	*line;
 	while (1)
 	{
@@ -210,6 +209,7 @@ void	reading(t_shell *shell)
 			free(line);
 			continue;
 		}
+		shell->cmd = optimize_command_list(shell->cmd);
 		// Debug opzionale
 		printf_debug("\nGenerated commands:\n");
 		debug_cmds(shell->cmd);

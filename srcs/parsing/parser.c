@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 14:59:11 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/16 14:14:08 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/16 19:28:05 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -203,6 +203,7 @@ t_cmd *parse_tokens(t_token *token_list, t_shell *shell)
 				current_cmd->argv[0] = ft_strdup("");
 				current_cmd->argc = 1;
 				current_cmd->argv[1] = NULL;
+				current_cmd->dummy_on = 1;
 				add_cmd_to_list(&cmd_list, current_cmd);
 			}
 			if (!handle_redirection(current_cmd, token, shell))
@@ -212,6 +213,7 @@ t_cmd *parse_tokens(t_token *token_list, t_shell *shell)
 			}
 			if (token->next)
 				token = token->next;
+
 		}
 		token = token->next;
 	}

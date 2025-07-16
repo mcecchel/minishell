@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:09:38 by marianna          #+#    #+#             */
-/*   Updated: 2025/07/15 18:09:05 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/16 18:13:45 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,6 @@ void	execute_cmd(t_shell *shell, t_cmd *cmd)
 	// Se è un comando dummy (solo redirezione), esci subito
 	if (cmd->cmd_path && ft_strlen(cmd->cmd_path) == 0)
 		fork_error_handler(shell, NULL, 4, 0);
-	
 	if (parser_builtin(shell, cmd))
 		fork_error_handler(shell, NULL, 4, shell->exit_value);
 	path = get_cmd_path(shell, cmd, cmd->argv[0]);

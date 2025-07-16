@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 16:02:45 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/16 14:25:51 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/16 19:48:55 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,7 @@ typedef struct s_cmd
 	int				argc;
 	int				infile;
 	int				outfile;
+	int				dummy_on;
 	int				pid;
 	struct s_cmd	*next;
 	char			*heredoc_delimiter;
@@ -191,6 +192,13 @@ void			fork_error_handler(t_shell *shell, char *path, int err, int exit_code);
 int				which_fd(t_shell *shell);
 void			free_matrix(char **str);
 t_token			*ft_last(t_token *lst);
+
+// Funzioni per gestione dummy command
+int		is_dummy_command(t_cmd *cmd);
+void	free_single_cmd(t_cmd *cmd);
+void	merge_dummy_to_real(t_cmd *dummy, t_cmd *real);
+t_cmd	*remove_dummy_from_list(t_cmd *cmd_list, t_cmd *to_remove);
+t_cmd	*optimize_command_list(t_cmd *cmd_list);
 
 
 

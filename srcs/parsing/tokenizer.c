@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 14:58:50 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/15 18:07:03 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/16 20:01:56 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ char	*extract_operator(char *line, int *index)
 	start = *index;
 	if ((line[*index] == '<' && line[*index + 1] == '<')
 		|| (line[*index] == '>' && line[*index + 1] == '>'))
-		*index += 2; // Salta gli operatori doppi
+		*index += 2;
 	else if (line[*index] == '|' || line[*index] == '<' || line[*index] == '>')
 		(*index)++;
 	else
@@ -165,6 +165,7 @@ int	tokenize_input(t_token *token_list, char *line, t_shell *shell)
 {
 	int	i = 0;
 	int	is_first_token = 1;
+	int	waiting_for_redirect_arg = 0;
 	token_list->head = NULL;
 	token_list->current = NULL;
 
@@ -220,10 +221,17 @@ int	tokenize_input(t_token *token_list, char *line, t_shell *shell)
 				return (0);
 			}
 			add_token_to_list(token_list, new_token);
-			if (type == PIPE)
-				is_first_token = 1;
-			else if (is_first_token)
-				is_first_token = 0;
+		if (type == PIPE)
+		{
+			is_first_token = 1;
+			waiting_for_redirect_arg = 0;
+		}
+		else if (type == HEREDOC || type == RED_IN || type == RED_OUT || type == APPEND)
+			waiting_for_redirect_arg = 1;
+		else if (waiting_for_redirect_arg)
+			waiting_for_redirect_arg = 0; // Non cambiamo is_first_token - il prossimo token potrebbe essere CMD
+		else if (is_first_token)
+			is_first_token = 0;
 		}
 
 		// Gestione operatori
@@ -247,7 +255,14 @@ int	tokenize_input(t_token *token_list, char *line, t_shell *shell)
 			}
 			add_token_to_list(token_list, new_token);
 			if (type == PIPE)
+			{
 				is_first_token = 1;
+				waiting_for_redirect_arg = 0;
+			}
+			else if (type == HEREDOC || type == RED_IN || type == RED_OUT || type == APPEND)
+				waiting_for_redirect_arg = 1;
+			else if (waiting_for_redirect_arg)
+				waiting_for_redirect_arg = 0; // Non cambiamo is_first_token - il prossimo token potrebbe essere CMD
 			else if (is_first_token)
 				is_first_token = 0;
 		}
