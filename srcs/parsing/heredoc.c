@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 16:58:47 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/15 21:02:12 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/16 14:27:07 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ char	*expand_heredoc(t_shell *shell, char *line, int exp, int quote)
 
 	if (!line)
 		return (NULL);
-	if (exp && quote == 0)
+	if (exp && quote != 1)
 		expanded_line = expand_variables(line, shell, 0);
 	else
 		expanded_line = ft_strdup(line);
@@ -65,32 +65,6 @@ int	is_delimiter_quoted(char *delimiter)
 	if (delimiter[0] == '\'' || delimiter[0] == '\"')
 		return (1);
 	return (0);
-}
-
-// Rimuove le quote dal delimitatore (se presenti)
-char	*remove_quotes_from_delimiter(char *delimiter)
-{
-	char	*new_delimiter;
-	int		i;
-	int		j;
-
-	if (!delimiter)
-		return (NULL);
-	new_delimiter = ft_calloc(ft_strlen(delimiter) + 1, sizeof(char));
-	if (!new_delimiter)
-		return (NULL);
-	i = 0;
-	j = 0;
-	while (delimiter[i])
-	{
-		if (delimiter[i] != '\'' && delimiter[i] != '\"')
-			new_delimiter[j++] = delimiter[i];
-		i++;
-	}
-	new_delimiter[j] = '\0';
-	if (j == 0)
-		return (free(new_delimiter), NULL);
-	return (new_delimiter);
 }
 
 // Crea un file temporaneo per l'heredoc
@@ -117,34 +91,21 @@ char	*create_tmp_heredoc_file(void)
 }
 
 // Gestione input heredoc
-int	handle_heredoc_input(t_shell *shell, char *delimiter)
+int	handle_heredoc_input(t_shell *shell, char *delimiter, int quoted)
 {
 	char	*line;
-	char	*clean_delimiter;
 	char	*tmp_file;
 	int		fd;
 	char	*expanded_line;
 	int		ret_fd;
-	int		quoted;
 
-	clean_delimiter = remove_quotes_from_delimiter(delimiter);
-	quoted = ft_strcmp(delimiter, clean_delimiter);
-	if (!clean_delimiter)
-	{
-		perror("Error removing quotes from delimiter");
-		return (-1);
-	}
 	tmp_file = create_tmp_heredoc_file();
 	if (!tmp_file)
-	{
-		free(clean_delimiter);
 		return (-1);
-	}
 	fd = open(tmp_file, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 	if (fd < 0)
 	{
 		perror("Error: Failed to open heredoc file");
-		free(clean_delimiter);
 		free(tmp_file);
 		return (-1);
 	}
@@ -157,7 +118,6 @@ int	handle_heredoc_input(t_shell *shell, char *delimiter)
 		{
 			close(fd);
 			unlink(tmp_file);
-			free(clean_delimiter);
 			free(tmp_file);
 			return (-3);
 		}
@@ -168,11 +128,10 @@ int	handle_heredoc_input(t_shell *shell, char *delimiter)
 			write(STDOUT_FILENO, "\n", 1);
 			close(fd);
 			unlink(tmp_file);
-			free(clean_delimiter);
 			free(tmp_file);
 			return (-2);
 		}
-		if (ft_strcmp(line, clean_delimiter) == 0)
+		if (ft_strcmp(line, delimiter) == 0)
 		{
 			free(line);
 			break ;
@@ -188,18 +147,17 @@ int	handle_heredoc_input(t_shell *shell, char *delimiter)
 	close(fd);
 	ret_fd = open(tmp_file, O_RDONLY);
 	unlink(tmp_file);
-	free(clean_delimiter);
 	free(tmp_file);
 	return (ret_fd);
 }
 
-int	setup_heredoc(t_cmd *cmd, char *delimiter, t_shell *shell)
+int	setup_heredoc(t_cmd *cmd, char *delimiter, t_shell *shell, int quoted)
 {
 	int	fd;
 
 	if (!delimiter)
 		return (0);
-	fd = handle_heredoc_input(shell, delimiter);
+	fd = handle_heredoc_input(shell, delimiter, quoted);
 	if (fd < 0)
 	{
 		if (fd == -1)
