@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 17:30:08 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/16 19:53:33 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/17 13:55:25 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,23 +17,26 @@
 #include <signal.h>
 
 // Variabile globale
-int current_child_pid = -1;
+int	current_child_pid = -1;
 
-void sigint_handler(int sig)
+void	sigint_handler(int sig)
 {
 	(void)sig;
 	current_child_pid = sig;
 	write(STDOUT_FILENO, "\n", 1);
-	rl_replace_line("", 0);          // Pulisce la riga corrente
-	rl_on_new_line();                // Si prepara a una nuova riga
-	rl_redisplay();                  // Mostra il prompt di nuovo
+	rl_replace_line("", 0);
+	rl_on_new_line();
+	rl_redisplay();
 }
 
-void debug_cmds(t_cmd *cmd_list)
+void	debug_cmds(t_cmd *cmd_list)
 {
-	int cmd_index = 0;
-	t_cmd *current = cmd_list;
+	int		cmd_index;
+	t_cmd	*current;
+	int		i;
 
+	cmd_index = 0;
+	current = cmd_list;
 	if (!DEBUG)
 		return ;
 	while (current)
@@ -41,7 +44,7 @@ void debug_cmds(t_cmd *cmd_list)
 		printf_debug("Command %d:\n", cmd_index++);
 		printf_debug("  Path: %s\n", current->cmd_path);
 		printf_debug("  Arguments: ");
-		int i = 0;
+		i = 0;
 		while (current->argv && current->argv[i])
 		{
 			printf_debug("\"%s\" ", current->argv[i]);
@@ -58,28 +61,42 @@ const char	*obtain_token_type(t_token *token)
 {
 	if (!DEBUG)
 		return ("NULL");
-	if (token->type == CMD) return ("CMD");
-	else if (token->type == ARG) return ("ARG");
-	else if (token->type == FLAG) return ("FLAG");
-	else if (token->type == PIPE) return ("PIPE");
-	else if (token->type == RED_IN) return ("RED_IN");
-	else if (token->type == RED_OUT) return ("RED_OUT");
-	else if (token->type == APPEND) return ("APPEND");
-	else if (token->type == HEREDOC) return ("HEREDOC");
-	else if (token->type == QUOTE) return ("QUOTE");
-	else if (token->type == DQUOTE) return ("DQUOTE");
-	else return ("UNKNOWN");
+	if (token->type == CMD)
+		return ("CMD");
+	else if (token->type == ARG)
+		return ("ARG");
+	else if (token->type == FLAG)
+		return ("FLAG");
+	else if (token->type == PIPE)
+		return ("PIPE");
+	else if (token->type == RED_IN)
+		return ("RED_IN");
+	else if (token->type == RED_OUT)
+		return ("RED_OUT");
+	else if (token->type == APPEND)
+		return ("APPEND");
+	else if (token->type == HEREDOC)
+		return ("HEREDOC");
+	else if (token->type == QUOTE)
+		return ("QUOTE");
+	else if (token->type == DQUOTE)
+		return ("DQUOTE");
+	else
+		return ("UNKNOWN");
 }
 
 // Funzione di debug 2
 void	debug_tokens(t_token *token)
 {
+	int	i;
+
 	if (!DEBUG)
 		return ;
-	int i = 0;
+	i = 0;
 	while (token)
 	{
-		printf_debug("[%d] Token: \"%s\" | Type: %s", i, token->value, obtain_token_type(token));
+		printf_debug("[%d] Token: \"%s\" | Type: %s", i, token->value,
+			obtain_token_type(token));
 		if (token->is_quoted)
 			printf_debug(" (QUOTED)");
 		printf_debug("\n");
@@ -112,27 +129,29 @@ void	cleanup_shell(t_shell *shell)
 	}
 }
 
-void print_pwd(t_env *env_list)
+void	print_pwd(t_env *env_list)
 {
-	t_env *pwd = find_env(env_list, "PWD");
+	t_env	*pwd;
+	t_env	*oldpwd;
 
+	pwd = find_env(env_list, "PWD");
 	if (pwd && pwd->arg)
 		ft_printf("%s\n", pwd->arg);
 	else
 		ft_printf("PWD not found or has no value\n");
-		
-	t_env *oldpwd = find_env(env_list, "OLDPWD");
+	oldpwd = find_env(env_list, "OLDPWD");
 	if (oldpwd && oldpwd->arg)
 		ft_printf("%s\n", oldpwd->arg);
 	else
 		ft_printf("OLDPWD not found or has no value\n");
 }
+
 void	new_exit_code(t_shell *shell, int status)
 {
 	shell->exit_value = status;
 }
 
-void status_code_update(t_shell *shell)
+void	status_code_update(t_shell *shell)
 {
 	if (current_child_pid == SIGINT)
 		shell->exit_value = 130;
@@ -143,7 +162,7 @@ void status_code_update(t_shell *shell)
 
 int	parser_builtin(t_shell *root, t_cmd *cmd)
 {
-	int fd;
+	int		fd;
 
 	root->exit_value = 0;
 	if (ft_strcmp(cmd->argv[0], "env") == 0 && cmd->argc != 1)
@@ -169,9 +188,11 @@ int	parser_builtin(t_shell *root, t_cmd *cmd)
 		return (add_env(root, cmd->argv[0], VAR), 1);
 	return (0);
 }
+
 void	reading(t_shell *shell)
 {
 	char	*line;
+
 	while (1)
 	{
 		line = readline("minishell> ");
@@ -183,103 +204,57 @@ void	reading(t_shell *shell)
 			cleanup_shell(shell);
 			exit (1);
 		}
-		// Ignora linee vuote
 		if (*line == '\0')
 		{
 			free(line);
-			continue;
+			continue ;
 		}
 		add_history(line);
-		// Tokenizza l'input
 		if (!tokenize_input(&shell->token, line, shell))
 		{
 			cleanup_shell(shell);
 			free(line);
-			continue;
+			continue ;
 		}
-		// Debug opzionale
 		printf_debug("Generated tokens:\n");
 		debug_tokens(shell->token.head);
-
-		// Parsing
 		shell->cmd = parse_tokens(shell->token.head, shell);
 		if (!shell->cmd)
 		{
 			cleanup_shell(shell);
 			free(line);
-			continue;
+			continue ;
 		}
 		shell->cmd = optimize_command_list(shell->cmd);
-		// Debug opzionale
 		printf_debug("\nGenerated commands:\n");
 		debug_cmds(shell->cmd);
-
-		// Gestisci built-in nel processo padre solo se è un comando singolo SENZA redirezioni
-		if (shell->cmd && !shell->cmd->next && 
-			shell->cmd->infile == -1 && shell->cmd->outfile == -1 &&
-			parser_builtin(shell, shell->cmd))
+		if (shell->cmd && !shell->cmd->next && shell->cmd->infile == -1
+			&& shell->cmd->outfile == -1 && parser_builtin(shell, shell->cmd))
 		{
-			// Built-in eseguita nel processo padre per modificare lo stato della shell
 		}
 		else
-		{
-			// Comandi esterni o pipeline (incluse built-in in pipeline o con redirezioni)
 			execute_command_list(shell);
-		}
-
 		cleanup_shell(shell);
 		free(line);
 	}
 }
 
-int main(int argc, char **argv, char **envp)
+int	main(int argc, char **argv, char **envp)
 {
-	t_shell shell;
-	t_env	*env = (t_env *){0};
+	t_shell	shell;
+	t_env	*env;
+
 	shell = (t_shell){0};
+	env = (t_env *){0};
 	env = copy_env(envp);
 	copy_system_envp_to_shell(envp, &shell);
-	//print_envp_char(shell.envp);
 	shell.env = env;
-
 	(void)argc;
 	(void)argv;
 	signal(SIGINT, sigint_handler);
-	signal(SIGQUIT, SIG_IGN); 
+	signal(SIGQUIT, SIG_IGN);
 	init_shell(&shell);
 	reading(&shell);
 	cleanup_shell(&shell);
 	return (0);
 }
-
-// int main(int argc, char **argv, char **envp)
-// {
-// 	char *read_line;
-// 	t_env	*env = (t_env *){0};
-// 	t_shell	*root;
-// 	int i = 0;
-// 	//int a;
-// 	//char	*tryunset;
-
-// 	root = ft_calloc(1, sizeof(t_shell));
-// 	env = copy_env(envp);
-// 	rool.env = env;
-// 	(void)argc;
-// 	(void)argv;
-// 	while(1)
-// 	{
-// 		read_line = readline("");
-
-// 		if (read_line == NULL)
-// 		{
-// 			printf("\nexit\n");
-// 			free_env_list(env);
-// 			free (root);
-// 			break;
-// 		}
-// 		parser_builtin(root, read_line);
-// 		free(read_line);
-// 		i++;
-// 	}
-//     return (0);
-// }
