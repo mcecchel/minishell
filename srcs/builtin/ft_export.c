@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   ft_export.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 16:45:25 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/16 20:34:16 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/07/17 14:56:16 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	check_export(t_shell *shell, char *arg)
+int	check_export(t_shell *shell, char *arg, int print)
 {
 	int	i;
 	int	check;
@@ -23,20 +23,23 @@ int	check_export(t_shell *shell, char *arg)
 	{
 		if (i == 0 && arg[i] != '_' && !ft_isalpha(arg[i]))
 		{
-			if (check == 0)
+			if (check == 0 && print == 1)
 			{
-				fd_printf(2, "1Invalid argument to export\n");
+				fd_printf(2, "Invalid argument to export\n");
 				check ++;
+				shell->exit_value = 1;
+				return (1);
 			}
 			shell->exit_value = 1;
 			return (1);
 		}
 		else if (i > 0 && arg[i] != '_' && !ft_isalnum(arg[i]))
 		{
-			if (check == 0)
+			if (check == 0 && print == 1)
 			{
-				fd_printf(2, "2Invalid argument to export\n");
+				fd_printf(2, "Invalid argument to export\n");
 				check ++;
+				shell->exit_value = 1;
 				return (1);
 			}
 			shell->exit_value = 1;
@@ -49,16 +52,16 @@ int	check_export(t_shell *shell, char *arg)
 
 void	where_it_goes(t_shell *root, t_cmd *cmd, int i)
 {
+	int	is_valid;
+
 	while (cmd->argv[i] != NULL)
 	{
-		if (ft_strchr(cmd->argv[i], '=')
-			&& check_export(root, cmd->argv[i]) == 0)
+		is_valid = (check_export(root, cmd->argv[i], 1) == 0);
+
+		if (ft_strchr(cmd->argv[i], '=') && is_valid)
 			add_env(root, cmd->argv[i], ENV);
-		else if (check_export(root, cmd->argv[i]) == 0)
+		else if (is_valid)
 			add_env(root, cmd->argv[i], EXPORT);
-		else if (ft_strchr(cmd->argv[i], '=')
-			&& check_export(root, cmd->argv[i]) == 0)
-			add_env(root, cmd->argv[i], VAR);
 		i++;
 	}
 }
