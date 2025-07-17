@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 14:59:11 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/16 20:20:40 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/07/17 18:32:32 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,6 +146,12 @@ t_cmd *parse_tokens(t_token *token_list, t_shell *shell)
 	{
 		if (token->type == CMD)
 		{
+			if (ft_strchr(token->value, '=') && check_export(shell, token->value, 0) == 0)
+			{
+				add_env(shell, token->value, VAR);
+				token = token->next;
+				continue ;
+			}
 			current_cmd = init_new_cmd();
 			current_cmd->cmd_path = ft_strdup(token->value);
 			if (!current_cmd->cmd_path)
@@ -213,9 +219,6 @@ t_cmd *parse_tokens(t_token *token_list, t_shell *shell)
 		token = token->next;
 	}
 	if (!cmd_list)
-	{
-		ft_printf("Error: No valid commands found\n");
 		return (NULL);
-	}
 	return (cmd_list);
 }
