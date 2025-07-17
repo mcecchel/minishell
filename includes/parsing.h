@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 16:02:45 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/17 16:17:57 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/17 19:25:20 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,8 +88,8 @@ typedef struct s_env
 
 typedef struct s_shell
 {
-    t_env	*env;
-    t_cmd	*cmd;
+	t_env	*env;
+	t_cmd	*cmd;
 	char	**envp;
 	int		exit_value;
 	t_token	token;
@@ -103,7 +103,8 @@ typedef struct s_shell
 // Tokenization functions
 int				tokenize_input(t_token *token, char *line, t_shell *shell);
 char			*extract_word(char *line, int *index, t_shell *shell);
-char			*extract_quote(char *line, int *index, int *is_quoted, t_shell *shell);
+char			*extract_quote(char *line, int *index, int *is_quoted,
+					t_shell *shell);
 char			*extract_operator(char *line, int *index);
 
 // Token classification
@@ -139,8 +140,10 @@ void			restore_signals(void);
 char			*expand_heredoc(t_shell *shell, char *line, int exp, int quote);
 int				is_delimiter_quoted(char *delimiter);
 char			*create_tmp_heredoc_file(void);
-int				setup_heredoc(t_cmd *cmd, char *delimiter, t_shell *shell, int quoted);
-int				handle_heredoc_input(t_shell *shell, char *delimiter, int quoted);
+int				setup_heredoc(t_cmd *cmd, char *delimiter, t_shell *shell,
+					int quoted);
+int				handle_heredoc_input(t_shell *shell, char *delimiter,
+					int quoted);
 
 
 // Command utilities

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 16:58:47 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/16 20:10:36 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/07/17 19:14:13 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 // Configurazione segnali per heredoc
 void	handle_heredoc_signal(int sig)
 {
-	(void)sig;
 	current_child_pid = sig;
 	ioctl(STDIN_FILENO, TIOCSTI, "\n");
 	rl_replace_line("", 0);
@@ -124,11 +123,7 @@ int	handle_heredoc_input(t_shell *shell, char *delimiter, int quoted)
 		{
 			ft_printf("\nminishell: warning: here-document delimited"
 				" by end-of-file (wanted `%s')\n", delimiter);
-			write(STDOUT_FILENO, "\n", 1);
-			close(fd);
-			unlink(tmp_file);
-			free(tmp_file);
-			return (-2);
+			break ;
 		}
 		if (ft_strcmp(line, delimiter) == 0)
 		{
