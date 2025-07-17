@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/10 12:21:50 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/15 16:15:20 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/17 16:53:03 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,9 @@ char	*find_env_path(t_shell *shell)
 	while (env)
 	{
 		if (env->var && ft_strcmp(env->var, "PATH") == 0)
+		{
 			return (env->arg);
+		}
 		env = env->next;
 	}
 	return (NULL);

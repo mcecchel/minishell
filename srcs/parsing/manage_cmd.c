@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   manage_cmd.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:09:38 by marianna          #+#    #+#             */
-/*   Updated: 2025/07/16 20:13:08 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/07/17 16:56:21 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	fork_error_handler(t_shell *shell, char *path, int err, int exit_code)
+void	fork_error_handler(t_shell *shell, t_cmd *cmd, char *path, int err, int exit_code)
 {
 	if (err == 0)
 		perror("dup2 error");
@@ -25,7 +25,10 @@ void	fork_error_handler(t_shell *shell, char *path, int err, int exit_code)
 	if (err == 4)
 	{
 	}
-	close_cmd_fds(shell->cmd);
+	if (cmd)
+		close_cmd_fds(cmd);
+	else
+		close_cmd_fds(shell->cmd);
 	cleanup_shell(shell);
 	free_env_list(shell->env);
 	free_matrix(shell->envp);
@@ -41,28 +44,27 @@ void	execute_cmd(t_shell *shell, t_cmd *cmd)
 	if (cmd->infile != -1)
 	{
 		if (dup2(cmd->infile, STDIN_FILENO) == -1)
-			fork_error_handler(shell, NULL, 0, 1);
+			fork_error_handler(shell, cmd, NULL, 0, 1);
 	}
 	if (cmd->outfile != -1)
 	{
 		if (dup2(cmd->outfile, STDOUT_FILENO) == -1)
-			fork_error_handler(shell, NULL, 0, 1);
+			fork_error_handler(shell, cmd, NULL, 0, 1);
 	}
-	close_all_cmd_fds(shell->cmd);
 	if (cmd->cmd_path && ft_strlen(cmd->cmd_path) == 0)
-		fork_error_handler(shell, NULL, 4, 0);
+		fork_error_handler(shell, cmd, NULL, 4, 0);
 	if (parser_builtin(shell, cmd))
-		fork_error_handler(shell, NULL, 4, shell->exit_value);
+		fork_error_handler(shell, cmd, NULL, 4, shell->exit_value);
 	path = get_cmd_path(shell, cmd, cmd->argv[0]);
 	if (!path)
-		fork_error_handler(shell, path, 1, 127);
+		fork_error_handler(shell, cmd, path, 1, 127);
 	execve(path, cmd->argv, shell->envp);
 	if (access(path, F_OK) != 0)
-		fork_error_handler(shell, path, 1, 127);
+		fork_error_handler(shell, cmd, path, 1, 127);
 	else if (access(path, X_OK) != 0)
-		fork_error_handler(shell, path, 1, 126);
+		fork_error_handler(shell, cmd, path, 1, 126);
 	else
-		fork_error_handler(shell, path, 1, 1);
+		fork_error_handler(shell, cmd, path, 1, 1);
 }
 
 void	print_envp_char(char **envp)
@@ -112,19 +114,18 @@ void	execute_command_list(t_shell *shell)
 			signal(SIGQUIT, SIG_DFL);
 			if (prev_pipe != -1)
 			{
-				if (dup2(prev_pipe, STDIN_FILENO) == -1)
-					fork_error_handler(shell, NULL, 2, 1);
-				close(prev_pipe);
+				if (current->infile == -1)
+					current->infile = prev_pipe;
+				else
+					close(prev_pipe);
 			}
 			if (current->next)
 			{
 				close(fd_pipe[0]);
 				if (current->outfile == -1)
-				{
-					if (dup2(fd_pipe[1], STDOUT_FILENO) == -1)
-						fork_error_handler(shell, NULL, 3, 1);
-				}
-				close(fd_pipe[1]);
+					current->outfile = fd_pipe[1];
+				else
+					close(fd_pipe[1]);
 			}
 			execute_cmd(shell, current);
 		}

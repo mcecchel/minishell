@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 17:30:08 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/17 14:48:21 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/17 16:51:06 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,7 +184,7 @@ int	parser_builtin(t_shell *root, t_cmd *cmd)
 		return (ft_exit(root, cmd), 1);
 	if (ft_strcmp(cmd->argv[0], "echo") == 0)
 		return (new_exit_code(root, ft_echo(root, cmd)), 1);
-	if (ft_strchr(cmd->argv[0], '=' && check_export(root, cmd->argv[0], 0)))
+	if (ft_strchr(cmd->argv[0], '=') && check_export(root, cmd->argv[0], 0))
 		return (add_env(root, cmd->argv[0], VAR), 1);
 	return (0);
 }
@@ -230,8 +230,8 @@ void	reading(t_shell *shell)
 		debug_cmds(shell->cmd);
 		if (shell->cmd && !shell->cmd->next && shell->cmd->infile == -1
 			&& shell->cmd->outfile == -1 && parser_builtin(shell, shell->cmd))
-		{
-		}
+			{
+			}
 		else
 			execute_command_list(shell);
 		cleanup_shell(shell);
