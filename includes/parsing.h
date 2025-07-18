@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 16:02:45 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/17 19:25:20 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/18 17:22:56 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,7 +191,7 @@ void			print_envp_char(char **envp);
 int				main(int argc, char **argv, char **envp);
 
 void			copy_system_envp_to_shell(char **system_envp, t_shell *shell);
-void			fork_error_handler(t_shell *shell, t_cmd *cmd, char *path, int err, int exit_code);
+void			fork_error_handler(t_shell *shell, t_cmd *cmd, int err, int exit_code);
 int				which_fd(t_shell *shell);
 void			free_matrix(char **str);
 t_token			*ft_last(t_token *lst);

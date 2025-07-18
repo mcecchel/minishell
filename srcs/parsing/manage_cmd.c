@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   manage_cmd.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:09:38 by marianna          #+#    #+#             */
-/*   Updated: 2025/07/18 16:29:07 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/18 17:40:56 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	fork_error_handler(t_shell *shell, t_cmd *cmd, char *path, int err, int exit_code)
+void	fork_error_handler(t_shell *shell, t_cmd *cmd, int err, int exit_code)
 {
 	if (err == 0)
 		perror("dup2 error");
@@ -32,8 +32,6 @@ void	fork_error_handler(t_shell *shell, t_cmd *cmd, char *path, int err, int exi
 	cleanup_shell(shell);
 	free_env_list(shell->env);
 	free_matrix(shell->envp);
-	if (path)
-		free(path);
 	exit (exit_code);
 }
 
@@ -41,46 +39,49 @@ void	fork_error_handler(t_shell *shell, t_cmd *cmd, char *path, int err, int exi
 int	is_directory(char *path)
 {
 	int	is_a_folder;
-	
+
 	is_a_folder = open(path, __O_DIRECTORY);
 	if (is_a_folder != -1)
-	{
-		close (is_a_folder);
-		return (1);
-	}
+		return (close (is_a_folder), 1);
 	close (is_a_folder);
 	return (0);
 }
+
+void	execve_failed(t_shell *shell, t_cmd *cmd, char *path)
+{
+	int	status_code;
+
+	if (access(path, F_OK) != 0)
+		status_code = 127;
+	else if (access(path, X_OK) != 0)
+		status_code = 126;
+	else if (is_directory(path))
+		status_code = 126;
+	else
+		status_code = 1;
+	free(path);
+	fork_error_handler(shell, cmd, 1, status_code);
+}
+
 void	execute_cmd(t_shell *shell, t_cmd *cmd)
 {
 	char	*path;
 
 	if (cmd->infile != -1)
-	{
 		if (dup2(cmd->infile, STDIN_FILENO) == -1)
-			fork_error_handler(shell, cmd, NULL, 0, 1);
-	}
+			fork_error_handler(shell, cmd, 0, 1);
 	if (cmd->outfile != -1)
-	{
 		if (dup2(cmd->outfile, STDOUT_FILENO) == -1)
-			fork_error_handler(shell, cmd, NULL, 0, 1);
-	}
+			fork_error_handler(shell, cmd, 0, 1);
 	if (cmd->cmd_path && ft_strlen(cmd->cmd_path) == 0)
-		fork_error_handler(shell, cmd, NULL, 4, 0);
+		fork_error_handler(shell, cmd, 4, 0);
 	if (parser_builtin(shell, cmd))
-		fork_error_handler(shell, cmd, NULL, 4, shell->exit_value);
+		fork_error_handler(shell, cmd, 4, shell->exit_value);
 	path = get_cmd_path(shell, cmd, cmd->argv[0]);
 	if (!path)
-		fork_error_handler(shell, cmd, path, 1, 127);
+		fork_error_handler(shell, cmd, 1, 127);
 	execve(path, cmd->argv, shell->envp);
-	if (access(path, F_OK) != 0)
-		fork_error_handler(shell, cmd, path, 1, 127);
-	else if (access(path, X_OK) != 0)
-		fork_error_handler(shell, cmd, path, 1, 126);
-	else if (is_directory(path))
-		fork_error_handler(shell, cmd, path, 1, 126);
-	else
-		fork_error_handler(shell, cmd, path, 1, 1);
+	execve_failed(shell, cmd, path);
 }
 
 void	print_envp_char(char **envp)

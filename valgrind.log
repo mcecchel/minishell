@@ -1,167 +1,180 @@
-==485458== Memcheck, a memory error detector
-==485458== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
-==485458== Using Valgrind-3.18.1-42b08ed5bd-20211015 and LibVEX; rerun with -h for copyright info
-==485458== Command: /usr/bin/cat
-==485458== Parent PID: 483648
-==485458== 
---485458-- 
---485458-- Valgrind options:
---485458--    --leak-check=full
---485458--    --show-leak-kinds=all
---485458--    --track-origins=yes
---485458--    --verbose
---485458--    --log-file=valgrind.log
---485458--    --leak-check=full
---485458--    --track-fds=yes
---485458--    --trace-children=yes
---485458--    --show-leak-kinds=all
---485458--    --track-origins=yes
---485458--    --suppressions=good.supp
---485458-- Contents of /proc/version:
---485458--   Linux version 5.15.0-143-generic (buildd@lcy02-amd64-115) (gcc (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0, GNU ld (GNU Binutils for Ubuntu) 2.38) #153-Ubuntu SMP Fri Jun 13 19:10:45 UTC 2025
---485458-- 
---485458-- Arch and hwcaps: AMD64, LittleEndian, amd64-cx16-lzcnt-rdtscp-sse3-ssse3-avx-avx2-bmi-f16c-rdrand-rdseed
---485458-- Page sizes: currently 4096, max supported 4096
---485458-- Valgrind library directory: /usr/libexec/valgrind
---485458-- Reading syms from /usr/bin/cat
---485458--    object doesn't have a symbol table
---485458-- Reading syms from /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
---485458--   Considering /usr/lib/debug/.build-id/9c/b53985768bb99f138f48655f7b8bf7e420d13d.debug ..
---485458--   .. build-id is valid
---485458-- Reading syms from /usr/libexec/valgrind/memcheck-amd64-linux
---485458--    object doesn't have a symbol table
---485458--    object doesn't have a dynamic symbol table
---485458-- Scheduler: using generic scheduler lock implementation.
---485458-- Reading suppressions file: good.supp
---485458-- Reading suppressions file: /usr/libexec/valgrind/default.supp
-==485458== embedded gdbserver: reading from /tmp/vgdb-pipe-from-vgdb-to-485458-by-mcecchel-on-???
-==485458== embedded gdbserver: writing to   /tmp/vgdb-pipe-to-vgdb-from-485458-by-mcecchel-on-???
-==485458== embedded gdbserver: shared mem   /tmp/vgdb-pipe-shared-mem-vgdb-485458-by-mcecchel-on-???
-==485458== 
-==485458== TO CONTROL THIS PROCESS USING vgdb (which you probably
-==485458== don't want to do, unless you know exactly what you're doing,
-==485458== or are doing some strange experiment):
-==485458==   /usr/bin/vgdb --pid=485458 ...command...
-==485458== 
-==485458== TO DEBUG THIS PROCESS USING GDB: start GDB like this
-==485458==   /path/to/gdb /usr/bin/cat
-==485458== and then give GDB the following command
-==485458==   target remote | /usr/bin/vgdb --pid=485458
-==485458== --pid is optional if only one valgrind process is running
-==485458== 
---485458-- REDIR: 0x402aa40 (ld-linux-x86-64.so.2:strlen) redirected to 0x580bcec2 (???)
---485458-- REDIR: 0x402a810 (ld-linux-x86-64.so.2:index) redirected to 0x580bcedc (???)
---485458-- Reading syms from /usr/libexec/valgrind/vgpreload_core-amd64-linux.so
---485458--    object doesn't have a symbol table
---485458-- Reading syms from /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so
---485458--    object doesn't have a symbol table
-==485458== WARNING: new redirection conflicts with existing -- ignoring it
---485458--     old: 0x0402aa40 (strlen              ) R-> (0000.0) 0x580bcec2 ???
---485458--     new: 0x0402aa40 (strlen              ) R-> (2007.0) 0x0484ee30 strlen
---485458-- REDIR: 0x4027220 (ld-linux-x86-64.so.2:strcmp) redirected to 0x484fcd0 (strcmp)
---485458-- REDIR: 0x402afa0 (ld-linux-x86-64.so.2:mempcpy) redirected to 0x4853840 (mempcpy)
---485458-- Reading syms from /usr/lib/x86_64-linux-gnu/libc.so.6
---485458--   Considering /usr/lib/debug/.build-id/d5/197096f709801829b118af1b7cf6631efa2dcd.debug ..
---485458--   .. build-id is valid
-==485458== WARNING: new redirection conflicts with existing -- ignoring it
---485458--     old: 0x04917c60 (memalign            ) R-> (1011.0) 0x0484e080 memalign
---485458--     new: 0x04917c60 (memalign            ) R-> (1017.0) 0x0484e050 aligned_alloc
-==485458== WARNING: new redirection conflicts with existing -- ignoring it
---485458--     old: 0x04917c60 (memalign            ) R-> (1011.0) 0x0484e080 memalign
---485458--     new: 0x04917c60 (memalign            ) R-> (1017.0) 0x0484e020 aligned_alloc
-==485458== WARNING: new redirection conflicts with existing -- ignoring it
---485458--     old: 0x04917c60 (memalign            ) R-> (1011.0) 0x0484e080 memalign
---485458--     new: 0x04917c60 (memalign            ) R-> (1017.0) 0x0484e050 aligned_alloc
-==485458== WARNING: new redirection conflicts with existing -- ignoring it
---485458--     old: 0x04917c60 (memalign            ) R-> (1011.0) 0x0484e080 memalign
---485458--     new: 0x04917c60 (memalign            ) R-> (1017.0) 0x0484e020 aligned_alloc
---485458-- REDIR: 0x491a720 (libc.so.6:strnlen) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
---485458-- REDIR: 0x491a9e0 (libc.so.6:strpbrk) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
---485458-- REDIR: 0x491a2e0 (libc.so.6:strcmp) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
---485458-- REDIR: 0x4938cd0 (libc.so.6:wcsnlen) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
---485458-- REDIR: 0x491b6d0 (libc.so.6:memset) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
---485458-- REDIR: 0x4937540 (libc.so.6:wcslen) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
---485458-- REDIR: 0x491bc10 (libc.so.6:memcpy@@GLIBC_2.14) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
---485458-- REDIR: 0x4937370 (libc.so.6:wcschr) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
---485458-- REDIR: 0x491a260 (libc.so.6:index) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
---485458-- REDIR: 0x491a960 (libc.so.6:rindex) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
---485458-- REDIR: 0x491b5a0 (libc.so.6:memmove) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
-==485458== Preferring higher priority redirection:
---485458--     old: 0x04a127c0 (__memcpy_avx_unalign) R-> (2018.0) 0x04850f90 __memcpy_avx_unaligned_erms
---485458--     new: 0x04a127c0 (__memcpy_avx_unalign) R-> (2018.1) 0x04852880 memmove
---485458-- REDIR: 0x49373f0 (libc.so.6:wcscmp) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
---485458-- REDIR: 0x491b9e0 (libc.so.6:stpncpy) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
---485458-- REDIR: 0x49379b0 (libc.so.6:wmemchr) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
---485458-- REDIR: 0x491a830 (libc.so.6:strncmp) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
---485458-- REDIR: 0x491ba70 (libc.so.6:strcasecmp) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
---485458-- REDIR: 0x491a420 (libc.so.6:strcspn) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
---485458-- REDIR: 0x4937470 (libc.so.6:wcscpy) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
---485458-- REDIR: 0x491a1d0 (libc.so.6:strcat) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
---485458-- REDIR: 0x491bb60 (libc.so.6:strncasecmp_l) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
---485458-- REDIR: 0x491b480 (libc.so.6:bcmp) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
---485458-- REDIR: 0x4923570 (libc.so.6:memrchr) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
---485458-- REDIR: 0x491d010 (libc.so.6:strchrnul) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
---485458-- REDIR: 0x491a390 (libc.so.6:strcpy) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
---485458-- REDIR: 0x491bb10 (libc.so.6:strcasecmp_l) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
---485458-- REDIR: 0x491a6a0 (libc.so.6:strlen) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
---485458-- REDIR: 0x491a8d0 (libc.so.6:strncpy) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
---485458-- REDIR: 0x491b950 (libc.so.6:stpcpy) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
---485458-- REDIR: 0x491b3f0 (libc.so.6:memchr) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
---485458-- REDIR: 0x491ab00 (libc.so.6:strspn) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
---485458-- REDIR: 0x491b7d0 (libc.so.6:mempcpy) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
---485458-- REDIR: 0x491bac0 (libc.so.6:strncasecmp) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
---485458-- REDIR: 0x491cf80 (libc.so.6:rawmemchr) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
---485458-- REDIR: 0x49a6280 (libc.so.6:__memcpy_chk) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
---485458-- REDIR: 0x4a0f610 (libc.so.6:__strrchr_avx2) redirected to 0x484e810 (rindex)
---485458-- REDIR: 0x4a0ad80 (libc.so.6:__strncmp_avx2) redirected to 0x484f3e0 (strncmp)
---485458-- REDIR: 0x4a0a940 (libc.so.6:__strcmp_avx2) redirected to 0x484fbd0 (strcmp)
---485458-- REDIR: 0x4a0f7e0 (libc.so.6:__strlen_avx2) redirected to 0x484ed10 (strlen)
---485458-- REDIR: 0x4a0f180 (libc.so.6:__strchr_avx2) redirected to 0x484e9f0 (index)
---485458-- REDIR: 0x4a0b2c0 (libc.so.6:__memchr_avx2) redirected to 0x484fd50 (memchr)
---485458-- REDIR: 0x4a0f400 (libc.so.6:__strchrnul_avx2) redirected to 0x4853330 (strchrnul)
---485458-- REDIR: 0x49170a0 (libc.so.6:malloc) redirected to 0x4848820 (malloc)
---485458-- REDIR: 0x4a12780 (libc.so.6:__mempcpy_avx_unaligned_erms) redirected to 0x4853440 (mempcpy)
---485458-- REDIR: 0x4a127c0 (libc.so.6:__memcpy_avx_unaligned_erms) redirected to 0x4852880 (memmove)
---485458-- REDIR: 0x49173e0 (libc.so.6:free) redirected to 0x484b210 (free)
-==485458== 
-==485458== FILE DESCRIPTORS: 2 open (0 std) at exit.
-==485458== Open file descriptor 4: /home/mcecchel/Desktop/Common/Bozze/minihell/valgrind.log
-==485458==    <inherited from parent>
-==485458== 
-==485458== Open file descriptor 3: /home/mcecchel/Desktop/Common/Bozze/minihell/valgrind.log
-==485458==    <inherited from parent>
-==485458== 
-==485458== 
-==485458== HEAP SUMMARY:
-==485458==     in use at exit: 0 bytes in 0 blocks
-==485458==   total heap usage: 31 allocs, 31 frees, 139,232 bytes allocated
-==485458== 
-==485458== All heap blocks were freed -- no leaks are possible
-==485458== 
-==485458== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ==483648== 
-==483648== FILE DESCRIPTORS: 4 open (3 std) at exit.
-==483648== Open file descriptor 3: /home/mcecchel/Desktop/Common/Bozze/minihell/valgrind.log
-==483648==    <inherited from parent>
-==483648== 
-==483648== 
-==483648== HEAP SUMMARY:
-==483648==     in use at exit: 208,186 bytes in 223 blocks
-==483648==   total heap usage: 1,062 allocs, 839 frees, 250,705 bytes allocated
-==483648== 
-==483648== Searching for pointers to 223 not-freed blocks
-==483648== Checked 263,072 bytes
-==483648== 
-==483648== LEAK SUMMARY:
-==483648==    definitely lost: 0 bytes in 0 blocks
-==483648==    indirectly lost: 0 bytes in 0 blocks
-==483648==      possibly lost: 0 bytes in 0 blocks
-==483648==    still reachable: 0 bytes in 0 blocks
-==483648==         suppressed: 208,186 bytes in 223 blocks
-==483648== 
-==483648== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
---483648-- 
---483648-- used_suppression:     63 RL readline leaks good.supp:2 suppressed: 204,170 bytes in 222 blocks
---483648-- used_suppression:      1 RL add_history leaks good.supp:8 suppressed: 4,016 bytes in 1 blocks
-==483648== 
-==483648== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==409643== Memcheck, a memory error detector
+==409643== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==409643== Using Valgrind-3.18.1-42b08ed5bd-20211015 and LibVEX; rerun with -h for copyright info
+==409643== Command: ./minishell
+==409643== Parent PID: 390328
+==409643== 
+--409643-- 
+--409643-- Valgrind options:
+--409643--    --leak-check=full
+--409643--    --show-leak-kinds=all
+--409643--    --track-origins=yes
+--409643--    --verbose
+--409643--    --log-file=valgrind.log
+--409643--    --leak-check=full
+--409643--    --track-fds=yes
+--409643--    --trace-children=yes
+--409643--    --show-leak-kinds=all
+--409643--    --track-origins=yes
+--409643--    --suppressions=good.supp
+--409643-- Contents of /proc/version:
+--409643--   Linux version 5.15.0-143-generic (buildd@lcy02-amd64-115) (gcc (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0, GNU ld (GNU Binutils for Ubuntu) 2.38) #153-Ubuntu SMP Fri Jun 13 19:10:45 UTC 2025
+--409643-- 
+--409643-- Arch and hwcaps: AMD64, LittleEndian, amd64-cx16-lzcnt-rdtscp-sse3-ssse3-avx-avx2-bmi-f16c-rdrand-rdseed
+--409643-- Page sizes: currently 4096, max supported 4096
+--409643-- Valgrind library directory: /usr/libexec/valgrind
+--409643-- Reading syms from /home/mcecchel/Desktop/Common/Bozze/minihell/minishell
+--409643-- Reading syms from /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+--409643--   Considering /usr/lib/debug/.build-id/9c/b53985768bb99f138f48655f7b8bf7e420d13d.debug ..
+--409643--   .. build-id is valid
+--409643-- Reading syms from /usr/libexec/valgrind/memcheck-amd64-linux
+--409643--    object doesn't have a symbol table
+--409643--    object doesn't have a dynamic symbol table
+--409643-- Scheduler: using generic scheduler lock implementation.
+--409643-- Reading suppressions file: good.supp
+--409643-- Reading suppressions file: /usr/libexec/valgrind/default.supp
+==409643== embedded gdbserver: reading from /tmp/vgdb-pipe-from-vgdb-to-409643-by-mcecchel-on-???
+==409643== embedded gdbserver: writing to   /tmp/vgdb-pipe-to-vgdb-from-409643-by-mcecchel-on-???
+==409643== embedded gdbserver: shared mem   /tmp/vgdb-pipe-shared-mem-vgdb-409643-by-mcecchel-on-???
+==409643== 
+==409643== TO CONTROL THIS PROCESS USING vgdb (which you probably
+==409643== don't want to do, unless you know exactly what you're doing,
+==409643== or are doing some strange experiment):
+==409643==   /usr/bin/vgdb --pid=409643 ...command...
+==409643== 
+==409643== TO DEBUG THIS PROCESS USING GDB: start GDB like this
+==409643==   /path/to/gdb ./minishell
+==409643== and then give GDB the following command
+==409643==   target remote | /usr/bin/vgdb --pid=409643
+==409643== --pid is optional if only one valgrind process is running
+==409643== 
+--409643-- REDIR: 0x402aa40 (ld-linux-x86-64.so.2:strlen) redirected to 0x580bcec2 (???)
+--409643-- REDIR: 0x402a810 (ld-linux-x86-64.so.2:index) redirected to 0x580bcedc (???)
+--409643-- Reading syms from /usr/libexec/valgrind/vgpreload_core-amd64-linux.so
+--409643--    object doesn't have a symbol table
+--409643-- Reading syms from /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so
+--409643--    object doesn't have a symbol table
+==409643== WARNING: new redirection conflicts with existing -- ignoring it
+--409643--     old: 0x0402aa40 (strlen              ) R-> (0000.0) 0x580bcec2 ???
+--409643--     new: 0x0402aa40 (strlen              ) R-> (2007.0) 0x0484ee30 strlen
+--409643-- REDIR: 0x4027220 (ld-linux-x86-64.so.2:strcmp) redirected to 0x484fcd0 (strcmp)
+--409643-- REDIR: 0x402afa0 (ld-linux-x86-64.so.2:mempcpy) redirected to 0x4853840 (mempcpy)
+--409643-- Reading syms from /usr/lib/x86_64-linux-gnu/libreadline.so.8.1
+--409643--    object doesn't have a symbol table
+--409643-- Reading syms from /usr/lib/x86_64-linux-gnu/libm.so.6
+--409643--   Considering /usr/lib/debug/.build-id/a3/ad9bb40b4907e509e4404cb972645c19675ca3.debug ..
+--409643--   .. build-id is valid
+--409643-- Reading syms from /usr/lib/x86_64-linux-gnu/libc.so.6
+--409643--   Considering /usr/lib/debug/.build-id/d5/197096f709801829b118af1b7cf6631efa2dcd.debug ..
+--409643--   .. build-id is valid
+==409643== WARNING: new redirection conflicts with existing -- ignoring it
+--409643--     old: 0x04a53c60 (memalign            ) R-> (1011.0) 0x0484e080 memalign
+--409643--     new: 0x04a53c60 (memalign            ) R-> (1017.0) 0x0484e050 aligned_alloc
+==409643== WARNING: new redirection conflicts with existing -- ignoring it
+--409643--     old: 0x04a53c60 (memalign            ) R-> (1011.0) 0x0484e080 memalign
+--409643--     new: 0x04a53c60 (memalign            ) R-> (1017.0) 0x0484e020 aligned_alloc
+==409643== WARNING: new redirection conflicts with existing -- ignoring it
+--409643--     old: 0x04a53c60 (memalign            ) R-> (1011.0) 0x0484e080 memalign
+--409643--     new: 0x04a53c60 (memalign            ) R-> (1017.0) 0x0484e050 aligned_alloc
+==409643== WARNING: new redirection conflicts with existing -- ignoring it
+--409643--     old: 0x04a53c60 (memalign            ) R-> (1011.0) 0x0484e080 memalign
+--409643--     new: 0x04a53c60 (memalign            ) R-> (1017.0) 0x0484e020 aligned_alloc
+--409643-- Reading syms from /usr/lib/x86_64-linux-gnu/libtinfo.so.6.3
+--409643--    object doesn't have a symbol table
+--409643-- REDIR: 0x4a56720 (libc.so.6:strnlen) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
+--409643-- REDIR: 0x4a569e0 (libc.so.6:strpbrk) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
+--409643-- REDIR: 0x4a562e0 (libc.so.6:strcmp) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
+--409643-- REDIR: 0x4a74cd0 (libc.so.6:wcsnlen) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
+--409643-- REDIR: 0x4a576d0 (libc.so.6:memset) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
+--409643-- REDIR: 0x4a73540 (libc.so.6:wcslen) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
+--409643-- REDIR: 0x4a57c10 (libc.so.6:memcpy@@GLIBC_2.14) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
+--409643-- REDIR: 0x4a73370 (libc.so.6:wcschr) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
+--409643-- REDIR: 0x4a56260 (libc.so.6:index) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
+--409643-- REDIR: 0x4a56960 (libc.so.6:rindex) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
+--409643-- REDIR: 0x4a575a0 (libc.so.6:memmove) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
+==409643== Preferring higher priority redirection:
+--409643--     old: 0x04b4e7c0 (__memcpy_avx_unalign) R-> (2018.0) 0x04850f90 __memcpy_avx_unaligned_erms
+--409643--     new: 0x04b4e7c0 (__memcpy_avx_unalign) R-> (2018.1) 0x04852880 memmove
+--409643-- REDIR: 0x4a733f0 (libc.so.6:wcscmp) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
+--409643-- REDIR: 0x4a579e0 (libc.so.6:stpncpy) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
+--409643-- REDIR: 0x4a739b0 (libc.so.6:wmemchr) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
+--409643-- REDIR: 0x4a56830 (libc.so.6:strncmp) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
+--409643-- REDIR: 0x4a57a70 (libc.so.6:strcasecmp) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
+--409643-- REDIR: 0x4a56420 (libc.so.6:strcspn) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
+--409643-- REDIR: 0x4a73470 (libc.so.6:wcscpy) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
+--409643-- REDIR: 0x4a561d0 (libc.so.6:strcat) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
+--409643-- REDIR: 0x4a57b60 (libc.so.6:strncasecmp_l) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
+--409643-- REDIR: 0x4a57480 (libc.so.6:bcmp) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
+--409643-- REDIR: 0x4a5f570 (libc.so.6:memrchr) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
+--409643-- REDIR: 0x4a59010 (libc.so.6:strchrnul) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
+--409643-- REDIR: 0x4a56390 (libc.so.6:strcpy) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
+--409643-- REDIR: 0x4a57b10 (libc.so.6:strcasecmp_l) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
+--409643-- REDIR: 0x4a566a0 (libc.so.6:strlen) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
+--409643-- REDIR: 0x4a568d0 (libc.so.6:strncpy) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
+--409643-- REDIR: 0x4a57950 (libc.so.6:stpcpy) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
+--409643-- REDIR: 0x4a573f0 (libc.so.6:memchr) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
+--409643-- REDIR: 0x4a56b00 (libc.so.6:strspn) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
+--409643-- REDIR: 0x4a577d0 (libc.so.6:mempcpy) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
+--409643-- REDIR: 0x4a57ac0 (libc.so.6:strncasecmp) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
+--409643-- REDIR: 0x4a58f80 (libc.so.6:rawmemchr) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
+--409643-- REDIR: 0x4a567a0 (libc.so.6:strncat) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
+--409643-- REDIR: 0x4ae2280 (libc.so.6:__memcpy_chk) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
+--409643-- REDIR: 0x4a57310 (libc.so.6:strstr) redirected to 0x483f220 (_vgnU_ifunc_wrapper)
+--409643-- REDIR: 0x4b4b610 (libc.so.6:__strrchr_avx2) redirected to 0x484e810 (rindex)
+--409643-- REDIR: 0x4b4ef80 (libc.so.6:__memset_avx2_unaligned_erms) redirected to 0x4852770 (memset)
+--409643-- REDIR: 0x4b4e7c0 (libc.so.6:__memcpy_avx_unaligned_erms) redirected to 0x4852880 (memmove)
+--409643-- REDIR: 0x4a530a0 (libc.so.6:malloc) redirected to 0x4848820 (malloc)
+--409643-- REDIR: 0x4b4b7e0 (libc.so.6:__strlen_avx2) redirected to 0x484ed10 (strlen)
+--409643-- REDIR: 0x4b4b400 (libc.so.6:__strchrnul_avx2) redirected to 0x4853330 (strchrnul)
+--409643-- REDIR: 0x49f3150 (libc.so.6:setenv) redirected to 0x48542d0 (setenv)
+--409643-- REDIR: 0x4b4b180 (libc.so.6:__strchr_avx2) redirected to 0x484e9f0 (index)
+--409643-- REDIR: 0x4b46d80 (libc.so.6:__strncmp_avx2) redirected to 0x484f3e0 (strncmp)
+--409643-- REDIR: 0x4a53740 (libc.so.6:realloc) redirected to 0x484dc50 (realloc)
+--409643-- REDIR: 0x4b4e780 (libc.so.6:__mempcpy_avx_unaligned_erms) redirected to 0x4853440 (mempcpy)
+--409643-- REDIR: 0x4b46940 (libc.so.6:__strcmp_avx2) redirected to 0x484fbd0 (strcmp)
+--409643-- REDIR: 0x4a54520 (libc.so.6:calloc) redirected to 0x484d9d0 (calloc)
+--409643-- REDIR: 0x4b4b960 (libc.so.6:__strnlen_avx2) redirected to 0x484ecb0 (strnlen)
+--409643-- REDIR: 0x4a533e0 (libc.so.6:free) redirected to 0x484b210 (free)
+--409643-- REDIR: 0x4b4ccb0 (libc.so.6:__strcpy_avx2) redirected to 0x484ee60 (strcpy)
+--409643-- REDIR: 0x4a56fc0 (libc.so.6:__GI_strstr) redirected to 0x4853ae0 (__strstr_sse2)
+--409643-- REDIR: 0x4b4e790 (libc.so.6:__memcpy_chk_avx_unaligned_erms) redirected to 0x4853940 (__memcpy_chk)
+--409643-- REDIR: 0x4b4d040 (libc.so.6:__strncpy_avx2) redirected to 0x484efe0 (strncpy)
+--409643-- REDIR: 0x4b472c0 (libc.so.6:__memchr_avx2) redirected to 0x484fd50 (memchr)
+--409643-- REDIR: 0x4b4d9a0 (libc.so.6:__stpcpy_avx2) redirected to 0x4852130 (stpcpy)
+--409643-- REDIR: 0x4b48130 (libc.so.6:__strcasecmp_avx) redirected to 0x484f560 (strcasecmp)
+--409643-- REDIR: 0x4b497b0 (libc.so.6:__strncasecmp_avx) redirected to 0x484f640 (strncasecmp)
+--409643-- REDIR: 0x4b47a80 (libc.so.6:__memcmp_avx2_movbe) redirected to 0x4852010 (bcmp)
+==409643== 
+==409643== FILE DESCRIPTORS: 7 open (3 std) at exit.
+==409643== Open file descriptor 103: /usr/share/code/v8_context_snapshot.bin
+==409643==    <inherited from parent>
+==409643== 
+==409643== Open file descriptor 42: /dev/ptmx
+==409643==    <inherited from parent>
+==409643== 
+==409643== Open file descriptor 41: /home/mcecchel/.config/Code/logs/20250718T171536/ptyhost.log
+==409643==    <inherited from parent>
+==409643== 
+==409643== Open file descriptor 3: /home/mcecchel/Desktop/Common/Bozze/minihell/valgrind.log
+==409643==    <inherited from parent>
+==409643== 
+==409643== 
+==409643== HEAP SUMMARY:
+==409643==     in use at exit: 204,165 bytes in 221 blocks
+==409643==   total heap usage: 679 allocs, 458 frees, 232,742 bytes allocated
+==409643== 
+==409643== Searching for pointers to 221 not-freed blocks
+==409643== Checked 263,512 bytes
+==409643== 
+==409643== LEAK SUMMARY:
+==409643==    definitely lost: 0 bytes in 0 blocks
+==409643==    indirectly lost: 0 bytes in 0 blocks
+==409643==      possibly lost: 0 bytes in 0 blocks
+==409643==    still reachable: 0 bytes in 0 blocks
+==409643==         suppressed: 204,165 bytes in 221 blocks
+==409643== 
+==409643== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+--409643-- 
+--409643-- used_suppression:     62 RL readline leaks good.supp:2 suppressed: 204,165 bytes in 221 blocks
+==409643== 
+==409643== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
