@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:09:38 by marianna          #+#    #+#             */
-/*   Updated: 2025/07/18 16:17:47 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/18 16:29:07 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,20 @@ void	fork_error_handler(t_shell *shell, t_cmd *cmd, char *path, int err, int exi
 	exit (exit_code);
 }
 
+
+int	is_directory(char *path)
+{
+	int	is_a_folder;
+	
+	is_a_folder = open(path, __O_DIRECTORY);
+	if (is_a_folder != -1)
+	{
+		close (is_a_folder);
+		return (1);
+	}
+	close (is_a_folder);
+	return (0);
+}
 void	execute_cmd(t_shell *shell, t_cmd *cmd)
 {
 	char	*path;
@@ -61,7 +75,9 @@ void	execute_cmd(t_shell *shell, t_cmd *cmd)
 	execve(path, cmd->argv, shell->envp);
 	if (access(path, F_OK) != 0)
 		fork_error_handler(shell, cmd, path, 1, 127);
-	else if (access(path, X_OK) == 0)
+	else if (access(path, X_OK) != 0)
+		fork_error_handler(shell, cmd, path, 1, 126);
+	else if (is_directory(path))
 		fork_error_handler(shell, cmd, path, 1, 126);
 	else
 		fork_error_handler(shell, cmd, path, 1, 1);
