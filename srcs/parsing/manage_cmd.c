@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:09:38 by marianna          #+#    #+#             */
-/*   Updated: 2025/07/17 16:56:21 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/18 16:17:47 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ void	execute_cmd(t_shell *shell, t_cmd *cmd)
 	execve(path, cmd->argv, shell->envp);
 	if (access(path, F_OK) != 0)
 		fork_error_handler(shell, cmd, path, 1, 127);
-	else if (access(path, X_OK) != 0)
+	else if (access(path, X_OK) == 0)
 		fork_error_handler(shell, cmd, path, 1, 126);
 	else
 		fork_error_handler(shell, cmd, path, 1, 1);
