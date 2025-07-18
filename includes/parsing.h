@@ -6,7 +6,7 @@
 /*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 16:02:45 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/18 17:22:56 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/07/18 18:56:21 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,19 +133,6 @@ char			*get_cmd_path(t_shell *shell, t_cmd *cmd, char *command);
 int				setup_input_redir(t_cmd *cmd, char *filename);
 int				setup_output_redir(t_cmd *cmd, char *filename, int append);
 
-// Heredoc handling
-void			handle_heredoc_signal(int sig);
-void			setup_heredoc_signals(void);
-void			restore_signals(void);
-char			*expand_heredoc(t_shell *shell, char *line, int exp, int quote);
-int				is_delimiter_quoted(char *delimiter);
-char			*create_tmp_heredoc_file(void);
-int				setup_heredoc(t_cmd *cmd, char *delimiter, t_shell *shell,
-					int quoted);
-int				handle_heredoc_input(t_shell *shell, char *delimiter,
-					int quoted);
-
-
 // Command utilities
 void			debug_cmds(t_cmd *cmd_list);
 void			free_cmd_list(t_cmd *cmd);
@@ -206,5 +193,21 @@ t_cmd	*optimize_command_list(t_cmd *cmd_list);
 void	close_all_cmd_fds(t_cmd *head);
 void	sigint_handler(int sig);
 
+
+/* INIZIO RIORGANIZZAZIONE .H */
+/* ************************************************************************** */
+/*                     HEREDOC FUNCTION PROTOTYPES                           */
+/* ************************************************************************** */
+
+// heredoc.c
+char	*expand_heredoc(t_shell *shell, char *line, int exp, int quote);
+int		handle_heredoc_input(t_shell *shell, char *delimiter, int quoted);
+int		setup_heredoc(t_cmd *cmd, char *delimiter, t_shell *shell, int quoted);
+
+// heredoc_utils.c
+void	handle_heredoc_signal(int sig);
+void	setup_heredoc_signals(void);
+void	restore_signals(void);
+char	*create_tmp_heredoc_file(void);
 
 #endif
