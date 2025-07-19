@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   manage_cmd.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:09:38 by marianna          #+#    #+#             */
-/*   Updated: 2025/07/19 18:03:50 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/19 18:55:07 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,6 @@ void	fork_error_handler(t_shell *shell, t_cmd *cmd, int err, int exit_code)
 	free_matrix(shell->envp);
 	exit (exit_code);
 }
-
 
 int	is_directory(char *path)
 {
@@ -166,6 +165,7 @@ void	wait_for_children_safe(t_cmd *cmd_list, t_shell *shell)
 {
 	t_cmd	*current;
 	int		status;
+	int		sig;
 
 	current = cmd_list;
 	while (current)
@@ -178,7 +178,7 @@ void	wait_for_children_safe(t_cmd *cmd_list, t_shell *shell)
 					shell->exit_value = WEXITSTATUS(status);
 				else if (WIFSIGNALED(status))
 				{
-					int sig = WTERMSIG(status);
+					sig = WTERMSIG(status);
 					if (sig == SIGINT)
 						shell->exit_value = 130;
 					else if (sig == SIGQUIT)
@@ -189,6 +189,7 @@ void	wait_for_children_safe(t_cmd *cmd_list, t_shell *shell)
 		current = current->next;
 	}
 }
+
 int	process_command_loop(t_shell *shell, t_cmd *current, int *prev_pipe)
 {
 	int	fd_pipe[2];
@@ -223,7 +224,6 @@ void	execute_command_list(t_shell *shell)
 	current = shell->cmd;
 	cmd_list = shell->cmd;
 	prev_pipe = -1;
-
 	if (process_command_loop(shell, current, &prev_pipe) == -1)
 		return ;
 	wait_for_children_safe(cmd_list, shell);
@@ -231,5 +231,3 @@ void	execute_command_list(t_shell *shell)
 	if (prev_pipe != -1)
 		close(prev_pipe);
 }
-
-

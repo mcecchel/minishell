@@ -6,7 +6,7 @@
 /*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 16:00:00 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/16 20:22:32 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/07/19 19:00:23 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,13 +70,19 @@ int	should_expand_in_quotes(int quote_type)
 
 char	*process_variable(char *str, int *i, t_shell *shell, char *result)
 {
-	char *var_name = NULL;
-	char *var_value = NULL;
-	char *temp = NULL;
-	char *new_result = NULL;
+	char	*var_name;
+	char	*var_value;
+	char	*temp;
+	char	*new_result;
+	int		next;
 
-	int next = *i + 1;
-	if (!str[next] || is_space(str[next]) || str[next] == '\'' || str[next] == '"' || str[next] == '$' || str[next] == '|')
+	var_name = NULL;
+	var_value = NULL;
+	temp = NULL;
+	new_result = NULL;
+	next = *i + 1;
+	if (!str[next] || is_space(str[next]) || str[next] == '\''
+		|| str[next] == '"' || str[next] == '$' || str[next] == '|')
 	{
 		temp = result;
 		new_result = ft_strjoin(result, "$\0");

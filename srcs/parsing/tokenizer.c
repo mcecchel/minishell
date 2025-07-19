@@ -6,7 +6,7 @@
 /*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 14:58:50 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/18 17:43:41 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/07/19 19:05:23 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,16 +47,19 @@ char	*extract_word(char *line, int *index, t_shell *shell)
 	return (expanded);
 }
 
-char *extract_quote(char *line, int *index, int *is_quoted, t_shell *shell)
+char	*extract_quote(char *line, int *index, int *is_quoted, t_shell *shell)
 {
-	char	quote_char = line[*index];
-	int		start = *index + 1;
-	int		end = start;
+	char	quote_char;
+	int		start;
+	int		end;
 	char	*res;
 	char	*expanded;
 	int		quote_type;
 	t_token	*lst;
 
+	quote_char = line[*index];
+	start = *index + 1;
+	end = start;
 	expanded = NULL;
 	*is_quoted = 1;
 	while (line[end] && line[end] != quote_char)
@@ -163,26 +166,28 @@ void	add_token_to_list(t_token *token_list, t_token *new_token)
 // Tokenizer principale - VERSIONE CORRETTA
 int	tokenize_input(t_token *token_list, char *line, t_shell *shell)
 {
-	int	i = 0;
-	int	is_first_token = 1;
-	int	waiting_for_redirect_arg = 0;
+	int	i;
+	int	is_first_token;
+	int	waiting_for_redirect_arg;
+
 	token_list->head = NULL;
 	token_list->current = NULL;
-
+	i = 0;
+	is_first_token = 1;
+	waiting_for_redirect_arg = 0;
 	while (line[i])
 	{
 		while (is_space(line[i]))
 			i++;
 		if (line[i] == '\0')
-			break;
-
-		// Concatenazione quote e testo adiacente
-		char *content = NULL;
-		int is_quoted = 0;
-		while (line[i] && !is_space(line[i]) && line[i] != '|' && line[i] != '<' && line[i] != '>')
+			break ;
+		char	*content = NULL;
+		int	is_quoted = 0;
+		while (line[i] && !is_space(line[i]) && line[i] != '|' && line[i] != '<'
+			&& line[i] != '>')
 		{
-			char *tmp = NULL;
-			int tmp_quoted = 0;
+			char	*tmp = NULL;
+			int	tmp_quoted = 0;
 			if (line[i] == '\'' || line[i] == '\"')
 				tmp = extract_quote(line, &i, &tmp_quoted, shell);
 			else

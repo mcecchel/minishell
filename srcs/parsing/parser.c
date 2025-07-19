@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 14:59:11 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/19 18:44:36 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/19 18:52:12 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -222,7 +222,7 @@ static int	handle_redir_token(t_cmd **current,
 	return (1);
 }
 
-static int	process_token(t_token *tok, t_cmd **cmd_list, 
+static int	process_token(t_token *tok, t_cmd **cmd_list,
 				t_cmd **current, t_shell *shell)
 {
 	int	ok;

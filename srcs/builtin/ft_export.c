@@ -6,7 +6,7 @@
 /*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 16:45:25 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/18 17:48:11 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/07/19 18:51:52 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,6 @@ void	where_it_goes(t_shell *root, t_cmd *cmd, int i)
 	while (cmd->argv[i] != NULL)
 	{
 		is_valid = (check_export(root, cmd->argv[i], 1) == 0);
-
 		if (ft_strchr(cmd->argv[i], '=') && is_valid)
 			add_env(root, cmd->argv[i], ENV);
 		else if (is_valid)
