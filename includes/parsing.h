@@ -6,7 +6,7 @@
 /*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 16:02:45 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/18 18:56:21 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/07/19 13:56:48 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,5 +209,21 @@ void	handle_heredoc_signal(int sig);
 void	setup_heredoc_signals(void);
 void	restore_signals(void);
 char	*create_tmp_heredoc_file(void);
+
+// manage_cmd
+void	fork_error_handler(t_shell *shell, t_cmd *cmd, int err, int exit_code);
+int		is_directory(char *path);
+void	execve_failed(t_shell *shell, t_cmd *cmd, char *path);
+void	execute_cmd(t_shell *shell, t_cmd *cmd);
+void	print_envp_char(char **envp);
+void	execute_command_list(t_shell *shell);
+
+// pipeline_utils
+int		setup_pipe_fds(t_cmd *current, int prev_pipe, int *fd_pipe);
+void	handle_parent_process(t_cmd *current, int prev_pipe, int *fd_pipe);
+void	handle_child_process(t_shell *shell, t_cmd *current, int prev_pipe,int *fd_pipe);
+void	wait_for_children(t_shell *shell);
+int		create_and_fork_process(t_cmd *current, int *fd_pipe);
+int		execute_pipeline(t_shell *shell);
 
 #endif

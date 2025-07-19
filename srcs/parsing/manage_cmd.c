@@ -6,7 +6,7 @@
 /*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:09:38 by marianna          #+#    #+#             */
-/*   Updated: 2025/07/18 17:40:56 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/07/19 15:15:38 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,30 @@ void	print_envp_char(char **envp)
 	}
 }
 
+int	handle_pipe_creation(t_cmd *current, int *fd_pipe)
+{
+	if (current->next)
+	{
+		if (pipe(fd_pipe) == -1)
+		{
+			perror("Pipe error");
+			return (-1);
+		}
+	}
+	return (0);
+}
+
+int	handle_fork_creation(t_cmd *current)
+{
+	current->pid = fork();
+	if (current->pid == -1)
+	{
+		perror("Fork error");
+		return (-1);
+	}
+	return (0);
+}
+
 void	execute_command_list(t_shell *shell)
 {
 	t_cmd	*current;
@@ -111,20 +135,10 @@ void	execute_command_list(t_shell *shell)
 	prev_pipe = -1;
 	while (current)
 	{
-		if (current->next)
-		{
-			if (pipe(fd_pipe) == -1)
-			{
-				perror("Pipe error");
-				return ;
-			}
-		}
-		current->pid = fork();
-		if (current->pid == -1)
-		{
-			perror("Fork error");
+		if (handle_pipe_creation(current, fd_pipe) == -1)
 			return ;
-		}
+		if (handle_fork_creation(current) == -1)
+			return ;
 		if (current->pid == 0)
 		{
 			signal(SIGINT, SIG_DFL);

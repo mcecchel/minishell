@@ -6,7 +6,7 @@
 /*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 17:53:30 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/18 18:54:14 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/07/19 13:39:59 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,4 +56,3 @@ char	*create_tmp_heredoc_file(void)
 	}
 	return (filename);
 }
-
