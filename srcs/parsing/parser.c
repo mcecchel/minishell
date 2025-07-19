@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 14:59:11 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/19 18:01:44 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/19 18:44:36 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -219,8 +219,6 @@ static int	handle_redir_token(t_cmd **current,
 		free_cmd_list(*cmd_list);
 		return (0);
 	}
-	if ((*tok)->next)
-		*tok = (*tok)->next;
 	return (1);
 }
 
@@ -240,26 +238,58 @@ static int	process_token(t_token *tok, t_cmd **cmd_list,
 	return (ok);
 }
 
-static int	handle_token_in_loop(t_token **tok, t_cmd **cmd_list,
+static int	handle_cmd_advance(t_token **tok, t_cmd **cmd_list,
 				t_cmd **current, t_shell *shell)
 {
 	int	ok;
 
-	if ((*tok)->type == CMD)
+	ok = handle_cmd_token(cmd_list, current, tok, shell);
+	if (ok == 2)
 	{
-		ok = handle_cmd_token(cmd_list, current, tok, shell);
-		if (ok == 2)
-		{
-			*tok = (*tok)->next;
-			return (2);
-		}
+		*tok = (*tok)->next;
+		return (2);
 	}
-	else
-		ok = process_token(*tok, cmd_list, current, shell);
 	if (!ok)
 		return (0);
 	*tok = (*tok)->next;
 	return (1);
+}
+
+static int	handle_redirection_advance(t_token **tok, t_cmd **cmd_list,
+				t_cmd **current, t_shell *shell)
+{
+	int	ok;
+
+	ok = process_token(*tok, cmd_list, current, shell);
+	if (!ok)
+		return (0);
+	*tok = (*tok)->next;
+	if (*tok)
+		*tok = (*tok)->next;
+	return (1);
+}
+
+static int	handle_standard_advance(t_token **tok, t_cmd **cmd_list,
+				t_cmd **current, t_shell *shell)
+{
+	int	ok;
+
+	ok = process_token(*tok, cmd_list, current, shell);
+	if (!ok)
+		return (0);
+	*tok = (*tok)->next;
+	return (1);
+}
+
+static int	handle_token_in_loop(t_token **tok, t_cmd **cmd_list,
+				t_cmd **current, t_shell *shell)
+{
+	if ((*tok)->type == CMD)
+		return (handle_cmd_advance(tok, cmd_list, current, shell));
+	else if (is_redirection_token((*tok)->type))
+		return (handle_redirection_advance(tok, cmd_list, current, shell));
+	else
+		return (handle_standard_advance(tok, cmd_list, current, shell));
 }
 
 t_cmd	*parse_tokens(t_token *tokens, t_shell *shell)
