@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 16:58:47 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/19 15:15:27 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/07/19 19:47:19 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ int	handle_heredoc_input(t_shell *shell, char *delimiter, int quoted)
 			close(fd);
 			unlink(tmp_file);
 			free(tmp_file);
-			return (-3);
+			return (-2);
 		}
 		if (!line)
 		{
