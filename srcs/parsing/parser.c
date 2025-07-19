@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 14:59:11 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/18 17:23:55 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/07/19 15:29:41 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,96 +127,158 @@ void	free_cmd_list(t_cmd *cmd)
 			}
 			free(tmp->argv);
 		}
-		if (tmp->infile != -1)
-			close(tmp->infile);
-		if (tmp->outfile != -1)
-			close(tmp->outfile);
+		close_cmd_fds(cmd);
 		free(tmp);
 	}
 }
 
-t_cmd *parse_tokens(t_token *token_list, t_shell *shell)
+t_cmd	*create_base_cmd(t_token *token)
 {
-	t_cmd	*cmd_list = NULL;
-	t_cmd	*current_cmd = NULL;
-	t_token	*token = token_list;
+	t_cmd	*cmd;
 
-	(void)shell;
-	while (token)
+	cmd = init_new_cmd();
+	if (!cmd)
+		return (NULL);
+	cmd->cmd_path = ft_strdup(token->value);
+	if (!cmd->cmd_path)
+		return (cmd);
+	cmd->argv[0] = ft_strdup(token->value);
+	if (!cmd->argv[0])
+		return (cmd);
+	cmd->argc = 1;
+	cmd->argv[1] = NULL;
+	return (cmd);
+}
+
+int	handle_cmd_token(t_cmd **cmd_list, t_cmd **cur, t_token **tok, t_shell *sh)
+{
+	t_cmd	*cmd;
+
+	if (ft_strchr((*tok)->value, '=')
+		&& check_export(sh, (*tok)->value, 0) == 0)
 	{
-		if (token->type == CMD)
+		add_env(sh, (*tok)->value, VAR);
+		return (2);
+	}
+	cmd = create_base_cmd(*tok);
+	if (!cmd || !cmd->cmd_path || !cmd->argv[0])
+	{
+		free_cmd_list(cmd);
+		free_cmd_list(*cmd_list);
+		return (0);
+	}
+	add_cmd_to_list(cmd_list, cmd);
+	*cur = cmd;
+	return (1);
+}
+
+int	handle_arg_flag_token(t_cmd **current, t_cmd **cmd_list, t_token *tok)
+{
+	if (!*current)
+	{
+		ft_printf("Error: Argument without command\n");
+		free_cmd_list(*cmd_list);
+		return (0);
+	}
+	add_argument_to_cmd(*current, tok->value);
+	return (1);
+}
+
+int	handle_pipe_token(t_token *token, t_cmd **current, t_cmd **cmd_list)
+{
+	if (!token->next)
+	{
+		ft_printf("Pipe syntax error\n");
+		free_cmd_list(*cmd_list);
+		return (0);
+	}
+	*current = NULL;
+	return (1);
+}
+
+static int	handle_redir_token(t_cmd **current,
+				t_cmd **cmd_list, t_token **tok, t_shell *sh)
+{
+	if (!*current)
+	{
+		*current = init_new_cmd();
+		if (!*current)
 		{
-			if (ft_strchr(token->value, '=') && check_export(shell, token->value, 0) == 0)
-			{
-				add_env(shell, token->value, VAR);
-				token = token->next;
-				continue ;
-			}
-			current_cmd = init_new_cmd();
-			current_cmd->cmd_path = ft_strdup(token->value);
-			if (!current_cmd->cmd_path)
-			{
-				free_cmd_list(current_cmd);
-				free_cmd_list(cmd_list);
-				return (NULL);
-			}
-			current_cmd->argv[0] = ft_strdup(token->value);
-			if (!current_cmd->argv[0])
-			{
-				free_cmd_list(current_cmd);
-				free_cmd_list(cmd_list);
-				return (NULL);
-			}
-			current_cmd->argc = 1;
-			current_cmd->argv[1] = NULL;
-			add_cmd_to_list(&cmd_list, current_cmd);
+			free_cmd_list(*cmd_list);
+			return (0);
 		}
-		else if (token->type == ARG || token->type == FLAG)
+		(*current)->cmd_path = ft_strdup("");
+		(*current)->argv[0] = ft_strdup("");
+		(*current)->argc = 1;
+		(*current)->argv[1] = NULL;
+		(*current)->dummy_on = 1;
+		add_cmd_to_list(cmd_list, *current);
+	}
+	if (!handle_redirection(*current, *tok, sh))
+	{
+		free_cmd_list(*cmd_list);
+		return (0);
+	}
+	if ((*tok)->next)
+		*tok = (*tok)->next;
+	return (1);
+}
+
+static int	process_token(t_token *tok, t_cmd **cmd_list, 
+				t_cmd **current, t_shell *shell)
+{
+	int	ok;
+
+	if (tok->type == ARG || tok->type == FLAG)
+		ok = handle_arg_flag_token(current, cmd_list, tok);
+	else if (tok->type == PIPE)
+		ok = handle_pipe_token(tok, current, cmd_list);
+	else if (is_redirection_token(tok->type))
+		ok = handle_redir_token(current, cmd_list, &tok, shell);
+	else
+		ok = 1;
+	return (ok);
+}
+
+static int	handle_token_in_loop(t_token **tok, t_cmd **cmd_list,
+				t_cmd **current, t_shell *shell)
+{
+	int	ok;
+
+	if ((*tok)->type == CMD)
+	{
+		ok = handle_cmd_token(cmd_list, current, tok, shell);
+		if (ok == 2)
 		{
-			if (!current_cmd)
-			{
-				ft_printf("Error: Argument without command\n");
-				free_cmd_list(cmd_list);
-				return (NULL);
-			}
-			add_argument_to_cmd(current_cmd, token->value);
+			*tok = (*tok)->next;
+			return (2);
 		}
-		else if (token->type == PIPE)
-		{
-			if (!token->next)
-			{
-				ft_printf("Pipe syntax error\n");
-				free_cmd_list(cmd_list);
-				return (NULL);
-			}
-			current_cmd = NULL;
-		}
-		else if (is_redirection_token(token->type))
-		{
-			if (!current_cmd)
-			{
-				current_cmd = init_new_cmd();
-				if (!current_cmd)
-				{
-					free_cmd_list(cmd_list);
-					return (NULL);
-				}
-				current_cmd->cmd_path = ft_strdup("");
-				current_cmd->argv[0] = ft_strdup("");
-				current_cmd->argc = 1;
-				current_cmd->argv[1] = NULL;
-				current_cmd->dummy_on = 1;
-				add_cmd_to_list(&cmd_list, current_cmd);
-			}
-			if (!handle_redirection(current_cmd, token, shell))
-			{
-				free_cmd_list(cmd_list);
-				return (NULL);
-			}
-			if (token->next)
-				token = token->next;
-		}
-		token = token->next;
+	}
+	else
+		ok = process_token(*tok, cmd_list, current, shell);
+	if (!ok)
+		return (0);
+	*tok = (*tok)->next;
+	return (1);
+}
+
+t_cmd	*parse_tokens(t_token *tokens, t_shell *shell)
+{
+	t_cmd		*cmd_list;
+	t_cmd		*current;
+	t_token		*tok;
+	int			result;
+
+	cmd_list = NULL;
+	current = NULL;
+	tok = tokens;
+	while (tok)
+	{
+		result = handle_token_in_loop(&tok, &cmd_list, &current, shell);
+		if (result == 0)
+			return (NULL);
+		if (result == 2)
+			continue ;
 	}
 	if (!cmd_list)
 		return (NULL);
