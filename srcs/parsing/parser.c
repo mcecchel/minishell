@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 14:59:11 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/19 15:29:41 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/19 18:01:44 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,7 @@ void	free_cmd_list(t_cmd *cmd)
 			}
 			free(tmp->argv);
 		}
-		close_cmd_fds(cmd);
+		close_cmd_fds(tmp);
 		free(tmp);
 	}
 }

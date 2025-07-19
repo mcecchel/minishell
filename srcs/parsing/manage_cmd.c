@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   manage_cmd.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:09:38 by marianna          #+#    #+#             */
-/*   Updated: 2025/07/19 15:15:38 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/07/19 18:03:50 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,60 +125,53 @@ int	handle_fork_creation(t_cmd *current)
 	return (0);
 }
 
-void	execute_command_list(t_shell *shell)
+void	setup_child_process(t_cmd *current, int prev_pipe, int *fd_pipe)
+{
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
+	if (prev_pipe != -1)
+	{
+		if (current->infile == -1)
+			current->infile = prev_pipe;
+		else
+			close(prev_pipe);
+	}
+	if (current->next)
+	{
+		close(fd_pipe[0]);
+		if (current->outfile == -1)
+			current->outfile = fd_pipe[1];
+		else
+			close(fd_pipe[1]);
+	}
+}
+
+void	setup_parent_process(int prev_pipe, int *fd_pipe, t_cmd *current)
+{
+	signal(SIGINT, SIG_IGN);
+	if (prev_pipe != -1)
+		close(prev_pipe);
+	if (current->next)
+		close(fd_pipe[1]);
+}
+
+int	update_prev_pipe(t_cmd *current, int *fd_pipe, int prev_pipe)
+{
+	if (current->next)
+		return (fd_pipe[0]);
+	return (prev_pipe);
+}
+
+void	wait_for_children_safe(t_cmd *cmd_list, t_shell *shell)
 {
 	t_cmd	*current;
-	int		fd_pipe[2];
-	int		prev_pipe;
+	int		status;
 
-	current = shell->cmd;
-	prev_pipe = -1;
-	while (current)
-	{
-		if (handle_pipe_creation(current, fd_pipe) == -1)
-			return ;
-		if (handle_fork_creation(current) == -1)
-			return ;
-		if (current->pid == 0)
-		{
-			signal(SIGINT, SIG_DFL);
-			signal(SIGQUIT, SIG_DFL);
-			if (prev_pipe != -1)
-			{
-				if (current->infile == -1)
-					current->infile = prev_pipe;
-				else
-					close(prev_pipe);
-			}
-			if (current->next)
-			{
-				close(fd_pipe[0]);
-				if (current->outfile == -1)
-					current->outfile = fd_pipe[1];
-				else
-					close(fd_pipe[1]);
-			}
-			execute_cmd(shell, current);
-		}
-		else
-		{
-			signal(SIGINT, SIG_IGN);
-			if (prev_pipe != -1)
-				close(prev_pipe);
-			if (current->next)
-			{
-				close(fd_pipe[1]);
-				prev_pipe = fd_pipe[0];
-			}
-			current = current->next;
-		}
-	}
-	current = shell->cmd;
+	current = cmd_list;
 	while (current)
 	{
 		if (current->pid > 0)
 		{
-			int	status;
 			if (waitpid(current->pid, &status, 0) != -1)
 			{
 				if (WIFEXITED(status))
@@ -195,7 +188,48 @@ void	execute_command_list(t_shell *shell)
 		}
 		current = current->next;
 	}
+}
+int	process_command_loop(t_shell *shell, t_cmd *current, int *prev_pipe)
+{
+	int	fd_pipe[2];
+
+	while (current)
+	{
+		if (handle_pipe_creation(current, fd_pipe) == -1)
+			return (-1);
+		if (handle_fork_creation(current) == -1)
+			return (-1);
+		if (current->pid == 0)
+		{
+			setup_child_process(current, *prev_pipe, fd_pipe);
+			execute_cmd(shell, current);
+		}
+		else
+		{
+			setup_parent_process(*prev_pipe, fd_pipe, current);
+			*prev_pipe = update_prev_pipe(current, fd_pipe, *prev_pipe);
+			current = current->next;
+		}
+	}
+	return (0);
+}
+
+void	execute_command_list(t_shell *shell)
+{
+	t_cmd	*current;
+	t_cmd	*cmd_list;
+	int		prev_pipe;
+
+	current = shell->cmd;
+	cmd_list = shell->cmd;
+	prev_pipe = -1;
+
+	if (process_command_loop(shell, current, &prev_pipe) == -1)
+		return ;
+	wait_for_children_safe(cmd_list, shell);
 	signal(SIGINT, sigint_handler);
 	if (prev_pipe != -1)
 		close(prev_pipe);
 }
+
+
