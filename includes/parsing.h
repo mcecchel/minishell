@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 16:02:45 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/19 13:56:48 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/07/21 14:59:03 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -225,5 +225,7 @@ void	handle_child_process(t_shell *shell, t_cmd *current, int prev_pipe,int *fd_
 void	wait_for_children(t_shell *shell);
 int		create_and_fork_process(t_cmd *current, int *fd_pipe);
 int		execute_pipeline(t_shell *shell);
+void	close_outfile(t_cmd *cmd);
+
 
 #endif

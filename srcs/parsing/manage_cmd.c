@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   manage_cmd.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:09:38 by marianna          #+#    #+#             */
-/*   Updated: 2025/07/19 18:55:07 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/07/21 15:39:02 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,6 @@ void	execve_failed(t_shell *shell, t_cmd *cmd, char *path)
 void	execute_cmd(t_shell *shell, t_cmd *cmd)
 {
 	char	*path;
-
 	if (cmd->infile != -1)
 		if (dup2(cmd->infile, STDIN_FILENO) == -1)
 			fork_error_handler(shell, cmd, 0, 1);

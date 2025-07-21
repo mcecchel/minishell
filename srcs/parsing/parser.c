@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 14:59:11 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/19 18:52:12 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/07/21 15:39:05 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,24 +79,34 @@ int	is_redirection_token(t_token_type type)
 		|| type == APPEND || type == HEREDOC);
 }
 
+void	close_outfile(t_cmd *cmd)
+{
+	if (cmd->outfile != -1)
+		close(cmd->outfile);
+	cmd->outfile = -1;
+}
+
 int	handle_redirection(t_cmd *cmd, t_token *token, t_shell *shell)
 {
 	if (!token->next)
-	{
-		ft_printf("Error: Missing file for redirection\n");
-		return (0);
-	}
+		return (ft_printf("Error: Missing file for redirection\n"), 0);
 	if (token->next->type != ARG && token->next->type != CMD)
-	{
-		ft_printf("Error: Invalid redirection target\n");
-		return (0);
-	}
+		return (ft_printf("Error: Invalid redirection target\n"), 0);
 	if (token->type == RED_IN)
+	{	if (cmd->infile != -1)
+			close(cmd->infile);
 		return (setup_input_redir(cmd, token->next->value));
+	}
 	else if (token->type == RED_OUT)
+	{
+		close_outfile(cmd);
 		return (setup_output_redir(cmd, token->next->value, 0));
+	}
 	else if (token->type == APPEND)
+	{
+		close_outfile(cmd);
 		return (setup_output_redir(cmd, token->next->value, 1));
+	}
 	else if (token->type == HEREDOC)
 		return (setup_heredoc(cmd, token->next->value, shell,
 				token->next->is_quoted));
@@ -159,6 +169,15 @@ int	handle_cmd_token(t_cmd **cmd_list, t_cmd **cur, t_token **tok, t_shell *sh)
 	{
 		add_env(sh, (*tok)->value, VAR);
 		return (2);
+	}
+	if (*cur && (*cur)->dummy_on)
+	{
+		free((*cur)->cmd_path);
+		free((*cur)->argv[0]);
+		(*cur)->cmd_path = ft_strdup((*tok)->value);
+		(*cur)->argv[0] = ft_strdup((*tok)->value);
+		(*cur)->dummy_on = 0;
+		return (1);
 	}
 	cmd = create_base_cmd(*tok);
 	if (!cmd || !cmd->cmd_path || !cmd->argv[0])

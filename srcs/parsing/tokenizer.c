@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 14:58:50 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/19 19:05:23 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/07/21 15:17:54 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,7 +214,11 @@ int	tokenize_input(t_token *token_list, char *line, t_shell *shell)
 		}
 		if (content)
 		{
-			t_token_type type = classify_token(content, is_first_token, is_quoted);
+			t_token_type type;
+			if (waiting_for_redirect_arg)
+				type = ARG;
+			else
+				type = classify_token(content, is_first_token, is_quoted);
 			t_token *new_token = create_token(content, type, is_quoted);
 			if (!new_token)
 			{

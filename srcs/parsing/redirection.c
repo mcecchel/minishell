@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 17:28:53 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/15 18:56:02 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/21 15:40:31 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,8 @@ int	setup_output_redir(t_cmd *cmd, char *filename, int append)
 
 	if (!filename)
 		return (0);
+	if (cmd->outfile != -1)
+		close(cmd->outfile);
 	if (append)
 		flags = O_WRONLY | O_CREAT | O_APPEND;
 	else
@@ -47,8 +49,8 @@ int	setup_output_redir(t_cmd *cmd, char *filename, int append)
 		perror(filename);
 		return (0);
 	}
-	if (cmd->outfile != -1)
-		close(cmd->outfile);
 	cmd->outfile = fd;
 	return (1);
 }
+
+
