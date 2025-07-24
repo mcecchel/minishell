@@ -20,9 +20,10 @@ char	*expand_heredoc(t_shell *shell, char *line, int exp, int quote)
 	if (!line)
 		return (NULL);
 	if (exp && quote != 1)
-		expanded_line = expand_variables(line, shell, 0);
+		expanded_line = expand_variables(line, shell, 0, 0);
 	else
 		expanded_line = ft_strdup(line);
+	free(line);
 	if (!expanded_line)
 		return (NULL);
 	res = ft_strjoin(expanded_line, "\n");
@@ -35,77 +36,64 @@ char	*expand_heredoc(t_shell *shell, char *line, int exp, int quote)
 	return (res);
 }
 
-int	handle_heredoc_input(t_shell *shell, char *delimiter, int quoted)
+static bool	should_break(t_shell *shell, char *line, char *delimiter)
+{
+	if (!line)
+	{
+		ft_printf("\nminishell: warning: here-document delimited"
+			" by end-of-file (wanted `%s')\n", delimiter);
+		return (true);
+	}
+	if (shell->exit_value == 130)
+		return (free(line), true);
+	if (ft_strcmp(line, delimiter) == 0)
+	{
+		free(line);
+		return (true);
+	}
+	return (false);
+}
+
+int	get_heredoc_content(t_shell *shell, char *delimiter, int quoted, int out_fd)
 {
 	char	*line;
-	char	*tmp_file;
-	int		fd;
-	char	*expanded_line;
-	int		ret_fd;
 
-	tmp_file = create_tmp_heredoc_file();
-	if (!tmp_file)
-		return (-1);
-	fd = open(tmp_file, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-	if (fd < 0)
-	{
-		perror("Error: Failed to open heredoc file");
-		free(tmp_file);
-		return (-1);
-	}
 	setup_heredoc_signals();
-	while (1)
+	while (true)
 	{
 		line = readline("> ");
 		status_code_update(shell);
-		if (shell->exit_value == 130)
-		{
-			close(fd);
-			unlink(tmp_file);
-			free(tmp_file);
-			return (-2);
-		}
-		if (!line)
-		{
-			ft_printf("\nminishell: warning: here-document delimited"
-				" by end-of-file (wanted `%s')\n", delimiter);
+		if (should_break(shell, line, delimiter))
 			break ;
-		}
-		if (ft_strcmp(line, delimiter) == 0)
-		{
-			free(line);
-			break ;
-		}
-		expanded_line = expand_heredoc(shell, line, 1, quoted);
-		if (expanded_line)
-		{
-			write(fd, expanded_line, ft_strlen(expanded_line));
-			free(expanded_line);
-		}
+		line = expand_heredoc(shell, line, 1, quoted);
+		if (line)
+			write(out_fd, line, ft_strlen(line));
 		free(line);
 	}
-	close(fd);
-	ret_fd = open(tmp_file, O_RDONLY);
-	unlink(tmp_file);
-	free(tmp_file);
-	return (ret_fd);
+	return (0);
 }
 
 int	setup_heredoc(t_cmd *cmd, char *delimiter, t_shell *shell, int quoted)
 {
-	int	fd;
+	int		fd;
+	char	*file;
 
 	if (!delimiter)
 		return (0);
-	fd = handle_heredoc_input(shell, delimiter, quoted);
+	file = create_tmp_heredoc_file();
+	if (!file)
+		return (-1);
+	fd = open(file, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 	if (fd < 0)
-	{
-		if (fd == -1)
-			fd_printf(2, "Error: Failed to handle heredoc input\n");
-		return (fd == -2);
-	}
+		return (perror("Error: Failed to open heredoc file"), free(file), -1);
+	if (shell->exit_value != 130)
+		get_heredoc_content(shell, delimiter, quoted, fd);
+	close(fd);
 	if (cmd->infile != -1)
 		close(cmd->infile);
-	cmd->infile = fd;
-	return (1);
+	cmd->infile = open(file, O_RDONLY);
+	unlink(file);
+	if (cmd->infile < 0)
+		return (perror("Error: Failed to open heredoc file"), free(file), -1);
+	return (free(file), 1);
 }

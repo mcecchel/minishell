@@ -41,7 +41,7 @@ char	*extract_word(char *line, int *index, t_shell *shell)
 		lst = ft_last(shell->token.head);
 	if (!lst || lst->type != HEREDOC)
 	{
-		expanded = expand_variables(word, shell, 0);
+		expanded = expand_variables(word, shell, 0, 0);
 		free(word);
 	}
 	return (expanded);
@@ -84,7 +84,7 @@ char	*extract_quote(char *line, int *index, int *is_quoted, t_shell *shell)
 	expanded = res;
 	if (!lst || lst->type != HEREDOC)
 	{
-		expanded = expand_variables(res, shell, quote_type);
+		expanded = expand_variables(res, shell, quote_type, 0);
 		free(res);
 	}
 	return (expanded);
@@ -164,17 +164,22 @@ void	add_token_to_list(t_token *token_list, t_token *new_token)
 }
 
 // Tokenizer principale - VERSIONE CORRETTA
-int	tokenize_input(t_token *token_list, char *line, t_shell *shell)
+int	tokenize_input(t_token *token_list, char **l, t_shell *shell)
 {
 	int	i;
 	int	is_first_token;
 	int	waiting_for_redirect_arg;
+	char	*line;
 
 	token_list->head = NULL;
 	token_list->current = NULL;
 	i = 0;
 	is_first_token = 1;
 	waiting_for_redirect_arg = 0;
+	line = expand_variables(*l, shell, 0, 1);
+	free(*l);
+	*l = line;
+	printf("initially parsed line: %s\n", line);
 	while (line[i])
 	{
 		while (is_space(line[i]))

@@ -127,6 +127,8 @@ void	cleanup_shell(t_shell *shell)
 		shell->token.head = NULL;
 		shell->token.current = NULL;
 	}
+	free(shell->line);
+	shell->line = NULL;
 }
 
 void	print_pwd(t_env *env_list)
@@ -189,29 +191,27 @@ int	parser_builtin(t_shell *root, t_cmd *cmd)
 
 void	reading(t_shell *shell)
 {
-	char	*line;
-
 	while (1)
 	{
-		line = readline("minishell> ");
+		shell->line = readline("minishell> ");
 		status_code_update(shell);
-		if (!line)
+		if (!shell->line)
 		{
 			write (1, "exit\n", 5);
 			clean_exit(shell);
 			cleanup_shell(shell);
 			exit (1);
 		}
-		if (*line == '\0')
+		if (*shell->line == '\0')
 		{
-			free(line);
+			free(shell->line);
+			shell->line = NULL;
 			continue ;
 		}
-		add_history(line);
-		if (!tokenize_input(&shell->token, line, shell))
+		add_history(shell->line);
+		if (!tokenize_input(&shell->token, &shell->line, shell))
 		{
 			cleanup_shell(shell);
-			free(line);
 			continue ;
 		}
 		printf_debug("Generated tokens:\n");
@@ -220,7 +220,6 @@ void	reading(t_shell *shell)
 		if (!shell->cmd)
 		{
 			cleanup_shell(shell);
-			free(line);
 			continue ;
 		}
 		shell->cmd = optimize_command_list(shell->cmd);
@@ -233,7 +232,6 @@ void	reading(t_shell *shell)
 		else
 			execute_command_list(shell);
 		cleanup_shell(shell);
-		free(line);
 	}
 }
 

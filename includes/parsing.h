@@ -88,6 +88,7 @@ typedef struct s_env
 
 typedef struct s_shell
 {
+	char	*line;
 	t_env	*env;
 	t_cmd	*cmd;
 	char	**envp;
@@ -101,7 +102,7 @@ typedef struct s_shell
 /*                          LEXER FUNCTIONS                                   */
 /* ************************************************************************** */
 // Tokenization functions
-int				tokenize_input(t_token *token, char *line, t_shell *shell);
+int				tokenize_input(t_token *token, char **line, t_shell *shell);
 char			*extract_word(char *line, int *index, t_shell *shell);
 char			*extract_quote(char *line, int *index, int *is_quoted,
 					t_shell *shell);
@@ -157,12 +158,12 @@ void			update_shell_envp(t_shell *shell);
 /*                       VARIABLE EXPANSION                                  */
 /* ************************************************************************** */
 // Variable expansion functions
-char			*expand_variables(char *str, t_shell *shell, int in_quotes);
+char			*expand_variables(char *str, t_shell *shell, int in_quotes, int initial_parse);
 char			*get_env_value(t_shell *shell, char *var_name);
 char			*extract_var_name(char *str, int *index);
 int				should_expand_in_quotes(int quote_type);
 char			*handle_special_vars(t_shell *shell, char *var_name);
-char			*process_variable(char *str, int *i, t_shell *shell, char *result);
+char			*process_variable(char *str, int *i, t_shell *shell, char *result, int initial_processing, char surrounded_by_quote);
 char			*process_literal_text(char *str, int *i, char *result);
 
 /* ************************************************************************** */
