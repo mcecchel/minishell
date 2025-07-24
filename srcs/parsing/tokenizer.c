@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 14:58:50 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/21 15:17:54 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/24 13:52:20 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,7 +179,6 @@ int	tokenize_input(t_token *token_list, char **l, t_shell *shell)
 	line = expand_variables(*l, shell, 0, 1);
 	free(*l);
 	*l = line;
-	printf("initially parsed line: %s\n", line);
 	while (line[i])
 	{
 		while (is_space(line[i]))

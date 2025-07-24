@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 10:25:56 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/21 14:17:48 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/24 13:56:15 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@ typedef enum e_what
 	ALPHANUM,
 	ALL,
 	OTHERS,
-
 }			t_what;
 
 int		ft_isalnum(int c);
@@ -121,7 +120,6 @@ int		ft_putptr(int fd, void *ptr);
 int		ft_printf(const char *str, ...);
 int		printf_debug(const char *str, ...);
 int		fd_printf(int fd, const char *str, ...);
-
 
 // get_next_line functions
 char	*get_next_line(int fd);

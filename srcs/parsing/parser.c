@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 14:59:11 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/21 15:39:05 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/24 13:54:52 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,8 @@ int	handle_redirection(t_cmd *cmd, t_token *token, t_shell *shell)
 	if (token->next->type != ARG && token->next->type != CMD)
 		return (ft_printf("Error: Invalid redirection target\n"), 0);
 	if (token->type == RED_IN)
-	{	if (cmd->infile != -1)
+	{
+		if (cmd->infile != -1)
 			close(cmd->infile);
 		return (setup_input_redir(cmd, token->next->value));
 	}
@@ -160,6 +161,15 @@ t_cmd	*create_base_cmd(t_token *token)
 	return (cmd);
 }
 
+void	handle_dummy_in_token(t_cmd **cur, t_token **tok)
+{
+	free((*cur)->cmd_path);
+	free((*cur)->argv[0]);
+	(*cur)->cmd_path = ft_strdup((*tok)->value);
+	(*cur)->argv[0] = ft_strdup((*tok)->value);
+	(*cur)->dummy_on = 0;
+}
+
 int	handle_cmd_token(t_cmd **cmd_list, t_cmd **cur, t_token **tok, t_shell *sh)
 {
 	t_cmd	*cmd;
@@ -172,11 +182,7 @@ int	handle_cmd_token(t_cmd **cmd_list, t_cmd **cur, t_token **tok, t_shell *sh)
 	}
 	if (*cur && (*cur)->dummy_on)
 	{
-		free((*cur)->cmd_path);
-		free((*cur)->argv[0]);
-		(*cur)->cmd_path = ft_strdup((*tok)->value);
-		(*cur)->argv[0] = ft_strdup((*tok)->value);
-		(*cur)->dummy_on = 0;
+		handle_dummy_in_token(cur, tok);
 		return (1);
 	}
 	cmd = create_base_cmd(*tok);

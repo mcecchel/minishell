@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 17:28:53 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/21 15:40:31 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/24 13:53:42 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,5 +52,3 @@ int	setup_output_redir(t_cmd *cmd, char *filename, int append)
 	cmd->outfile = fd;
 	return (1);
 }
-
-

@@ -3,49 +3,39 @@
 /*                                                        :::      ::::::::   */
 /*   ft_export.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 16:45:25 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/19 18:51:52 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/07/24 14:05:36 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	check_export(t_shell *shell, char *arg, int print)
+int	is_valid_export_identifier(char *arg)
 {
 	int	i;
-	int	check;
 
 	i = 0;
-	check = 0;
 	while (arg[i] && arg[i] != '=')
 	{
 		if (i == 0 && arg[i] != '_' && !ft_isalpha(arg[i]))
-		{
-			if (check == 0 && print == 1)
-			{
-				fd_printf(2, "Invalid argument to export\n");
-				check ++;
-				shell->exit_value = 1;
-				return (1);
-			}
-			shell->exit_value = 1;
-			return (1);
-		}
+			return (0);
 		else if (i > 0 && arg[i] != '_' && !ft_isalnum(arg[i]))
-		{
-			if (check == 0 && print == 1)
-			{
-				fd_printf(2, "Invalid argument to export\n");
-				check ++;
-				shell->exit_value = 1;
-				return (1);
-			}
-			shell->exit_value = 1;
-			return (1);
-		}
+			return (0);
 		i++;
+	}
+	return (1);
+}
+
+int	check_export(t_shell *shell, char *arg, int print)
+{
+	if (!is_valid_export_identifier(arg))
+	{
+		if (print)
+			fd_printf(2, "Invalid argument to export\n");
+		shell->exit_value = 1;
+		return (1);
 	}
 	return (0);
 }
