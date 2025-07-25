@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 16:54:11 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/17 14:48:51 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/24 14:46:51 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 # include "libft.h"
 
 int				parser_builtin(t_shell *root, t_cmd *cmd);
-
 
 //cd
 t_env			*find_env(t_env *env, char *to_change);
@@ -36,7 +35,6 @@ int				update_env(t_env *env, char *name, char *value, int type);
 void			add_env(t_shell *root, char *arg, int type);
 int				ft_export(t_shell *root, t_cmd *cmd);
 int				check_export(t_shell *shell, char *arg, int print);
-
 
 //exit
 void			ft_exit(t_shell *root, t_cmd *cmd);

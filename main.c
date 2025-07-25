@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 17:30:08 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/17 18:27:20 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/24 17:28:24 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,12 @@
 #include <signal.h>
 
 // Variabile globale
-int	current_child_pid = -1;
+int	g_current_child_pid = -1;
 
 void	sigint_handler(int sig)
 {
 	(void)sig;
-	current_child_pid = sig;
+	g_current_child_pid = sig;
 	write(STDOUT_FILENO, "\n", 1);
 	rl_replace_line("", 0);
 	rl_on_new_line();
@@ -113,7 +113,6 @@ void	init_shell(t_shell *shell)
 	shell->token.head = NULL;
 	shell->token.current = NULL;
 }
-
 void	cleanup_shell(t_shell *shell)
 {
 	if (shell->cmd)
@@ -155,11 +154,27 @@ void	new_exit_code(t_shell *shell, int status)
 
 void	status_code_update(t_shell *shell)
 {
-	if (current_child_pid == SIGINT)
+	if (g_current_child_pid == SIGINT)
 		shell->exit_value = 130;
-	else if (current_child_pid == SIGQUIT)
+	else if (g_current_child_pid == SIGQUIT)
 		shell->exit_value = 131;
-	current_child_pid = -1;
+	g_current_child_pid = -1;
+}
+
+bool	is_builtin(char *cmd)
+{
+	const char	*valid[] = {"env", "export", "pwd", "unset", "cd",
+		"exit", "echo", NULL};
+	int			i;
+
+	i = 0;
+	while (valid[i])
+	{
+		if (ft_strcmp((char *)valid[i], cmd) == 0)
+			return (true);
+		i++;
+	}
+	return (false);
 }
 
 int	parser_builtin(t_shell *root, t_cmd *cmd)
@@ -225,10 +240,23 @@ void	reading(t_shell *shell)
 		shell->cmd = optimize_command_list(shell->cmd);
 		printf_debug("\nGenerated commands:\n");
 		debug_cmds(shell->cmd);
-		if (shell->cmd && !shell->cmd->next && shell->cmd->infile == -1
-			&& shell->cmd->outfile == -1 && parser_builtin(shell, shell->cmd))
+		if (shell->cmd && !shell->cmd->next && (is_dummy_command(shell->cmd) || is_builtin(shell->cmd->cmd_path)))
+		{
+			if (is_builtin(shell->cmd->cmd_path))
 			{
+				if (shell->cmd->infile != -1)
+					if (dup2(shell->cmd->infile, STDIN_FILENO) == -1)
+						;
+				if (shell->cmd->outfile != -1)
+					if (dup2(shell->cmd->outfile, STDOUT_FILENO) == -1)
+						;
+				parser_builtin(shell, shell->cmd);
+				if (shell->cmd->infile != -1)
+					dup2(shell->original_stdin, STDIN_FILENO);
+				if (shell->cmd->outfile != -1)
+					dup2(shell->original_stdout, STDOUT_FILENO);
 			}
+		}
 		else
 			execute_command_list(shell);
 		cleanup_shell(shell);
@@ -247,10 +275,13 @@ int	main(int argc, char **argv, char **envp)
 	shell.env = env;
 	(void)argc;
 	(void)argv;
+	shell.original_stdin = dup(STDIN_FILENO);
+	shell.original_stdout = dup(STDOUT_FILENO);
 	signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, SIG_IGN);
 	init_shell(&shell);
 	reading(&shell);
 	cleanup_shell(&shell);
+	clean_exit(&shell);
 	return (0);
 }

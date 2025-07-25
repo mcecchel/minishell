@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:09:38 by marianna          #+#    #+#             */
-/*   Updated: 2025/07/24 13:55:16 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/24 17:26:56 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,16 +22,12 @@ void	fork_error_handler(t_shell *shell, t_cmd *cmd, int err, int exit_code)
 		perror("Error dup2 prev_pipe");
 	if (err == 3)
 		perror("dup2 pipe_out");
-	if (err == 4)
-	{
-	}
 	if (cmd)
 		close_cmd_fds(cmd);
 	else
 		close_cmd_fds(shell->cmd);
 	cleanup_shell(shell);
-	free_env_list(shell->env);
-	free_matrix(shell->envp);
+	clean_exit(shell);
 	exit (exit_code);
 }
 
@@ -62,6 +58,8 @@ void	execve_failed(t_shell *shell, t_cmd *cmd, char *path)
 	fork_error_handler(shell, cmd, 1, status_code);
 }
 
+bool	is_builtin(char *cmd);
+
 void	execute_cmd(t_shell *shell, t_cmd *cmd)
 {
 	char	*path;
@@ -74,8 +72,12 @@ void	execute_cmd(t_shell *shell, t_cmd *cmd)
 			fork_error_handler(shell, cmd, 0, 1);
 	if (cmd->cmd_path && ft_strlen(cmd->cmd_path) == 0)
 		fork_error_handler(shell, cmd, 4, 0);
-	if (parser_builtin(shell, cmd))
-		fork_error_handler(shell, cmd, 4, shell->exit_value);
+	if (is_builtin(cmd->cmd_path))
+	{
+		if (parser_builtin(shell, cmd))
+			fork_error_handler(shell, cmd, 4, shell->exit_value);
+		
+	}
 	path = get_cmd_path(shell, cmd, cmd->argv[0]);
 	if (!path)
 		fork_error_handler(shell, cmd, 1, 127);

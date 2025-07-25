@@ -7,7 +7,8 @@
 		"compare": "c",
 		"type_traits": "c",
 		"wait.h": "c",
-		"parsing.h": "c"
+		"parsing.h": "c",
+		"builtin.h": "c"
 	},
 	"makefile.configureOnOpen": true
 }

@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 23:20:05 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/15 17:38:59 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/24 17:18:48 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,10 @@ void	clean_exit(t_shell *root)
 	if (root->envp)
 		free_matrix(root->envp);
 	rl_clear_history();
+	close(STDIN_FILENO);
+	close(STDOUT_FILENO);
+	close(root->original_stdin);
+	close(root->original_stdout);
 }
 
 void	too_much_args(t_shell *root, t_cmd *cmd, int len)

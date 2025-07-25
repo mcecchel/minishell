@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 16:02:45 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/24 14:39:46 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/25 23:15:57 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,48 @@ typedef struct s_shell
 	int		exit_value;
 	t_token	token;
 	bool	in_quote;
+	int		original_stdin;
+	int		original_stdout;
 }			t_shell;
+
+typedef struct s_expand_ctx
+{
+	char		*str;
+	int			*i;
+	t_shell		*shell;
+	char		*result;
+	int			initial;
+	char		quote;
+}	t_expand_ctx;
+
+typedef struct s_extract_ctx
+{
+	char		quote_char;
+	int			start;
+	int			end;
+	int			quote_type;
+	char		*res;
+	char		*expanded;
+}	t_extract_ctx;
+
+typedef struct s_parse
+{
+	int		i;
+	int		is_first;
+	int		waiting;
+	t_token	*token_list;
+	t_shell	*shell;
+	char	*line;
+}	t_parse;
+
+char	*expand_variables(char *line, t_shell *shell, int a, int b);
+int		is_space(char c);
+char	*extract_quote(char *line, int *i, int *quoted, t_shell *shell);
+char	*extract_word(char *line, int *i, t_shell *shell);
+char	*extract_operator(char *line, int *i);
+t_token	*create_token(char *value, t_token_type type, int is_quoted);
+void	add_token_to_list(t_token *token_list, t_token *new_token);
+void	free_tokens(t_token *head);
 
 /* ************************************************************************** */
 /*                          LEXER FUNCTIONS                                   */
@@ -127,7 +168,6 @@ void			add_cmd(t_cmd *cmd, t_cmd *new_cmd);
 void			add_cmd_to_list(t_cmd **cmd_list, t_cmd *new_cmd);
 void			add_argument_to_cmd(t_cmd *cmd, char *arg);
 char			*get_cmd_path(t_shell *shell, t_cmd *cmd, char *command);
-
 
 // Redirection handling
 int				setup_input_redir(t_cmd *cmd, char *filename);
@@ -162,7 +202,8 @@ char			*get_env_value(t_shell *shell, char *var_name);
 char			*extract_var_name(char *str, int *index);
 int				should_expand_in_quotes(int quote_type);
 char			*handle_special_vars(t_shell *shell, char *var_name);
-char			*process_variable(char *str, int *i, t_shell *shell, char *result, int initial_processing, char surrounded_by_quote);
+//char			*process_variable(char *str, int *i, t_shell *shell, char *result, int initial_processing, char surrounded_by_quote);
+char			*process_variable(t_expand_ctx *ctx);
 char			*process_literal_text(char *str, int *i, char *result);
 
 /* ************************************************************************** */
@@ -193,7 +234,6 @@ t_cmd	*optimize_command_list(t_cmd *cmd_list);
 void	close_all_cmd_fds(t_cmd *head);
 void	sigint_handler(int sig);
 
-
 /* INIZIO RIORGANIZZAZIONE .H */
 /* ************************************************************************** */
 /*                     HEREDOC FUNCTION PROTOTYPES                           */
@@ -221,11 +261,10 @@ void	execute_command_list(t_shell *shell);
 // pipeline_utils
 int		setup_pipe_fds(t_cmd *current, int prev_pipe, int *fd_pipe);
 void	handle_parent_process(t_cmd *current, int prev_pipe, int *fd_pipe);
-void	handle_child_process(t_shell *shell, t_cmd *current, int prev_pipe,int *fd_pipe);
+void	handle_child_process(t_shell *shell, t_cmd *current, int prev_pipe, int *fd_pipe);
 void	wait_for_children(t_shell *shell);
 int		create_and_fork_process(t_cmd *current, int *fd_pipe);
 int		execute_pipeline(t_shell *shell);
 void	close_outfile(t_cmd *cmd);
-
 
 #endif
