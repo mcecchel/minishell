@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 16:54:11 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/24 14:46:51 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/28 21:09:25 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,6 @@
 # define BUILTIN_H
 
 # include "libft.h"
-
-int				parser_builtin(t_shell *root, t_cmd *cmd);
 
 //cd
 t_env			*find_env(t_env *env, char *to_change);
@@ -39,6 +37,7 @@ int				check_export(t_shell *shell, char *arg, int print);
 //exit
 void			ft_exit(t_shell *root, t_cmd *cmd);
 void			clean_exit(t_shell *root);
+int				which_fd(t_shell *shell);
 
 //pwd
 int				ft_pwd(t_shell *shell, t_cmd *cmd);

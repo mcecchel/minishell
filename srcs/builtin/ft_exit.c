@@ -6,11 +6,19 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 23:20:05 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/24 17:18:48 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/29 15:53:10 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+static void	goodbye_my_dear(t_shell *root)
+{
+	write(1, "exit\n", 5);
+	clean_exit(root);
+	cleanup_shell(root);
+	exit((unsigned char)root->exit_value);
+}
 
 void	clean_exit(t_shell *root)
 {
@@ -42,7 +50,6 @@ void	ft_exit(t_shell *root, t_cmd *cmd)
 	long long int	exit_code;
 	size_t			len;
 
-	exit_code = 0;
 	len = ft_strlen(cmd->argv[1]);
 	if (cmd->argc > 2 && what_is(cmd->argv[1], (int)len) == 2)
 	{
@@ -55,11 +62,10 @@ void	ft_exit(t_shell *root, t_cmd *cmd)
 		if (what_is(cmd->argv[1], (int)len) != 2)
 			too_much_args(root, cmd, len);
 		exit_code = ft_atoi_ll(cmd->argv[1]);
+		root->exit_value = exit_code;
+		goodbye_my_dear(root);
 	}
-	write(1, "exit\n", 5);
-	clean_exit(root);
-	cleanup_shell(root);
-	exit((unsigned char)exit_code);
+	goodbye_my_dear(root);
 }
 
 /* Exit codes reference:

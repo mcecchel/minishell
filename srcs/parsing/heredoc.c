@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/02 16:58:47 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/19 19:47:19 by mbrighi          ###   ########.fr       */
+/*   Created: 2025/07/28 17:25:14 by mbrighi           #+#    #+#             */
+/*   Updated: 2025/07/28 21:03:03 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,32 @@ char	*expand_heredoc(t_shell *shell, char *line, int exp, int quote)
 	return (res);
 }
 
-static bool	should_break(t_shell *shell, char *line, char *delimiter)
+int	setup_heredoc(t_cmd *cmd, char *delimiter, t_shell *shell, int quoted)
+{
+	int		fd;
+	char	*file;
+
+	if (!delimiter)
+		return (0);
+	file = create_tmp_heredoc_file();
+	if (!file)
+		return (-1);
+	fd = open(file, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+	if (fd < 0)
+		return (perror("Error: Failed to open heredoc file"), free(file), -1);
+	if (shell->exit_value != 130)
+		get_heredoc_content(shell, delimiter, quoted, fd);
+	close(fd);
+	if (cmd->infile != -1)
+		close(cmd->infile);
+	cmd->infile = open(file, O_RDONLY);
+	unlink(file);
+	if (cmd->infile < 0)
+		return (perror("Error: Failed to open heredoc file"), free(file), -1);
+	return (free(file), 1);
+}
+
+bool	should_break(t_shell *shell, char *line, char *delimiter)
 {
 	if (!line)
 	{
@@ -71,29 +96,4 @@ int	get_heredoc_content(t_shell *shell, char *delimiter, int quoted, int out_fd)
 		free(line);
 	}
 	return (0);
-}
-
-int	setup_heredoc(t_cmd *cmd, char *delimiter, t_shell *shell, int quoted)
-{
-	int		fd;
-	char	*file;
-
-	if (!delimiter)
-		return (0);
-	file = create_tmp_heredoc_file();
-	if (!file)
-		return (-1);
-	fd = open(file, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-	if (fd < 0)
-		return (perror("Error: Failed to open heredoc file"), free(file), -1);
-	if (shell->exit_value != 130)
-		get_heredoc_content(shell, delimiter, quoted, fd);
-	close(fd);
-	if (cmd->infile != -1)
-		close(cmd->infile);
-	cmd->infile = open(file, O_RDONLY);
-	unlink(file);
-	if (cmd->infile < 0)
-		return (perror("Error: Failed to open heredoc file"), free(file), -1);
-	return (free(file), 1);
 }

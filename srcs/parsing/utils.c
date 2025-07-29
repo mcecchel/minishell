@@ -3,23 +3,43 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/10 12:22:22 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/16 20:21:36 by mcecchel         ###   ########.fr       */
+/*   Created: 2025/07/28 18:16:41 by mbrighi           #+#    #+#             */
+/*   Updated: 2025/07/28 21:05:53 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	is_space(char c)
+void	free_cmd_list(t_cmd *cmd)
 {
-	if (c == 32 || (c >= 9 && c <= 13))
-		return (1);
-	return (0);
+	t_cmd	*tmp;
+	int		i;
+
+	while (cmd)
+	{
+		tmp = cmd;
+		cmd = cmd->next;
+		if (tmp->cmd_path)
+			free(tmp->cmd_path);
+		if (tmp->heredoc_delimiter)
+			free(tmp->heredoc_delimiter);
+		if (tmp->argv)
+		{
+			i = 0;
+			while (tmp->argv[i])
+			{
+				free(tmp->argv[i]);
+				i++;
+			}
+			free(tmp->argv);
+		}
+		close_cmd_fds(tmp);
+		free(tmp);
+	}
 }
 
-// Funzione per liberare matrice di stringhe
 void	free_matrix(char **str)
 {
 	int	i;
@@ -35,37 +55,35 @@ void	free_matrix(char **str)
 	free(str);
 }
 
-void	close_all_cmd_fds(t_cmd *head)
+void	debug_tokens(t_token *token)
 {
-	t_cmd	*current;
+	int	i;
 
-	current = head;
-	while (current)
+	if (!DEBUG)
+		return ;
+	i = 0;
+	while (token)
 	{
-		close_cmd_fds(current);
-		current = current->next;
+		printf_debug("[%d] Token: \"%s\" | Type: %s", i, token->value,
+			obtain_token_type(token));
+		if (token->is_quoted)
+			printf_debug(" (QUOTED)");
+		printf_debug("\n");
+		token = token->next;
+		i++;
 	}
 }
 
-void	close_cmd_fds(t_cmd *cmd)
+int	is_valid_command(t_cmd *cmd, char *command)
 {
-	if (cmd->infile != -1)
+	if (command == NULL || *command == '\0' || is_space(*command) == 1)
 	{
-		close(cmd->infile);
-		cmd->infile = -1;
+		perror("Error: Invalid command");
+		if (cmd->infile != -1)
+			close(cmd->infile);
+		if (cmd->outfile != -1)
+			close(cmd->outfile);
+		return (0);
 	}
-	if (cmd->outfile != -1)
-	{
-		close(cmd->outfile);
-		cmd->outfile = -1;
-	}
-}
-
-t_token	*ft_last(t_token *lst)
-{
-	if (lst == NULL)
-		return (NULL);
-	while (lst->next != NULL)
-		lst = lst->next;
-	return (lst);
+	return (1);
 }
