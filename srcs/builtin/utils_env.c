@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:30:03 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/15 17:41:49 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/30 16:46:42 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ void	add_new_env(t_shell *root, char *name, char *value, int type)
 		root->env = new_env;
 }
 
-static char	*extract_name(char *arg, int *equal_pos)
+char	*extract_name(char *arg, int *equal_pos)
 {
 	int		i;
 	char	*name;
@@ -74,7 +74,7 @@ static char	*extract_name(char *arg, int *equal_pos)
 	return (name);
 }
 
-static char	*extract_value(char *arg, int equal_pos, char *name)
+char	*extract_value(char *arg, int equal_pos, char *name)
 {
 	char	*value;
 

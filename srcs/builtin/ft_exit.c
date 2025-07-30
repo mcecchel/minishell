@@ -6,13 +6,13 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 23:20:05 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/29 15:53:10 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/30 16:42:41 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void	goodbye_my_dear(t_shell *root)
+void	goodbye_my_dear(t_shell *root)
 {
 	write(1, "exit\n", 5);
 	clean_exit(root);
@@ -35,7 +35,7 @@ void	clean_exit(t_shell *root)
 	close(root->original_stdout);
 }
 
-void	too_much_args(t_shell *root, t_cmd *cmd, int len)
+void	too_many_args(t_shell *root, t_cmd *cmd, int len)
 {
 	write(2, "exit\nbash: exit: ", 17);
 	write(2, cmd->argv[1], len);
@@ -60,7 +60,7 @@ void	ft_exit(t_shell *root, t_cmd *cmd)
 	if (cmd->argc > 1)
 	{
 		if (what_is(cmd->argv[1], (int)len) != 2)
-			too_much_args(root, cmd, len);
+			too_many_args(root, cmd, len);
 		exit_code = ft_atoi_ll(cmd->argv[1]);
 		root->exit_value = exit_code;
 		goodbye_my_dear(root);

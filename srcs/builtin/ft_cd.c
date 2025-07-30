@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 12:22:07 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/15 17:40:53 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/30 16:39:54 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void	change_env(t_shell *root, char *old_path, char *current_path)
 	update_shell_envp(root);
 }
 
-static char	*get_target_path(t_shell *root)
+char	*get_target_path(t_shell *root)
 {
 	t_env	*home;
 
@@ -64,7 +64,7 @@ static char	*get_target_path(t_shell *root)
 		return (root->cmd->argv[1]);
 }
 
-static int	change_directory(const char *target_path)
+int	change_directory(const char *target_path)
 {
 	if (chdir(target_path) == -1)
 	{

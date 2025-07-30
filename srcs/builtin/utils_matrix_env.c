@@ -6,13 +6,13 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 16:58:05 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/15 18:02:40 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/30 16:50:09 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	count_env_list(t_env *env)
+int	count_env_list(t_env *env)
 {
 	int		count;
 	t_env	*current;
@@ -28,7 +28,7 @@ static int	count_env_list(t_env *env)
 	return (count);
 }
 
-static char	*create_env_string(t_env *env_node)
+char	*create_env_string(t_env *env_node)
 {
 	char	*temp;
 	char	*result;
@@ -41,7 +41,7 @@ static char	*create_env_string(t_env *env_node)
 	return (result);
 }
 
-static int	fill_env_matrix(char **envp, t_env *env, int count)
+int	fill_env_matrix(char **envp, t_env *env, int count)
 {
 	t_env	*current;
 	int		i;
