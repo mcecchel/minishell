@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:57:57 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/29 15:32:53 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/31 17:05:07 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,9 @@ int	process_command_loop(t_shell *shell, t_cmd *current, int *prev_pipe)
 	while (current)
 	{
 		if (handle_pipe_creation(current, fd_pipe) == -1)
-			return (-1);
+			return (close_pipe(fd_pipe), -1);
 		if (handle_fork_creation(current) == -1)
-			return (-1);
+			return (close_pipe(fd_pipe), -1);
 		if (current->pid == 0)
 		{
 			setup_child_process(current, *prev_pipe, fd_pipe);
@@ -55,18 +55,29 @@ void	setup_child_process(t_cmd *current, int prev_pipe, int *fd_pipe)
 	if (prev_pipe != -1)
 	{
 		if (current->infile == -1)
-			current->infile = prev_pipe;
-		else
-			close(prev_pipe);
+		{
+			if (dup2(prev_pipe, STDIN_FILENO) == -1)
+			{
+				perror("dup2 prev_pipe");
+				exit(1);
+			}
+		}
+		close(prev_pipe);
 	}
-	if (current->next)
+	if (current->next && fd_pipe[1] != -1)
 	{
 		close(fd_pipe[0]);
 		if (current->outfile == -1)
-			current->outfile = fd_pipe[1];
-		else
-			close(fd_pipe[1]);
+		{
+			if (dup2(fd_pipe[1], STDOUT_FILENO) == -1)
+			{
+				perror("dup2 pipe_out");
+				exit(1);
+			}
+		}
+		close(fd_pipe[1]);
 	}
+	close_unused_fds(current);
 }
 
 void	setup_parent_process(int prev_pipe, int *fd_pipe, t_cmd *current)
@@ -74,7 +85,7 @@ void	setup_parent_process(int prev_pipe, int *fd_pipe, t_cmd *current)
 	signal(SIGINT, SIG_IGN);
 	if (prev_pipe != -1)
 		close(prev_pipe);
-	if (current->next)
+	if (current->next && fd_pipe[1] != -1)
 		close(fd_pipe[1]);
 }
 

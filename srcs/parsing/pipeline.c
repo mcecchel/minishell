@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 17:56:56 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/28 20:23:21 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/31 17:12:05 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,12 @@ void	wait_for_children_safe(t_cmd *cmd_list, t_shell *shell)
 
 int	update_prev_pipe(t_cmd *current, int *fd_pipe, int prev_pipe)
 {
-	if (current->next)
+	(void)prev_pipe;
+	if (current->next && fd_pipe[0] != -1)
 		return (fd_pipe[0]);
-	return (prev_pipe);
+	if (fd_pipe[0] != -1)
+		close(fd_pipe[0]);
+	return (-1);
 }
 
 int	handle_pipe_creation(t_cmd *current, int *fd_pipe)

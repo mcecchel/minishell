@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 16:02:45 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/29 14:42:29 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/31 17:06:02 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,6 +170,10 @@ int				handle_redirection(t_cmd *cmd, t_token *token, t_shell *shell);
 void			close_cmd_fds(t_cmd *cmd);
 void			close_all_cmd_fds(t_cmd *head);
 void			close_outfile(t_cmd *cmd);
+void			close_pipe(int *pipe_fd);
+void			close_unused_fds(t_cmd *current);
+
+
 
 // Heredoc functions							heredoc.c
 char			*expand_heredoc(t_shell *shell, char *line, int exp, int quote);
