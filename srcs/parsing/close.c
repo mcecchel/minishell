@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:59:33 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/31 17:05:53 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/31 19:04:27 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,14 +57,12 @@ void	close_pipe(int *pipe_fd)
 		close(pipe_fd[1]);
 		pipe_fd[1] = -1;
 	}
-	close(0);
-	close(1);
 }
 
 void	close_unused_fds(t_cmd *current)
 {
 	t_cmd	*tmp;
-	
+
 	tmp = current->next;
 	while (tmp)
 	{

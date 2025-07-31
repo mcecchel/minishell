@@ -6,22 +6,65 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:57:57 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/31 17:05:07 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/31 19:12:36 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+// int	process_command_loop(t_shell *shell, t_cmd *current, int *prev_pipe)
+// {
+// 	int	fd_pipe[2];
+
+// 	fd_pipe[0] = -1;
+// 	fd_pipe[1] = -1;
+// 	while (current)
+// 	{
+// 		if (handle_pipe_creation(current, fd_pipe) == -1)
+// 			return (close_pipe(fd_pipe), -1);
+// 		if (handle_fork_creation(current) == -1)
+// 			return (close_pipe(fd_pipe), -1);
+// 		if (current->pid == 0)
+// 		{
+// 			setup_child_process(current, *prev_pipe, fd_pipe);
+// 			execute_cmd(shell, current);
+// 		}
+// 		else
+// 		{
+// 			setup_parent_process(*prev_pipe, fd_pipe, current);
+// 			*prev_pipe = update_prev_pipe(current, fd_pipe, *prev_pipe);
+// 			current = current->next;
+// 		}
+// 	}
+// 	return (0);
+// }
+
+void	close_all_fds_on_error(t_cmd *cmd_list)
+{
+	t_cmd	*current;
+
+	current = cmd_list;
+	while (current)
+	{
+		close_all_cmd_fds(current);
+		current = current->next;
+	}
+}
+
 int	process_command_loop(t_shell *shell, t_cmd *current, int *prev_pipe)
 {
 	int	fd_pipe[2];
 
+	fd_pipe[0] = -1;
+	fd_pipe[1] = -1;
 	while (current)
 	{
-		if (handle_pipe_creation(current, fd_pipe) == -1)
-			return (close_pipe(fd_pipe), -1);
-		if (handle_fork_creation(current) == -1)
-			return (close_pipe(fd_pipe), -1);
+		if (current->next)
+			if (pipe(fd_pipe) == -1)
+				return (error_fork(shell, fd_pipe, 0), -1);
+		current->pid = fork();
+		if (current->pid == -1)
+			return (error_fork(shell, fd_pipe, 1), -1);
 		if (current->pid == 0)
 		{
 			setup_child_process(current, *prev_pipe, fd_pipe);
@@ -37,16 +80,16 @@ int	process_command_loop(t_shell *shell, t_cmd *current, int *prev_pipe)
 	return (0);
 }
 
-int	handle_fork_creation(t_cmd *current)
-{
-	current->pid = fork();
-	if (current->pid == -1)
-	{
-		perror("Fork error");
-		return (-1);
-	}
-	return (0);
-}
+// int	handle_fork_creation(t_cmd *current)
+// {
+// 	current->pid = fork();
+// 	if (current->pid == -1)
+// 	{
+// 		perror("Fork error");
+// 		return (-1);
+// 	}
+// 	return (0);
+// }
 
 void	setup_child_process(t_cmd *current, int prev_pipe, int *fd_pipe)
 {

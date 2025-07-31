@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 17:54:41 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/28 20:30:30 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/31 18:30:54 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,17 +15,18 @@
 void	fork_error_handler(t_shell *shell, t_cmd *cmd, int err, int exit_code)
 {
 	if (err == 0)
-		perror("dup2 error");
+		fd_printf(2, "dup2 error");
 	if (err == 1)
-		perror("Execve failed");
+		fd_printf(2, "Execve failed");
 	if (err == 2)
-		perror("Error dup2 prev_pipe");
+		fd_printf(2, "Error dup2 prev_pipe");
 	if (err == 3)
-		perror("dup2 pipe_out");
+		fd_printf(2, "dup2 pipe_out");
 	if (cmd)
 		close_cmd_fds(cmd);
 	else
 		close_cmd_fds(shell->cmd);
+	ft_printf("CIAONE\n");
 	cleanup_shell(shell);
 	clean_exit(shell);
 	exit (exit_code);

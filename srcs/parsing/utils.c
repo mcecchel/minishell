@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 18:16:41 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/28 21:05:53 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/31 19:15:44 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,4 +86,20 @@ int	is_valid_command(t_cmd *cmd, char *command)
 		return (0);
 	}
 	return (1);
+}
+
+void	error_fork(t_shell *shell, int *fd_pipe, int a)
+{
+	close_all_cmd_fds(shell->cmd);
+	if (a == 0)
+	{
+		perror("Pipe error");
+		return ;
+	}
+	if (a == 1)
+	{
+		perror("Fork error");
+		close_pipe(fd_pipe);
+		return ;
+	}
 }

@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:49:41 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/29 17:15:29 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/07/31 19:04:18 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,6 @@ int	parser_builtin(t_shell *root, t_cmd *cmd)
 {
 	int		fd;
 
-	//root->exit_value = 0;
 	if (ft_strcmp(cmd->argv[0], "env") == 0 && cmd->argc != 1)
 		return (write(2, "Invalid command\n", 16), 1);
 	if (ft_strcmp(cmd->argv[0], "env") == 0)
