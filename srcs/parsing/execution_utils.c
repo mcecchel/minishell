@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution_utils.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 17:54:41 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/08/01 17:30:50 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/08/01 19:48:11 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,13 @@
 void	fork_error_handler(t_shell *shell, t_cmd *cmd, int err, int exit_code)
 {
 	if (err == 0)
-		fd_printf(2, "dup2 error");
+		fd_printf(2, "dup2 error\n");
 	if (err == 1)
-		fd_printf(2, "Execve failed");
+		fd_printf(2, "Execve failed\n");
 	if (err == 2)
-		fd_printf(2, "Error dup2 prev_pipe");
+		fd_printf(2, "Error dup2 prev_pipe\n");
 	if (err == 3)
-		fd_printf(2, "dup2 pipe_out");
+		fd_printf(2, "dup2 pipe_out\n");
 	if (cmd)
 		close_cmd_fds(cmd);
 	else
