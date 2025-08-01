@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 17:54:41 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/31 18:30:54 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/08/01 17:30:50 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@ void	fork_error_handler(t_shell *shell, t_cmd *cmd, int err, int exit_code)
 		close_cmd_fds(cmd);
 	else
 		close_cmd_fds(shell->cmd);
-	ft_printf("CIAONE\n");
 	cleanup_shell(shell);
 	clean_exit(shell);
 	exit (exit_code);

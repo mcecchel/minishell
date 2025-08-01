@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 16:02:45 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/07/31 19:14:10 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/08/01 17:11:58 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,7 @@ typedef struct s_shell
 	int		exit_value;
 	t_token	token;
 	bool	in_quote;
+	int		fd_pipe[2];
 	int		original_stdin;
 	int		original_stdout;
 }			t_shell;
@@ -298,8 +299,8 @@ int				process_command_loop(t_shell *shell, t_cmd *current,
 					int *prev_pipe);
 int				handle_fork_creation(t_cmd *current);
 void			setup_child_process(t_cmd *current,
-					int prev_pipe, int *fd_pipe);
-void			setup_parent_process(int prev_pipe,
+					int prev_pipe, int *fd_pipe, t_shell *shell);
+void			setup_parent_process(int *prev_pipe,
 					int *fd_pipe, t_cmd *current);
 int				handle_standard_advance(t_token **tok, t_cmd **cmd_list,
 					t_cmd **current, t_shell *shell);

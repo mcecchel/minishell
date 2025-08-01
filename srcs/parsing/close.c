@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:59:33 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/31 19:04:27 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/08/01 16:42:40 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,12 @@
 
 void	close_cmd_fds(t_cmd *cmd)
 {
-	if (cmd->infile != -1 && cmd->infile != STDIN_FILENO)
+	if (cmd->infile != -1)
 	{
 		close(cmd->infile);
 		cmd->infile = -1;
 	}
-	if (cmd->outfile != -1 && cmd->outfile != STDOUT_FILENO)
+	if (cmd->outfile != -1)
 	{
 		close(cmd->outfile);
 		cmd->outfile = -1;

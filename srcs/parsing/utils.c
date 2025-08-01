@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 18:16:41 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/31 19:15:44 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/08/01 15:54:01 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,7 @@ void	error_fork(t_shell *shell, int *fd_pipe, int a)
 	if (a == 0)
 	{
 		perror("Pipe error");
+		close_pipe(fd_pipe);
 		return ;
 	}
 	if (a == 1)

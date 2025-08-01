@@ -6,7 +6,7 @@
 /*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 17:50:36 by mbrighi           #+#    #+#             */
-/*   Updated: 2025/07/31 19:06:37 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/08/01 17:20:59 by mbrighi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,8 @@ void	execute_cmd(t_shell *shell, t_cmd *cmd)
 		fork_error_handler(shell, cmd, 4, 0);
 	if (is_builtin(cmd->cmd_path))
 	{
-		if (parser_builtin(shell, cmd))
-			fork_error_handler(shell, cmd, 4, shell->exit_value);
+		parser_builtin(shell, cmd);
+		fork_error_handler(shell, cmd, 4, shell->exit_value);
 	}
 	path = get_cmd_path(shell, cmd, cmd->argv[0]);
 	if (!path)
