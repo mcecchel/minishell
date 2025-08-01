@@ -39,7 +39,7 @@ SRC		= 	./main.c \
 		./srcs/parsing/pipeline.c \
 		./srcs/parsing/pipeline_main.c \
 		./srcs/parsing/process_command.c \
-		./srcs/parsing/setup_child_process.c \
+		./srcs/parsing/setup_processes.c \
 		./srcs/parsing/redirection.c \
 		./srcs/parsing/shell_core.c \
 		./srcs/parsing/shell_core_1.c \

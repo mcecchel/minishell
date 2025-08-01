@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbrighi <mbrighi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 16:02:45 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/08/01 17:11:58 by mbrighi          ###   ########.fr       */
+/*   Updated: 2025/08/01 20:06:55 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -294,12 +294,28 @@ int				add_operator_token(t_parse *p, char *op);
 int				handle_content(t_parse *p);
 int				add_content_token(t_parse *p, char *content, int is_quoted);
 
-//pipeline_main.c
-int				process_command_loop(t_shell *shell, t_cmd *current,
-					int *prev_pipe);
-int				handle_fork_creation(t_cmd *current);
+// setup_child_process
+void			setup_child_pipes(t_cmd *current, int prev_pipe, int *fd_pipe,
+					t_shell *shell);
+void			cleanup_child_fds(t_cmd *current, int prev_pipe, int *fd_pipe,
+					t_shell *shell);
 void			setup_child_process(t_cmd *current,
 					int prev_pipe, int *fd_pipe, t_shell *shell);
+void			setup_parent_process(int *prev_pipe, int *fd_pipe,
+					t_cmd *current);
+
+// process_command.c
+int				create_pipe_for_command(t_cmd *current, int fd_pipe[2]);
+int				fork_command_process(t_cmd *current, t_shell *shell,
+					int fd_pipe[2]);
+void			handle_process_roles(t_shell *shell, t_cmd *current,
+					int *prev_pipe, int fd_pipe[2]);
+int				process_command_loop(t_shell *shell, t_cmd *current,
+					int *prev_pipe);
+
+//pipeline_main.c
+int				handle_fork_creation(t_cmd *current);
+
 void			setup_parent_process(int *prev_pipe,
 					int *fd_pipe, t_cmd *current);
 int				handle_standard_advance(t_token **tok, t_cmd **cmd_list,

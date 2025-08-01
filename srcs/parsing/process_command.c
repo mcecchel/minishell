@@ -6,7 +6,7 @@
 /*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 19:45:04 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/08/01 19:59:10 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/08/01 20:09:52 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@ int	create_pipe_for_command(t_cmd *current, int fd_pipe[2])
 	{
 		if (pipe(fd_pipe) == -1)
 			return (-1);
-		printf("pipe[%d][%d]\n", fd_pipe[0], fd_pipe[1]);
 	}
 	return (0);
 }
